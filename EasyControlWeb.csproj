@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{55AE38B8-E13E-49C3-B779-616864FFC8D0}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>EasyControlWeb</RootNamespace>
+    <AssemblyName>EasyControlWeb</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="BouncyCastle.Cryptography, Version=2.0.0.0, Culture=neutral, PublicKeyToken=072edcf4a5328938, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\BouncyCastle.Cryptography.2.4.0\lib\net461\BouncyCastle.Cryptography.dll</HintPath>
+    </Reference>
+    <Reference Include="itextsharp, Version=5.5.13.4, Culture=neutral, PublicKeyToken=8354ae6d2174ddca, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\iTextSharp.5.5.13.4\lib\net461\itextsharp.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Design" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.FileSystem.AccessControl, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.IO.FileSystem.AccessControl.5.0.0\lib\net461\System.IO.FileSystem.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.Runtime.CompilerServices.Unsafe.4.5.2\lib\netstandard2.0\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.AccessControl, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.Security.AccessControl.6.0.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.Threading.Tasks.Extensions.4.5.3\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ValueTuple, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\SIMANET_W22R\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="EasyEncrypta.cs" />
+    <Compile Include="EasyGridButton.cs" />
+    <Compile Include="EasyGridExtended.cs" />
+    <Compile Include="EasyGridRowGroup.cs" />
+    <Compile Include="EasyGridView.cs" />
+    <Compile Include="EasyTypeConvertGeneric.cs" />
+    <Compile Include="EasyUtilitario.cs" />
+    <Compile Include="EasyViewReportPDF.cs" />
+    <Compile Include="Errors\EasyErrorControls.cs" />
+    <Compile Include="Errors\EasyErrorWebService.cs" />
+    <Compile Include="Filtro\EasyCampoListaSelect.cs" />
+    <Compile Include="Filtro\EasyFiltroCampo.cs" />
+    <Compile Include="Filtro\EasyFiltroCollectionCriterio.cs" />
+    <Compile Include="Filtro\EasyFiltroItem.cs" />
+    <Compile Include="Filtro\EasyFiltroParamURLws.cs" />
+    <Compile Include="Filtro\EasyGestorFiltro.cs" />
+    <Compile Include="Form\Base\EasyButtonBase.cs" />
+    <Compile Include="Form\Base\EasyCardBase.cs" />
+    <Compile Include="Form\Base\EasyCardBaseContenido.cs" />
+    <Compile Include="Form\Base\EasyControlBE.cs" />
+    <Compile Include="Form\Base\EasyList.cs" />
+    <Compile Include="Form\Base\EasyPanelBase.cs" />
+    <Compile Include="Form\Base\EasyProgressbarBase.cs" />
+    <Compile Include="Form\Base\EasyTexto.cs" />
+    <Compile Include="Form\Controls\Cards\EasyCard.cs" />
+    <Compile Include="Form\Controls\Cards\EasyCardButton.cs" />
+    <Compile Include="Form\Controls\Cards\EasyCardToolBar.cs" />
+    <Compile Include="Form\Controls\Cards\EasyPanelUsers.cs" />
+    <Compile Include="Form\Controls\Cards\EasyUserButton.cs" />
+    <Compile Include="Form\Controls\Cards\EasyViewCard.cs" />
+    <Compile Include="Form\Controls\Cards\EasyViewCardGroup.cs" />
+    <Compile Include="Form\Controls\DataDemoBE.cs" />
+    <Compile Include="Form\Controls\EasyAutocompletar.cs" />
+    <Compile Include="Form\Controls\EasyButton.cs" />
+    <Compile Include="Form\Controls\EasyButtonMenuContext.cs" />
+    <Compile Include="Form\Controls\EasyCardPerfil.cs" />
+    <Compile Include="Form\Controls\EasyCheckBox.cs" />
+    <Compile Include="Form\Controls\EasyClockDigital.cs" />
+    <Compile Include="Form\Controls\EasyContextMenu.cs" />
+    <Compile Include="Form\Controls\EasyControlCollection.cs" />
+    <Compile Include="Form\Controls\EasyDatepicker.cs" />
+    <Compile Include="Form\Controls\EasyDropdownList.cs" />
+    <Compile Include="Form\Controls\EasyFileInfo.cs" />
+    <Compile Include="Form\Controls\EasyFormHeader.cs" />
+    <Compile Include="Form\Controls\EasyInputRange.cs" />
+    <Compile Include="Form\Controls\EasyItemLog.cs" />
+    <Compile Include="Form\Controls\EasyListAutocompletar.cs" />
+    <Compile Include="Form\Controls\EasyListItem.cs" />
+    <Compile Include="Form\Controls\EasyListView.cs" />
+    <Compile Include="Form\Controls\EasyListViewHyperLink.cs" />
+    <Compile Include="Form\Controls\EasyListViewItemBase.cs" />
+    <Compile Include="Form\Controls\EasyListViewItemTipo.cs" />
+    <Compile Include="Form\Controls\EasyLoginCard.cs" />
+    <Compile Include="Form\Controls\EasyMenuItem.cs" />
+    <Compile Include="Form\Controls\EasyMenuPopup.cs" />
+    <Compile Include="Form\Controls\EasyMessageBox.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorBarIconBE.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorBarMenu.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorBarMenuBE.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorBE.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorHistorial.cs" />
+    <Compile Include="Form\Controls\EasyNavigatorParam.cs" />
+    <Compile Include="Form\Controls\EasyNumericBox.cs" />
+    <Compile Include="Form\Controls\EasyPathHistory.cs" />
+    <Compile Include="Form\Controls\EasyPathItem.cs" />
+    <Compile Include="Form\Controls\EasyPathLocalWeb.cs" />
+    <Compile Include="Form\Controls\EasyPdfViewer.cs" />
+    <Compile Include="Form\Controls\EasyPopupBase.cs" />
+    <Compile Include="Form\Controls\EasySnapShotBE.cs" />
+    <Compile Include="Form\Controls\EasyTabControl.cs" />
+    <Compile Include="Form\Controls\EasyTabControlV.cs" />
+    <Compile Include="Form\Controls\EasyTabItem.cs" />
+    <Compile Include="Form\Controls\EasyTextBox.cs" />
+    <Compile Include="Form\Controls\EasyTextEfecto.cs" />
+    <Compile Include="Form\Controls\EasyToolBarButtons.cs" />
+    <Compile Include="Form\Controls\EasyTreeView.cs" />
+    <Compile Include="Form\Controls\EasyUpLoad.cs" />
+    <Compile Include="Form\Controls\EasyUpLoadMultiple.cs" />
+    <Compile Include="Form\Controls\EasyUsuario.cs" />
+    <Compile Include="Form\Controls\EasyViewLog.cs" />
+    <Compile Include="Form\Controls\EasyViewLogButtom.cs" />
+    <Compile Include="Form\Controls\EasyViewLogGroup.cs" />
+    <Compile Include="Form\EasyFomItem.cs" />
+    <Compile Include="Form\EasyForm.cs" />
+    <Compile Include="Form\EasyFormCollection.cs" />
+    <Compile Include="Form\EasyFormDataBE.cs" />
+    <Compile Include="Form\EasyFormSeccion.cs" />
+    <Compile Include="Form\EasyProgressBar.cs" />
+    <Compile Include="Form\Editor\EasyFormColletionsEditor.cs" />
+    <Compile Include="Form\Editor\EasyGridCollectionsEditor.cs" />
+    <Compile Include="Form\Estilo\Bootstrap.cs" />
+    <Compile Include="Form\Estilo\EasyBtnStyle.cs" />
+    <Compile Include="Form\Templates\CustomCollectionEditor.cs" />
+    <Compile Include="Form\Templates\EasyFormItemTemplate.cs" />
+    <Compile Include="Form\Templates\EasyITemplateAutocompletar.cs" />
+    <Compile Include="Form\Templates\EasyITemplateDatepicker.cs" />
+    <Compile Include="Form\Templates\EasyITemplateDropdownList.cs" />
+    <Compile Include="Form\Templates\EasyITemplateListAutocompletar.cs" />
+    <Compile Include="Form\Templates\EasyITemplateNumericBox.cs" />
+    <Compile Include="Form\Templates\EasyITemplateTextBox.cs" />
+    <Compile Include="Form\Templates\EasyTemplateCheckBox.cs" />
+    <Compile Include="Form\Templates\ListView\EasyITemplateListItem.cs" />
+    <Compile Include="Form\Templates\ListView\EasyITemplateListItemImg.cs" />
+    <Compile Include="Form\Templates\ListView\EasyListViewTemplate.cs" />
+    <Compile Include="InterConecion\EasyBaseEntityBE.cs" />
+    <Compile Include="InterConecion\EasyDataInterConect.cs" />
+    <Compile Include="InterConecion\EasyWebServieHelper.cs" />
+    <Compile Include="InterConecion\WebClient_Tiempo.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Test\DosBE.cs" />
+    <Compile Include="Test\FilteredFileNameEditor.cs" />
+    <Compile Include="Test\MyUITypeEditor.cs" />
+    <Compile Include="Test\NumerosBE.cs" />
+    <Compile Include="Test\UnoBE.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
