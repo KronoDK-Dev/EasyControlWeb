@@ -2,14 +2,20 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text; 
 
 namespace EasyControlWeb.Filtro
 {
     [Serializable]
     public class EasyFiltroParamURLws
     {
+        /* public enum ParamTipo
+         {
+             Fijo,
+             DinamicoPorURL,
+             FormControl,
+             CriterioInput,
+         }*/
         public enum TipoObtenerValor
         {
             Fijo,
@@ -19,16 +25,14 @@ namespace EasyControlWeb.Filtro
             CriterioInput,
             FunctionScript,
         }
+      
 
         public EasyFiltroParamURLws() : this(string.Empty, TipoObtenerValor.Fijo) { }
-
-        public EasyFiltroParamURLws(string _Param, TipoObtenerValor _Tipo)
-        {
+        public EasyFiltroParamURLws(string _Param, TipoObtenerValor _Tipo) {
             this.ParamName = _Param;
             this.ObtenerValor = _Tipo;
         }
-
-        public EasyFiltroParamURLws(string _Param, TipoObtenerValor _ObtenerValor, EasyUtilitario.Enumerados.TiposdeDatos _TipodeDato)
+        public EasyFiltroParamURLws(string _Param, TipoObtenerValor _ObtenerValor, EasyUtilitario.Enumerados.TiposdeDatos  _TipodeDato)
         {
             this.ParamName = _Param;
             this.ObtenerValor = _ObtenerValor;
@@ -47,7 +51,7 @@ namespace EasyControlWeb.Filtro
         [Description("Valor de parámetro")]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
-        public string Paramvalue { get; set; }
+        public string Paramvalue{ get; set; }
 
         [Category("Params")]
         [Browsable(true)]
@@ -69,11 +73,11 @@ namespace EasyControlWeb.Filtro
         }
         public string ToString(bool outClienteBE)
         {
-            string cmll = "\"";
-            string strBaseBE = "{"
-                               + "ParamName" + ":" + cmll + this.ParamName + cmll + ","
-                               + "Paramvalue" + ":" + cmll + this.Paramvalue + cmll + ","
-                               + "ObtenerValor" + ":" + cmll + this.ObtenerValor.ToString() + cmll + "}";
+           string cmll = "\"";
+           string strBaseBE = "{"
+                            + "ParamName"  + ":" + cmll + this.ParamName + cmll + ","
+                            + "Paramvalue" + ":" + cmll + this.Paramvalue + cmll + ","
+                            + "ObtenerValor" + ":" + cmll + this.ObtenerValor.ToString() + cmll + "}";
             return strBaseBE.ToString();
         }
     }

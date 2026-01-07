@@ -1,21 +1,29 @@
-﻿using EasyControlWeb.Form.Controls;
-using EasyControlWeb.Form.Templates;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing.Design;
-using System.Globalization;
 using System.Linq;
-using System.Security.Permissions;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
+using System.Web.UI.WebControls; 
+using System.Data;
+using System.Security.Permissions;
+using System.Drawing.Design;
 using System.Web.UI.HtmlControls;
-using System.Web.UI.WebControls;
+using System.Web.UI.Design;
+using EasyControlWeb.Form.Controls;
+using EasyControlWeb.Form.Templates;
+using EasyControlWeb.InterConecion;
+using System.Globalization;
+using Org.BouncyCastle.Tls;
 
+/*
+[assembly: TagPrefix("EasyGestorFiltro", "SIMA_CTRL")]
+[assembly: WebResource("GenFiltro.gif", "image/")]
+referencia de popup por columna : https://codepen.io/ellpanda/pen/RwRedRX
+*/
 namespace EasyControlWeb.Filtro
 {
+    
     [
         AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal),
         AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal),
@@ -23,16 +31,23 @@ namespace EasyControlWeb.Filtro
         ParseChildren(true, "EasyFiltroCampos"),
         ToolboxData("<{0}:EasyGestorFiltro runat=server></{0}:EasyGestorFiltro")
     ]
+
+   /* [
+    ParseChildren(true, "Titulo"),
+    ToolboxData("<{0}:EasyGestorFiltro runat=server></{0}:EasyGestorFiltro")
+    ]
+    */
+    /*[Serializable]*/
     public class EasyGestorFiltro : CompositeControl
     {
         #region Constantes
-        private const string ITEM_COLOR_SELECT = "ItemColorSelect";
-        private const string ITEM_COLOR_MOUSEMOVE = "ItemColorMouseMove";
-        private const string IMG_FILTRO_GRUPO = "ImgFiltroGrupo";
+            private const string ITEM_COLOR_SELECT = "ItemColorSelect";
+            private const string ITEM_COLOR_MOUSEMOVE = "ItemColorMouseMove";
+            private const string IMG_FILTRO_GRUPO = "ImgFiltroGrupo";
 
-        private const string IMG_FILTRO_HEADER = "ImagenFiltroHead";
-        private const string IMG_FILTRO_ADD = "ImagenFiltroAdd";
-        private const string IMG_FILTRO_DEL = "ImagenFiltroDelete";
+            private const string IMG_FILTRO_HEADER = "ImagenFiltroHead";
+            private const string IMG_FILTRO_ADD = "ImagenFiltroAdd";
+            private const string IMG_FILTRO_DEL = "ImagenFiltroDelete";
         #endregion
 
         #region Enumerados
@@ -52,7 +67,7 @@ namespace EasyControlWeb.Filtro
             Modify,
             ApplySoloItem
         }
-
+      
         public enum eventJScript
         {
             onClick,
@@ -67,58 +82,61 @@ namespace EasyControlWeb.Filtro
         const string bsl = @"\";
         #endregion
 
+
         //Eventos que completan la operacion de generar los criterios de filtros
         public delegate void FilterBound(string FiltroResultante, List<EasyControlWeb.Filtro.EasyFiltroItem> lstEasyFiltroItem);
         public event FilterBound ProcessCompleted;
+
 
         //Eventos que completan la operacion de generar los criterios de filtros
         public delegate void FilterItemCiterio(ModoEditFiltro Modo, EasyFiltroItem oEasyFiltroItem);
         public event FilterItemCiterio ItemCriterio;
 
+
         #region Declaraciones de objetos a ser usados
-        Table tblBase;
-        Table tblBaseGestor;
-        Table tblSubCriterio;
+            Table tblBase;
+            Table tblBaseGestor;
+            Table tblSubCriterio;
 
-        TableRow tr;
-        TableCell tc;
+            TableRow tr;
+            TableCell tc;
 
-        Table tblColumnField;
-        Label lblColumField;
-        EasyTextBox txtFieldColumnValue;
-        EasyTextBox TextFieldColumnName;
-        EasyTextBox TextFieldColumnTitle;
+            Table tblColumnField;
+            Label lblColumField;
+            EasyTextBox txtFieldColumnValue;
+            EasyTextBox TextFieldColumnName;
+            EasyTextBox TextFieldColumnTitle;
 
-        EasyTextBox TextOperador;
-        EasyTextBox TextCriterio;
+            EasyTextBox TextOperador;
+            EasyTextBox TextCriterio;
 
 
-        DropDownList ddlCriterio;
-        DropDownList ddlOperador;
-        DropDownList ddlCampo;
-        List<Control> AllCtrlValue;
-        TextBox txtIdFiltro;
-        TextBox txtidFiltroDel;
-        TextBox txtFlagInvoke;
+            DropDownList ddlCriterio;
+            DropDownList ddlOperador;
+            DropDownList ddlCampo;
+            List<Control> AllCtrlValue;
+            TextBox txtIdFiltro;
+            TextBox txtidFiltroDel;
+            TextBox txtFlagInvoke;
 
 
         //boton para agregr menu
         HtmlImage oimgAdd;
-        HtmlImage oImgSubItemAdd;
-        HtmlImage oImagenDel;
-        //
-        System.Web.UI.HtmlControls.HtmlButton btnFAceptar;
-        System.Web.UI.HtmlControls.HtmlButton btnFAceptar2;
-        System.Web.UI.HtmlControls.HtmlButton btnAceptarField;
+            HtmlImage oImgSubItemAdd;
+            HtmlImage oImagenDel;
+            //
+            System.Web.UI.HtmlControls.HtmlButton btnFAceptar;
+            System.Web.UI.HtmlControls.HtmlButton btnFAceptar2;
+            System.Web.UI.HtmlControls.HtmlButton btnAceptarField;
         //para las 2 ventanas de filtos
-        HtmlGenericControl wPopupCriterios;
-        HtmlGenericControl wPopupGestor;
-        HtmlGenericControl wPopupColumnField;
-        HtmlGenericControl wPopupConfirmDelete;
-        //para mensajes
-        HtmlGenericControl aContext;
-        //Boton por defecto
-        HtmlButton btnInicio;
+            HtmlGenericControl wPopupCriterios;
+            HtmlGenericControl wPopupGestor;
+            HtmlGenericControl wPopupColumnField;
+            HtmlGenericControl wPopupConfirmDelete;
+            //para mensajes
+            HtmlGenericControl aContext;
+            //Boton por defecto
+            HtmlButton btnInicio;
         //Boton de eliminacion de filtro
         HtmlButton btnDelete;
 
@@ -138,7 +156,7 @@ namespace EasyControlWeb.Filtro
         List<LiteralControl> CollecctionScript = new List<LiteralControl>();
         #endregion
 
-
+      
         #endregion
 
         #region Nombre de control
@@ -147,7 +165,7 @@ namespace EasyControlWeb.Filtro
         #endregion
 
         #region Propiedades
-
+        
         public string Titulo
         {
             get
@@ -209,19 +227,18 @@ namespace EasyControlWeb.Filtro
             }
         }
 
-
+       
         [Category("Appearance")]
         [Bindable(BindableSupport.No)]
         [DefaultValue("true")]
         public bool DisplayButtonInterface
         {
-            get
-            {
+            get {
                 if (this.ViewState["VerBotonFiltro"] == null)
                 {
                     this.ViewState["VerBotonFiltro"] = true;
                 }
-                return (bool)this.ViewState["VerBotonFiltro"];
+                   return (bool)this.ViewState["VerBotonFiltro"]; 
             }
             set { this.ViewState["VerBotonFiltro"] = value; }
         }
@@ -300,6 +317,11 @@ namespace EasyControlWeb.Filtro
 
         #endregion
 
+
+    
+
+
+
         #region Para la lista de criterios
 
 
@@ -310,11 +332,11 @@ namespace EasyControlWeb.Filtro
         private List<EasyFiltroItem> easyCriterioList;
 
         [
-            Category("Behavior"),
-            Description("Coleccion de Criterios"),
-            DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-            Editor(typeof(EasyFiltroCollectionCriterio), typeof(UITypeEditor)),
-            PersistenceMode(PersistenceMode.InnerDefaultProperty)
+        Category("Behavior"),
+        Description("Coleccion de Criterios"),
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+        Editor(typeof(EasyFiltroCollectionCriterio), typeof(UITypeEditor)),
+        PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public List<EasyFiltroItem> EasyFiltroItems
         {
@@ -324,17 +346,17 @@ namespace EasyControlWeb.Filtro
                 return easyCriterioList;
             }
         }
-
+      
         #endregion
 
         #region Para la lista de campos de bd
         private List<EasyFiltroCampo> easyCamposBDList;
         [
-            Category("Behavior"),
-            Description("Coleccion de campos"),
-            DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-            Editor(typeof(EasyFiltroCollectionCampo), typeof(UITypeEditor)),
-            PersistenceMode(PersistenceMode.InnerDefaultProperty)
+        Category("Behavior"),
+        Description("Coleccion de campos"),
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+        Editor(typeof(EasyFiltroCollectionCampo), typeof(UITypeEditor)),
+        PersistenceMode(PersistenceMode.InnerDefaultProperty)
         ]
         public List<EasyFiltroCampo> EasyFiltroCampos
         {
@@ -347,47 +369,49 @@ namespace EasyControlWeb.Filtro
 
         #endregion
 
+        
+
+
         #region Inicializa arrays
-
         void InicializaListaCtrl()
-        {
-            if (easyCriterioList == null)
             {
-                easyCriterioList = new List<EasyFiltroItem>();
-            }
+                if (easyCriterioList == null)
+                {
+                    easyCriterioList = new List<EasyFiltroItem>();
+                }
 
-            if (easyCamposBDList == null)
-            {
-                easyCamposBDList = new List<EasyFiltroCampo>();
+                if (easyCamposBDList == null)
+                {
+                    easyCamposBDList = new  List<EasyFiltroCampo>();
+                }
             }
-        }
-
         #endregion
-
         void InicializaControles()
         {
             #region Objeto del popup ColumnField 
-            tblColumnField = new Table();
-            tblColumnField.ID = "tblColumnField";
+                tblColumnField = new Table();
+                tblColumnField.ID = "tblColumnField";
 
-            lblColumField = new Label();
-            lblColumField.ID = "lblColumFieldName";
+                lblColumField = new Label();
+                lblColumField.ID = "lblColumFieldName";
 
-            txtFieldColumnValue = new EasyTextBox();
-            txtFieldColumnValue.ID = "txtFieldColumnValor";//se usarar en el server para recuperar el valor ingresado por el usuario
+                txtFieldColumnValue = new EasyTextBox();
+                txtFieldColumnValue.ID = "txtFieldColumnValor";//se usarar en el server para recuperar el valor ingresado por el usuario
 
-            //Objetos que ecogen los valores de los ddlSeleccionado
-            TextFieldColumnName = new EasyTextBox();
-            TextFieldColumnName.ID = "txtFieldColumnName";
+                //Objetos que ecogen los valores de los ddlSeleccionado
+                TextFieldColumnName = new EasyTextBox();
+                TextFieldColumnName.ID = "txtFieldColumnName";
 
-            TextOperador = new EasyTextBox();
-            TextOperador.ID = "txtOperador";
-            TextCriterio = new EasyTextBox();
-            TextCriterio.ID = "txtCriterio";
+                TextOperador = new EasyTextBox();
+                TextOperador.ID = "txtOperador";
+                TextCriterio =new EasyTextBox();
+                TextCriterio.ID = "txtCriterio";
 
-            TextFieldColumnTitle = new EasyTextBox();
-            TextFieldColumnTitle.ID = "txtFieldColumnNameTitle";
+                TextFieldColumnTitle = new EasyTextBox();
+                TextFieldColumnTitle.ID = "txtFieldColumnNameTitle";
             #endregion
+
+
 
             ddlOperador = new DropDownList();
             ddlOperador.ID = "ddlOperador";
@@ -399,163 +423,161 @@ namespace EasyControlWeb.Filtro
             //CAMPOS
             ddlCampo = new DropDownList();
             ddlCampo.ID = "ddlCampo";
-            try
-            {
-                AllCtrlValue = new List<Control>();//Array en donde se guardaran los objeto para luego se pintados en el formulario
-                if ((easyCamposBDList != null) && (easyCamposBDList.Count > 0))
+                try
                 {
-                    int NroCampos = easyCamposBDList.Count;
-                    ddlCampo.Items.Add(new ListItem("[Seleccionar...]", " "));
-                    string LstFields = "";
-                    int idx = 0;
-                    foreach (EasyFiltroCampo item in easyCamposBDList)
+                    AllCtrlValue = new List<Control>();//Array en donde se guardaran los objeto para luego se pintados en el formulario
+                    if ((easyCamposBDList != null) && (easyCamposBDList.Count > 0))
                     {
-                        EasyFiltroCampo oEasyCampo = item as EasyFiltroCampo;
-                        if (oEasyCampo != null)
+                        int NroCampos = easyCamposBDList.Count;
+                        ddlCampo.Items.Add(new ListItem("[Seleccionar...]", " "));
+                        string LstFields = "";
+                        int idx = 0;
+                       foreach (EasyFiltroCampo item in easyCamposBDList)
                         {
-                            string Describ = (((oEasyCampo.Descripcion.Replace(" ", "") == null) || (oEasyCampo.Descripcion.Replace(" ", "").Length == 0)) ? "[" + oEasyCampo.Nombre + "]" : oEasyCampo.Descripcion);
-                            ddlCampo.Items.Add(new ListItem(Describ, oEasyCampo.Nombre));
-                            //Creacion de los controles de campos valor
-                            if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateTextBox"))
+                             EasyFiltroCampo oEasyCampo = item as EasyFiltroCampo;
+                            if (oEasyCampo != null)
                             {
-                                EasyITemplateTextBox oEasyITemplateTextBox = (EasyITemplateTextBox)oEasyCampo.EasyControlAsociado;
-                                EasyTextBox oEasyTextBox = new EasyTextBox();
-                                oEasyTextBox.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
-                                oEasyTextBox.ID = oEasyCampo.Nombre;
-                                oEasyTextBox.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
-                                oEasyTextBox.Attributes.Add("Nombre", oEasyCampo.Nombre);
-                                oEasyTextBox.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
-                                AllCtrlValue.Add(oEasyTextBox);
-                            }
-                            else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateDatepicker"))
-                            {
-                                EasyITemplateDatepicker ndpk = (EasyITemplateDatepicker)oEasyCampo.EasyControlAsociado;
-                                EasyDatepicker oEasyDatepicker = new EasyDatepicker();
-                                oEasyDatepicker.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
-                                oEasyDatepicker.FormatInPut = ndpk.FormatInPut;
-                                oEasyDatepicker.FormatOutPut = ndpk.FormatOutPut;
-                                oEasyDatepicker.ID = oEasyCampo.Nombre;
-                                oEasyDatepicker.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
-                                oEasyDatepicker.Attributes.Add("Nombre", oEasyCampo.Nombre);
-                                oEasyDatepicker.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
-                                AllCtrlValue.Add(oEasyDatepicker);
-                            }
-                            else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateNumericBox"))
-                            {
-                                EasyITemplateNumericBox nbox = (EasyITemplateNumericBox)oEasyCampo.EasyControlAsociado;
-                                EasyNumericBox oEasyNumericBox = new EasyNumericBox();
-                                oEasyNumericBox.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
-                                oEasyNumericBox.ID = oEasyCampo.Nombre;
-                                oEasyNumericBox.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
-                                oEasyNumericBox.Attributes.Add("Nombre", oEasyCampo.Nombre);
-                                oEasyNumericBox.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
-                                AllCtrlValue.Add(oEasyNumericBox);
-
-                            }
-                            else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateDropdownList"))
-                            {
-                                EasyITemplateDropdownList ddl = (EasyITemplateDropdownList)oEasyCampo.EasyControlAsociado;
-                                EasyDropdownList oEasyDropdownList = new EasyDropdownList();
-                                oEasyDropdownList.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
-                                oEasyDropdownList.ID = oEasyCampo.Nombre;
-                                oEasyDropdownList.DataTextField = ddl.TextField;
-                                oEasyDropdownList.DataValueField = ddl.ValueField;
-                                oEasyDropdownList.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
-                                oEasyDropdownList.Attributes.Add("Nombre", oEasyCampo.Nombre);
-                                oEasyDropdownList.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
-                                int OrdParam = 0;
-                                if ((oEasyCampo.DataInterconect.UrlWebServicieParams != null) && (oEasyCampo.DataInterconect.UrlWebServicieParams.Count > 0))
+                                string Describ = (((oEasyCampo.Descripcion.Replace(" ","") == null) ||(oEasyCampo.Descripcion.Replace(" ", "").Length == 0)) ? "[" + oEasyCampo.Nombre +"]" : oEasyCampo.Descripcion);
+                                ddlCampo.Items.Add(new ListItem(Describ, oEasyCampo.Nombre));
+                                //Creacion de los controles de campos valor
+                                if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateTextBox"))
                                 {
-                                    oEasyDropdownList.DataInterconect = oEasyCampo.DataInterconect;
-
-                                    object[] args = new object[oEasyCampo.DataInterconect.UrlWebServicieParams.Count];
-
-                                    foreach (EasyFiltroParamURLws oEasyFiltroParam in oEasyCampo.DataInterconect.UrlWebServicieParams)
-                                    {
-                                        string ParamValor = "";//Obtener el valor
-                                        switch (oEasyFiltroParam.ObtenerValor)
-                                        {
-                                            case EasyFiltroParamURLws.TipoObtenerValor.Fijo:
-                                                ParamValor = oEasyFiltroParam.Paramvalue;
-                                                break;
-                                            case EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL:
-                                                ParamValor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParam.Paramvalue];//Aqui el valor contenido es el nombre del parámetro
-                                                break;
-                                        }
-
-                                        switch (oEasyFiltroParam.TipodeDato)//estabñlece el tipo del parámetro
-                                        {
-
-                                            case EasyUtilitario.Enumerados.TiposdeDatos.String: //EasyFiltroParamURLws.TiposdeDatos.String:
-                                                args.SetValue(ParamValor, OrdParam);
-                                                break;
-                                            case EasyUtilitario.Enumerados.TiposdeDatos.Int:
-                                                args.SetValue(Convert.ToInt32(ParamValor), OrdParam);
-                                                break;
-                                            case EasyUtilitario.Enumerados.TiposdeDatos.Date:
-                                                args.SetValue(Convert.ToDateTime(ParamValor), OrdParam);
-                                                break;
-                                            case EasyUtilitario.Enumerados.TiposdeDatos.Double:
-                                                args.SetValue(Convert.ToDouble(ParamValor), OrdParam);
-                                                break;
-                                        }
-                                        OrdParam++;
-                                    }
-                                    oEasyDropdownList.CargaInmediata = true;
-                                    oEasyDropdownList.LoadData();
+                                    EasyITemplateTextBox oEasyITemplateTextBox = (EasyITemplateTextBox)oEasyCampo.EasyControlAsociado;
+                                    EasyTextBox oEasyTextBox = new EasyTextBox();
+                                    oEasyTextBox.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
+                                    oEasyTextBox.ID = oEasyCampo.Nombre;
+                                    oEasyTextBox.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
+                                    oEasyTextBox.Attributes.Add("Nombre", oEasyCampo.Nombre);
+                                    oEasyTextBox.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
+                                    AllCtrlValue.Add(oEasyTextBox);
+                                }
+                                else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateDatepicker") )
+                                {
+                                    EasyITemplateDatepicker ndpk= (EasyITemplateDatepicker)oEasyCampo.EasyControlAsociado;
+                                    EasyDatepicker oEasyDatepicker = new EasyDatepicker();
+                                    oEasyDatepicker.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
+                                    oEasyDatepicker.FormatInPut = ndpk.FormatInPut;
+                                    oEasyDatepicker.FormatOutPut = ndpk.FormatOutPut;
+                                    oEasyDatepicker.ID = oEasyCampo.Nombre;
+                                    oEasyDatepicker.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
+                                    oEasyDatepicker.Attributes.Add("Nombre", oEasyCampo.Nombre);
+                                    oEasyDatepicker.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
+                                    AllCtrlValue.Add(oEasyDatepicker);
+                                }
+                                else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateNumericBox"))
+                                {
+                                    EasyITemplateNumericBox nbox = (EasyITemplateNumericBox)oEasyCampo.EasyControlAsociado;
+                                    EasyNumericBox oEasyNumericBox = new EasyNumericBox();
+                                    oEasyNumericBox.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
+                                    oEasyNumericBox.ID = oEasyCampo.Nombre;
+                                    oEasyNumericBox.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
+                                    oEasyNumericBox.Attributes.Add("Nombre", oEasyCampo.Nombre);
+                                    oEasyNumericBox.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
+                                    AllCtrlValue.Add(oEasyNumericBox);
 
                                 }
-                                AllCtrlValue.Add(oEasyDropdownList);
+                                else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateDropdownList"))
+                                {
+                                    EasyITemplateDropdownList ddl = (EasyITemplateDropdownList)oEasyCampo.EasyControlAsociado;
+                                    EasyDropdownList oEasyDropdownList = new EasyDropdownList();
+                                    oEasyDropdownList.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
+                                    oEasyDropdownList.ID = oEasyCampo.Nombre;
+                                    oEasyDropdownList.DataTextField = ddl.TextField;
+                                    oEasyDropdownList.DataValueField = ddl.ValueField;
+                                    oEasyDropdownList.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
+                                    oEasyDropdownList.Attributes.Add("Nombre", oEasyCampo.Nombre);
+                                    oEasyDropdownList.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
+                                    int OrdParam = 0;
+                                    if ((oEasyCampo.DataInterconect.UrlWebServicieParams != null) && (oEasyCampo.DataInterconect.UrlWebServicieParams.Count>0)) {
+                                        oEasyDropdownList.DataInterconect = oEasyCampo.DataInterconect;
 
-                            }
-                            else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateAutoCompletar"))
-                            {
-                                EasyITemplateAutoCompletar acpl = (EasyITemplateAutoCompletar)oEasyCampo.EasyControlAsociado;
-                                EasyAutocompletar oEasyAutocompletar = new EasyAutocompletar();
-                                oEasyAutocompletar.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
-                                oEasyAutocompletar.DisplayText = acpl.TextField;//Campos que muestra la busqueda
-                                oEasyAutocompletar.ValueField = acpl.ValueField;//Campo disponible para se usado en el filtro
-                                oEasyAutocompletar.fncTempaleCustom = acpl.fncTempaleCustom;
-                                //oEasyAutocompletar.DisplayText = oEasyCampo.Nombre;
-                                // oEasyAutocompletar.DisplayValue = acpl.ValueField;//Campo disponible para se usado en el filtro
-                                oEasyAutocompletar.DataInterconect = oEasyCampo.DataInterconect;
-                                oEasyAutocompletar.ID = oEasyCampo.Nombre;
-                                oEasyAutocompletar.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
-                                oEasyAutocompletar.Attributes.Add("Nombre", oEasyCampo.Nombre);
-                                oEasyAutocompletar.Attributes.Add("CtrlContext", this.ClientID + "_" + oEasyCampo.Nombre);
-                                oEasyAutocompletar.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
-                                AllCtrlValue.Add(oEasyAutocompletar);
-                            }
+                                        object[] args = new object[oEasyCampo.DataInterconect.UrlWebServicieParams.Count];
 
-                            //LstFields += ((idx==0)?"":",") + oEasyCampo.ToString(true) ;
-                            LstFields += ((idx == 0) ? "" : ",") + oEasyCampo.ToCliente();
+                                        foreach (EasyFiltroParamURLws oEasyFiltroParam in oEasyCampo.DataInterconect.UrlWebServicieParams) {
+                                            string ParamValor = "";//Obtener el valor
+                                            switch (oEasyFiltroParam.ObtenerValor)
+                                            {
+                                                case EasyFiltroParamURLws.TipoObtenerValor.Fijo:
+                                                    ParamValor = oEasyFiltroParam.Paramvalue;
+                                                    break;
+                                                case EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL:
+                                                    ParamValor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParam.Paramvalue];//Aqui el valor contenido es el nombre del parámetro
+                                                    break;
+                                            }
+
+                                            switch (oEasyFiltroParam.TipodeDato)//estabñlece el tipo del parámetro
+                                            {
+
+                                                case EasyUtilitario.Enumerados.TiposdeDatos.String: //EasyFiltroParamURLws.TiposdeDatos.String:
+                                                    args.SetValue(ParamValor, OrdParam);
+                                                    break;
+                                                case EasyUtilitario.Enumerados.TiposdeDatos.Int:
+                                                    args.SetValue(Convert.ToInt32(ParamValor), OrdParam);
+                                                    break;
+                                                case EasyUtilitario.Enumerados.TiposdeDatos.Date:
+                                                    args.SetValue(Convert.ToDateTime(ParamValor), OrdParam);
+                                                    break;
+                                                case EasyUtilitario.Enumerados.TiposdeDatos.Double:
+                                                    args.SetValue(Convert.ToDouble(ParamValor), OrdParam);
+                                                    break;
+                                            }
+                                            OrdParam++;
+                                        }
+                                        oEasyDropdownList.CargaInmediata = true;
+                                        oEasyDropdownList.LoadData();
+
+                                    }
+                                    AllCtrlValue.Add(oEasyDropdownList);
+
+                                }
+                                else if (oEasyCampo.EasyControlAsociado.TemplateType.Equals("EasyITemplateAutoCompletar"))
+                                {
+                                    EasyITemplateAutoCompletar acpl = (EasyITemplateAutoCompletar)oEasyCampo.EasyControlAsociado;
+                                    EasyAutocompletar oEasyAutocompletar = new EasyAutocompletar();
+                                    oEasyAutocompletar.Attributes["TemplateType"] = oEasyCampo.EasyControlAsociado.TemplateType;
+                                    oEasyAutocompletar.DisplayText = acpl.TextField;//Campos que muestra la busqueda
+                                    oEasyAutocompletar.ValueField = acpl.ValueField;//Campo disponible para se usado en el filtro
+                                    oEasyAutocompletar.fncTempaleCustom = acpl.fncTempaleCustom;
+                                                                                    //oEasyAutocompletar.DisplayText = oEasyCampo.Nombre;
+                                                                                    // oEasyAutocompletar.DisplayValue = acpl.ValueField;//Campo disponible para se usado en el filtro
+                                    oEasyAutocompletar.DataInterconect = oEasyCampo.DataInterconect;
+                                    oEasyAutocompletar.ID = oEasyCampo.Nombre;
+                                    oEasyAutocompletar.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
+                                    oEasyAutocompletar.Attributes.Add("Nombre", oEasyCampo.Nombre);
+                                    oEasyAutocompletar.Attributes.Add("CtrlContext", this.ClientID + "_" + oEasyCampo.Nombre);
+                                    oEasyAutocompletar.Attributes.Add("TipodeDato", oEasyCampo.TipodeDato.ToString());
+                                    AllCtrlValue.Add(oEasyAutocompletar);
+                                }
+
+                                //LstFields += ((idx==0)?"":",") + oEasyCampo.ToString(true) ;
+                                LstFields += ((idx == 0) ? "" : ",") + oEasyCampo.ToCliente();
+                            }
+                            idx++;
                         }
-                        idx++;
+                        //**************************-----------SCRIPT-----------**********************************************              
+                        ddlCampo.Attributes.Add("arrEasyCampo", "[" + LstFields + "]");
+                        ddlCampo.Attributes.Add("onchange", this.ClientID.Replace("_","") + "_FindOpciones(this)");
+
+                        //RegistrarScriptSelectOpcion();
                     }
-                    //**************************-----------SCRIPT-----------**********************************************              
-                    ddlCampo.Attributes.Add("arrEasyCampo", "[" + LstFields + "]");
-                    ddlCampo.Attributes.Add("onchange", this.ClientID.Replace("_", "") + "_FindOpciones(this)");
-
-                    //RegistrarScriptSelectOpcion();
                 }
-            }
-            catch (Exception ex)
-            {
-                string dd = ex.Message.ToString();
+                catch (Exception ex) {
+                    string dd= ex.Message.ToString();
 
-            }
-            //criterios
-            ddlCriterio = new DropDownList();
-            ddlCriterio.ID = "ddlCriterio";
-            int lengh = strCriterio.GetLength(1);
-            ddlCriterio.Items.Add(new ListItem("[Seleccionar]", " "));
-            for (int C = 0; C <= lengh - 1; C++)
-            {
-                ListItem lItemCriterio = new ListItem(strCriterio[0, C], strCriterio[1, C]);
-                //lItemCriterio.Attributes["style"] = "display:none";
-                ddlCriterio.Items.Add(lItemCriterio);
-            }
+                }
+                //criterios
+                ddlCriterio = new DropDownList();
+                ddlCriterio.ID = "ddlCriterio";
+                int lengh = strCriterio.GetLength(1);
+                ddlCriterio.Items.Add(new ListItem("[Seleccionar]", " "));
+                for (int C = 0; C <= lengh - 1; C++)
+                {
+                    ListItem lItemCriterio = new ListItem(strCriterio[0, C], strCriterio[1, C]);
+                    //lItemCriterio.Attributes["style"] = "display:none";
+                    ddlCriterio.Items.Add(lItemCriterio);
+                }
         }
+
 
         void RegistrarScriptSelectOpcion()
         {
@@ -590,12 +612,12 @@ namespace EasyControlWeb.Filtro
 
             /*-----------------------------------------------------------------------------------*/
             CollecctionScript.Add(new LiteralControl("<script>\n" + ScripOnSelect + "</script>"));
-
+          
         }
 
-        void CrearTablaParaGeneradordeCriterios()
-        {//ventana con la lsita de filtros generados
-            string MetodoScript = this.ClientID.Replace("_", "") + MetodoBase._OpenWinModal.ToString();
+
+        void CrearTablaParaGeneradordeCriterios(){//ventana con la lsita de filtros generados
+            string MetodoScript = this.ClientID.Replace("_","") + MetodoBase._OpenWinModal.ToString();
             try
             {
                 tblBase = new Table();
@@ -623,8 +645,8 @@ namespace EasyControlWeb.Filtro
                 for (int c = 0; c <= lengh - 1; c++)
                 {
                     tc = new TableCell();
-                    tc.Text = TitHeader[0, c].Replace("OPERADOR", "OPER");
-                    tc.Attributes.Add("width", TitHeader[2, c]);
+                    tc.Text = TitHeader[0, c].Replace("OPERADOR","OPER");
+                    tc.Attributes.Add("width",TitHeader[2, c]);
                     tr.Controls.Add(tc);
                 }
 
@@ -640,12 +662,12 @@ namespace EasyControlWeb.Filtro
 
                 //tblBase.Attributes.Add("border", "0px");
                 tblBase.Attributes.Add("width", "100%");
-
+             
                 //listado de filtros elaborados si lo hubiera
                 ViewCriteriosGenerados();
 
                 this.Controls.Add(tblBase);//Aplicar aqui el manejo de cada atributo
-
+                
                 //tblBase.Attributes.Add("border", "3px");
                 tblBase.CssClass = this.CssClass;//"table table-dark";
 
@@ -655,20 +677,17 @@ namespace EasyControlWeb.Filtro
                 this.Controls.Add(new LiteralControl(ex.Message.ToString()));
             }
         }
-
         public void setCollectionCriterios(List<EasyFiltroItem> lstEasyFiltroItem)
         {
-            this.ViewState[VariablesViewState.DataCriterios.ToString()] = lstEasyFiltroItem;
+            this.ViewState[VariablesViewState.DataCriterios.ToString()]= lstEasyFiltroItem;
         }
 
-        public List<EasyFiltroItem> getCollectionCriterios()
-        {
+        public List<EasyFiltroItem> getCollectionCriterios() {
             List<EasyFiltroItem> lstEasyFiltroItem = (List<EasyFiltroItem>)this.ViewState[VariablesViewState.DataCriterios.ToString()];
             return lstEasyFiltroItem;
         }
 
-        void ViewCriteriosGenerados()
-        {
+        void ViewCriteriosGenerados() {
             string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
             string MetodoScript = this.ClientID.Replace("_", "") + MetodoBase._OpenWinModal.ToString();
             List<EasyFiltroItem> lstEasyFiltroItem = getCollectionCriterios();
@@ -683,7 +702,7 @@ namespace EasyControlWeb.Filtro
                         tblBase.Rows.RemoveAt(2);
                     }
                 }
-
+             
                 NroItems = 0;
                 foreach (EasyFiltroItem oEasyFiltroItem in lstEasyFiltroItem)
                 {
@@ -721,7 +740,7 @@ namespace EasyControlWeb.Filtro
 
                     }
                     tr.Cells[2].Text = oEasyFiltroItem.CriterioDescripcion;
-                    tr.Cells[3].Text = (((oEasyFiltroItem.TemplateType == "EasyITemplateDropdownList") || (oEasyFiltroItem.TemplateType == "EasyITemplateAutoCompletar") || (oEasyFiltroItem.TemplateType == "EasyITemplateDatepicker")) ? oEasyFiltroItem.TextField : oEasyFiltroItem.ValueField);
+                    tr.Cells[3].Text = (((oEasyFiltroItem.TemplateType== "EasyITemplateDropdownList") ||(oEasyFiltroItem.TemplateType == "EasyITemplateAutoCompletar") || (oEasyFiltroItem.TemplateType == "EasyITemplateDatepicker")) ? oEasyFiltroItem.TextField :  oEasyFiltroItem.ValueField);
 
                     oImagenDel = new HtmlImage();
                     oImagenDel.Src = EasyUtilitario.Constantes.ImgDataURL.IconFiltroDelete;
@@ -751,32 +770,31 @@ namespace EasyControlWeb.Filtro
 
                 }
             }
-            else
-            {
+            else {
                 if (tblBase.Rows.Count >= 3) { tblBase.Rows.RemoveAt(2); }
             }
         }
 
-        HtmlGenericControl CrearBarradeFiltros()
-        {
+
+        HtmlGenericControl CrearBarradeFiltros() {
             string onSeleted = this.ClientID.Replace("_", "") + MetodoBase._OnSelected.ToString();//Nombre del metodo relaciodo para eliminar un filtro
             //string onSeleted = this.ClientID.Replace("_", "") + "_OnDelete";//Nombre del metodo relaciodo para eliminar un filtro
 
             HtmlGenericControl dvToolBarFilter = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
-            dvToolBarFilter.ID = this.ClientID + "_BarraFiltro";
+            dvToolBarFilter.ID = this.ClientID +  "_BarraFiltro";
             dvToolBarFilter.Attributes.Add("class", "form-multi-select form-multi-select-multiple form-multi-select-selection-tags form-multi-select-with-cleaner show");
             dvToolBarFilter.Style.Add("font-weight", "bold");
             dvToolBarFilter.Style.Add("display", "none");
-            dvToolBarFilter.Style.Add("overflow-x", "auto");
-            dvToolBarFilter.Style.Add("overflow-y", "hidden");
+            dvToolBarFilter.Style.Add("overflow-x","auto");
+            dvToolBarFilter.Style.Add("overflow-y","hidden");
 
-            List<EasyFiltroItem> lstEasyFiltroItem;
+            List <EasyFiltroItem> lstEasyFiltroItem;
             lstEasyFiltroItem = new List<EasyFiltroItem>();
-
+           
             if (this.ViewState[VariablesViewState.DataCriterios.ToString()] != null)
             {
                 lstEasyFiltroItem = getCollectionCriterios();
-                List<EasyFiltroItem> LstItemPrincipal = lstEasyFiltroItem.Where(item => item.IdPadre == "0" && item.Definitivo == true).ToList();
+                List<EasyFiltroItem> LstItemPrincipal = lstEasyFiltroItem.Where(item => item.IdPadre == "0" && item.Definitivo==true).ToList();
                 foreach (EasyFiltroItem itemPrincipal in LstItemPrincipal)
                 {
 
@@ -800,12 +818,11 @@ namespace EasyControlWeb.Filtro
                                 MultiSelected.Controls.Add(new LiteralControl(ItemChild.Operador));
                                 MultiSelected.Controls.Add(ItemChild.Render(EasyFiltroItem.btnTipo.Valor, this.ClientID, onSeleted));
                             }
-                            else
-                            {
+                            else {
                                 MultiSelected.Controls.Add(new LiteralControl(ItemChild.Operador));
                                 MultiSelected.Controls.Add(ItemChild.Render(EasyFiltroItem.btnTipo.CampoyValor, this.ClientID, onSeleted));
                             }
-
+                           
                         }
                         dvToolBarFilter.Controls.Add(MultiSelected);
                     }
@@ -819,11 +836,11 @@ namespace EasyControlWeb.Filtro
             return dvToolBarFilter;
         }
 
-        TableRow CrearRowCriterio()
-        {
+
+        TableRow CrearRowCriterio() {
             TableRow _tr = new TableRow();
-            int Columnas = (TitHeader.GetLength(1) + 2);
-            for (int c = 0; c <= Columnas; c++)
+            int Columnas = (TitHeader.GetLength(1)+2);
+            for (int c=0;c<= Columnas; c++)
             {
                 TableCell _cell = new TableCell();
                 _cell.Attributes.Add("align", "left");
@@ -833,15 +850,12 @@ namespace EasyControlWeb.Filtro
             return _tr;
         }
 
-        decimal Mod(int Nro, int nbase)
-        {
+        decimal Mod(int Nro, int nbase) {
             decimal r = (decimal)Nro;
             decimal resultado = (r / nbase) % nbase;
             return resultado;
         }
-
-        Table CrearSubFiltro(EasyFiltroItem oEasyFiltroItemBE)
-        {
+        Table CrearSubFiltro(EasyFiltroItem oEasyFiltroItemBE) {
             tblSubCriterio = new Table();
             TableRow trs = new TableRow();
             TableCell tcs = new TableCell();
@@ -851,7 +865,7 @@ namespace EasyControlWeb.Filtro
             tcs = new TableCell();
             tcs.Attributes.Add("width", "90%");
             tcs.Attributes.Add("align", "left");
-
+                                
             tcs.Text = oEasyFiltroItemBE.CampoDescripcion;
             trs.Controls.Add(tcs);
 
@@ -864,7 +878,7 @@ namespace EasyControlWeb.Filtro
 
         void CrearTablaParaGeneradordeFiltro()
         {
-            // string cmll = "\"";
+           // string cmll = "\"";
             string IdTblGestor = this.ClientID + "_tblGestor";
             tblBaseGestor = new Table();
             tblBaseGestor.Attributes.Add("id", IdTblGestor);
@@ -877,11 +891,11 @@ namespace EasyControlWeb.Filtro
                 tr = new TableRow();
                 tc = new TableCell();
                 tc.Attributes.Add("width", "20px");
-
+                
                 HtmlGenericControl dv = new HtmlGenericControl("div");
                 dv.Attributes.Add("class", "form-group");
                 HtmlGenericControl lbl = new HtmlGenericControl("label");
-                lbl.InnerText = TitHeader[0, c];
+                lbl.InnerText= TitHeader[0, c];
                 dv.Controls.Add(lbl);
                 tc.Controls.Add(dv);
                 tr.Controls.Add(tc);
@@ -889,10 +903,9 @@ namespace EasyControlWeb.Filtro
                 tc = new TableCell();
                 tc.Attributes.Add("width", "70%");
                 string NomCtrl = TitHeader[1, c];
-                switch (c)
-                {
+                switch (c) {
                     case 0:
-                        ddlOperador.Attributes.Add("class", "form-control form-control-sm");
+                        ddlOperador.Attributes.Add("class","form-control form-control-sm");
                         ddlOperador.Attributes[EasyUtilitario.Enumerados.EventosJavaScript.onchange.ToString()] = "javascript:" + this.ClientID + "_txtOperador.SetValue(this.value);";
                         tc.Controls.Add(ddlOperador);
                         TextOperador.Attributes["style"] = "display:none";
@@ -918,8 +931,7 @@ namespace EasyControlWeb.Filtro
                         TableCell tcField;
                         //Crea los controles segun su camporelacionado
                         string attCampo = "";
-                        foreach (object ctrl in AllCtrlValue)
-                        {
+                        foreach (object ctrl in AllCtrlValue) {
                             dv = new HtmlGenericControl("div");
                             dv.Attributes.Add("class", "form-group");
                             if (ctrl.GetType() == typeof(EasyTextBox))
@@ -980,7 +992,7 @@ namespace EasyControlWeb.Filtro
 
                         break;
                 }
-
+               
                 tr.Controls.Add(tc);
                 tc = new TableCell();
                 tc.Attributes.Add("width", "10px");
@@ -988,7 +1000,7 @@ namespace EasyControlWeb.Filtro
                 // tc.Text = c.ToString();
                 tr.Controls.Add(tc);
                 tblBaseGestor.Controls.Add(tr);
-
+              
             }
             tr = new TableRow();
             tc = new TableCell();
@@ -1002,7 +1014,7 @@ namespace EasyControlWeb.Filtro
 
             //string cmll = "\"";
             string NonFncWind = this.ClientID.Replace("_", "") + MetodoBase._OpenWinModal.ToString();
-            string NonFncHideShow = this.ClientID.Replace("_", "") + "_ShowHide";
+            string NonFncHideShow= this.ClientID.Replace("_", "") + "_ShowHide";
             string javaScript =
               "function " + NonFncWind + "(NombreWindow, IdFiltroSelect, NombreCampo){\n"
                  + "        $(" + cmll + "#" + this.ClientID + "_txtIdSelect" + cmll + ").val(0);" + "\n"
@@ -1056,13 +1068,13 @@ namespace EasyControlWeb.Filtro
 
                                + "}" + "\n";
 
-            CollecctionScript.Add(new LiteralControl("<script>\n" + onSelect + "</script>\n"));
+             CollecctionScript.Add(new LiteralControl("<script>\n" + onSelect + "</script>\n"));
 
-
-
-            String onFiltroOnlyItem = "function " + this.ClientID.Replace("_", "") + "ApplyItemSelect(EasyFiltroItemBE){" + "\n"
-                              + "    $(" + cmll + "#" + txtIdDel + cmll + ").val(EasyFiltroItemBE.Id);" + "\n"
-                                + @"  $.confirm({title: 'Filtro inmediato',
+            
+            
+             String onFiltroOnlyItem = "function " + this.ClientID.Replace("_", "") + "ApplyItemSelect(EasyFiltroItemBE){" + "\n"
+                               + "    $(" + cmll + "#" + txtIdDel + cmll + ").val(EasyFiltroItemBE.Id);" + "\n"
+                                 + @"  $.confirm({title: 'Filtro inmediato',
                                                              content: 'Desea aplicar solo este FILTRO ahora?',
                                                              icon: 'fa fa-filter',
                                                              animation: 'scale',
@@ -1073,27 +1085,29 @@ namespace EasyControlWeb.Filtro
                                                                                      text: 'Aceptar',
                                                                                      btnClass: 'btn-blue',
                                                                                      action: function() {
-                                                                                                       __doPostBack('" + this.ClientID.Replace("_", "") + @"$Delete','" + ModoEditFiltro.ApplySoloItem.ToString() + "@'" + @" + EasyFiltroItemBE.Id);
+                                                                                                       __doPostBack('" + this.ClientID.Replace("_", "") + @"$Delete','"+ ModoEditFiltro.ApplySoloItem.ToString() + "@'" + @" + EasyFiltroItemBE.Id);
                                                                                                  }
                                                                                      },
                                                                                      cancel: function() {},
                                                                                      }
                                                                      });"
 
-                              + "}" + "\n";
+                               + "}" + "\n";
 
-            CollecctionScript.Add(new LiteralControl("<script>\n" + onFiltroOnlyItem + "</script>"));
+             CollecctionScript.Add(new LiteralControl("<script>\n" + onFiltroOnlyItem + "</script>"));
 
-
+            
 
         }
 
-        HtmlGenericControl CrearWindowsPopup(Table tbl, string Subfijo)
-        {
-            string MiId = this.ClientID.Replace("_", "");
+
+
+
+        HtmlGenericControl CrearWindowsPopup(Table tbl,string Subfijo) {
+            string MiId=this.ClientID.Replace("_", "");
             HtmlGenericControl ModalBody = new HtmlGenericControl("div");
             ModalBody.Attributes.Add("class", "modal-body");
-            //  ModalBody.Style.Add("width", "980px");
+          //  ModalBody.Style.Add("width", "980px");
             ModalBody.Controls.Add(tbl);
             /*-----------------------------------------------------------------*/
             HtmlGenericControl H5Titulo = new HtmlGenericControl("div");
@@ -1103,12 +1117,11 @@ namespace EasyControlWeb.Filtro
             {
                 H5Titulo.InnerText = this.Titulo;
             }
-            else
-            {
+            else {
                 HtmlImage oimg = new HtmlImage();
                 oimg.Src = EasyUtilitario.Constantes.ImgDataURL.IconFiltroGen;
                 Table tbltit = new Table();
-
+                
                 tbltit.Attributes["BORDER"] = "0";
                 tbltit.Attributes["style"] = "width: 400px;";
 
@@ -1121,7 +1134,7 @@ namespace EasyControlWeb.Filtro
                 tcell.Text = "ELABORAR FILTRO";
                 tcell.Attributes["style"] = "width: 80%;";
                 trow.Controls.Add(tcell);
-                // if ((txtFlagInvoke.Text.Length > 0) && (txtFlagInvoke.Text == "ColHeadCtrlGrid"))
+               // if ((txtFlagInvoke.Text.Length > 0) && (txtFlagInvoke.Text == "ColHeadCtrlGrid"))
                 {
                     tcell = new TableCell();
                     oimg = new HtmlImage();
@@ -1185,7 +1198,7 @@ namespace EasyControlWeb.Filtro
             Modalfooter.Attributes.Add("class", "modal-footer");
             Modalfooter.Controls.Add(btnFAceptar);
             Modalfooter.Controls.Add(btnFClose);
-
+            
             /*-----------------------------------------------------------------*/
             //< div class="modal-content">
             HtmlGenericControl Modalcontent = new HtmlGenericControl("div");
@@ -1201,8 +1214,7 @@ namespace EasyControlWeb.Filtro
                 //ModalDialog.Attributes.Add("class", "modal-dialog modal-lg modal-dialog-centered");
                 ModalDialog.Attributes.Add("class", "modal-dialog modal-lg modal-dialog-scrollable");
             }
-            else
-            {
+            else {
                 //ModalDialog.Attributes.Add("class", "modal-dialog modal-dialog-scrollable");
                 ModalDialog.Attributes.Add("class", "modal-dialog");
             }
@@ -1216,17 +1228,16 @@ namespace EasyControlWeb.Filtro
             ModalFade.Attributes.Add("role", "dialog");
             ModalFade.Attributes.Add("aria-labelledby", MiId + "_Title" + '_' + Subfijo);
             ModalFade.Attributes.Add("aria-hidden", "true");
-            ModalFade.ID = Subfijo;
+            ModalFade.ID =  Subfijo ;
             ModalFade.Controls.Add(ModalDialog);
-
-
+            
+       
             return ModalFade;
         }
 
         /*Crear una nueva ventana para filtros individuales*/
 
-        void CrearBodyField()
-        {
+        void  CrearBodyField() {
             /*tblColumnField = new Table();
             tblColumnField.ID = "tblColumnField";*/
             tblColumnField.Attributes["border"] = "0";
@@ -1250,9 +1261,9 @@ namespace EasyControlWeb.Filtro
             txtFieldColumnValue.Attributes["style"] = "width:100%";
             cell.Controls.Add(txtFieldColumnValue);
 
-            /* TextFieldColumnName = new EasyTextBox();
-             TextFieldColumnName.ID = "txtFieldColumnName";
-             */
+           /* TextFieldColumnName = new EasyTextBox();
+            TextFieldColumnName.ID = "txtFieldColumnName";
+            */
             //TextFieldColumnName.Attributes["style"] = "display:none";
             //cell.Controls.Add(TextFieldColumnName);
 
@@ -1354,9 +1365,11 @@ namespace EasyControlWeb.Filtro
 
         /**************************************************/
 
+
+
         protected override void CreateChildControls()
         {
-
+      
             Controls.Clear();
             this.InicializaControles();
 
@@ -1367,7 +1380,7 @@ namespace EasyControlWeb.Filtro
 
             wPopupCriterios = CrearWindowsPopup(tblBase, SubFijo.Crit.ToString());
             this.Controls.Add(wPopupCriterios);
-
+            
             wPopupGestor = CrearWindowsPopup(tblBaseGestor, SubFijo.Gen.ToString());
             this.Controls.Add(wPopupGestor);
 
@@ -1404,12 +1417,13 @@ namespace EasyControlWeb.Filtro
 
             btnInicio.Attributes.Add(eventJScript.onClick.ToString(), this.ClientID.Replace("_", "") + "_Init();");
 
-            btnInicio.Attributes.Add("type", "button");
+            btnInicio.Attributes.Add("type","button");
 
             txtIdFiltro = new TextBox();
             txtIdFiltro.ID = "txtIdSelect";
             txtIdFiltro.Style.Add("display", "none");
             this.Controls.Add(txtIdFiltro);
+
         }
 
         protected override void Render(HtmlTextWriter writer)
@@ -1502,8 +1516,7 @@ namespace EasyControlWeb.Filtro
                 CollecctionScript.Add(new LiteralControl(srcriptFncForGridView));
                 /*Nro de Filtros egenrados*/
                 List<EasyFiltroItem> lstEasyFiltroItem = getCollectionCriterios();
-                if (lstEasyFiltroItem != null)
-                {
+                if (lstEasyFiltroItem != null) { 
                     string RegCount = "<script>\n var " + this.ClientID + "_NroFiltros=" + lstEasyFiltroItem.Count.ToString() + ";\n</script>\n";
                     CollecctionScript.Add(new LiteralControl(RegCount));
                 }
@@ -1521,8 +1534,7 @@ namespace EasyControlWeb.Filtro
             txtFlagInvoke.RenderControl(writer);
         }
 
-        bool VerificaSelecciondeCriterios(int NroFiltros)
-        {//Validar
+        bool VerificaSelecciondeCriterios(int NroFiltros) {//Validar
             strValor = "";
             bool retorno = true;
             TableRow trAlert;
@@ -1534,62 +1546,57 @@ namespace EasyControlWeb.Filtro
             //parent = ddlOperador.Parent.Parent;
             parent = TextOperador.Parent.Parent;
             trAlert = (TableRow)parent;
-            if (NroFiltros > 0)
-            {
+            if (NroFiltros > 0) {
                 // if (itemCtrl.Value == " ")
-                if (TextOperador.Text == " ")
+                if (TextOperador.Text == " ") 
                 {
                     trAlert.Cells[2].Text = "*";
                     retorno = false;
                 }
-                else
-                {
+                else {
                     trAlert.Cells[2].Text = "";
                     retorno = true;
                 }
             }
-            else
-            {
+            else {
                 trAlert.Cells[2].Text = "";
                 retorno = true;
             }
-            //Verifica el ddl campo
-            itemCtrl = ddlCampo.SelectedItem;
+                //Verifica el ddl campo
+                itemCtrl = ddlCampo.SelectedItem;
             // parent = ddlCampo.Parent.Parent;
-            parent = TextFieldColumnName.Parent.Parent;
-            trAlert = (TableRow)parent;
-            if (TextFieldColumnName.Text == " ")
-            //if (itemCtrl.Value == " ")
-            {
-                trAlert.Cells[2].Text = "*";
-                retorno = ((retorno == true) ? false : retorno);
-            }
-            else
-            {
-                trAlert.Cells[2].Text = "";
-            }
-            //Verifica el ddl campo
-            itemCtrl = ddlCriterio.SelectedItem;
-            //parent = ddlCriterio.Parent.Parent;
-            parent = TextCriterio.Parent.Parent;
-            trAlert = (TableRow)parent;
-            //if (itemCtrl.Value == " ")
-            if (TextCriterio.Text == " ")
-            {
-                trAlert.Cells[2].Text = "*";
-                retorno = ((retorno == true) ? false : retorno);
-            }
-            else
-            {
-                trAlert.Cells[2].Text = "";
-            }
+                parent = TextFieldColumnName.Parent.Parent;
+                trAlert = (TableRow)parent;
+                if (TextFieldColumnName.Text == " ")
+                //if (itemCtrl.Value == " ")
+                {
+                    trAlert.Cells[2].Text = "*";
+                    retorno = ((retorno == true) ? false : retorno);
+                }
+                else {
+                    trAlert.Cells[2].Text = "";
+                }
+                //Verifica el ddl campo
+                itemCtrl = ddlCriterio.SelectedItem;
+                //parent = ddlCriterio.Parent.Parent;
+                parent = TextCriterio.Parent.Parent;            
+                trAlert = (TableRow)parent;
+                //if (itemCtrl.Value == " ")
+                 if (TextCriterio.Text == " ")                
+                 {
+                        trAlert.Cells[2].Text = "*";
+                        retorno = ((retorno == true) ? false : retorno);
+                 }
+                else
+                {
+                    trAlert.Cells[2].Text = "";
+                }
             //Busca en la coleccion de controles por campo y valida su contenido
             //string IdControl = ddlCampo.SelectedItem.Value;
             string IdControl = TextFieldColumnName.Text;
             Control ctrl = AllCtrlValue.Find(x => x.ID == IdControl);//Busca en la matriz el control seleccionado
-            if (ctrl != null)
-            {
-                if ((ctrl.GetType() == typeof(EasyTextBox)) || (ctrl.GetType() == typeof(EasyDatepicker)) || (ctrl.GetType() == typeof(EasyNumericBox)))
+            if (ctrl != null) {
+                if ((ctrl.GetType() == typeof(EasyTextBox))|| (ctrl.GetType() == typeof(EasyDatepicker))|| (ctrl.GetType() == typeof(EasyNumericBox)))
                 {
                     strValor = ((TextBox)ctrl).Text;
                 }
@@ -1612,14 +1619,13 @@ namespace EasyControlWeb.Filtro
 
             //Seccion de mensajes de error   
             string IdCliente = this.ClientID.Replace("_", "");
-            HtmlGenericControl _strong = new HtmlGenericControl("strong");
+            HtmlGenericControl _strong  = new HtmlGenericControl("strong");
             _strong.InnerText = "NOTA:";
             aContext.Controls.Add(_strong);
             aContext.Controls.Add(new LiteralControl(" Por favor ingrese los valores en los campos remarcados con asterisco(*)"));
             aContext.Style.Add("display", "block");
             string ScriptExecFindOpciones = "";
-            if (ddlCampo.SelectedValue != " ")
-            {//Se considera esta rutina luego de presionar el boton aceptar de generado de filtro y si el campo seleccionado contiene configuracion de busqueda pueda vovlver a configurarse el objeto de ingreso de valor
+            if (ddlCampo.SelectedValue != " ") {//Se considera esta rutina luego de presionar el boton aceptar de generado de filtro y si el campo seleccionado contiene configuracion de busqueda pueda vovlver a configurarse el objeto de ingreso de valor
                 ScriptExecFindOpciones = IdCliente + "_FindOpciones(document.getElementById('" + IdCliente + "_ddlCampo" + "'));\n";
             }
 
@@ -1643,7 +1649,7 @@ namespace EasyControlWeb.Filtro
             List<EasyFiltroItem> lstEasyFiltroItem;
             lstEasyFiltroItem = new List<EasyFiltroItem>();
             lstEasyFiltroItem = getCollectionCriterios();
-            int pos = (lstEasyFiltroItem.Count + 1);
+            int pos = (lstEasyFiltroItem.Count+1);
 
             EasyFiltroItem oEasyFiltroItemBE = new EasyFiltroItem();
             oEasyFiltroItemBE.Campo = TextFieldColumnName.Text;
@@ -1657,7 +1663,7 @@ namespace EasyControlWeb.Filtro
             oEasyFiltroItemBE.TextField = TextFieldColumnTitle.Text;
             oEasyFiltroItemBE.ValueField = txtFieldColumnValue.Text;
             oEasyFiltroItemBE.TipodeDatos = EasyUtilitario.Enumerados.TiposdeDatos.String;
-            lstEasyFiltroItem.Insert((pos - 1), oEasyFiltroItemBE);
+            lstEasyFiltroItem.Insert((pos-1) , oEasyFiltroItemBE);
             this.ViewState[VariablesViewState.DataCriterios.ToString()] = lstEasyFiltroItem;
 
             OnProcessCompleted(lstEasyFiltroItem);
@@ -1676,8 +1682,8 @@ namespace EasyControlWeb.Filtro
 
             if (strBtnID.IndexOf(SubFijo.Gen.ToString()) > 0)//Cuando se presiona el boton aceptar de la ventana de generacion de filtro
             {
-
-                if ((idItemCriterioSeleccionado.Length == 0) || (idItemCriterioSeleccionado == "0"))
+               
+                if ((idItemCriterioSeleccionado.Length==0)||(idItemCriterioSeleccionado=="0"))
                 {
                     OnItemCriterio(ModoEditFiltro.Add, null);
                 }
@@ -1696,8 +1702,7 @@ namespace EasyControlWeb.Filtro
                         EasyFiltro_Click(btnAceptarCrit, e);
                     }
                 }
-                else
-                { //implementado 22/11/2024
+                else { //implementado 22/11/2024
                     if (this.ViewState[VariablesViewState.DataCriterios.ToString()] != null)
                     {
                         lstEasyFiltroItem = getCollectionCriterios();
@@ -1716,7 +1721,7 @@ namespace EasyControlWeb.Filtro
                 if (this.ViewState[VariablesViewState.DataCriterios.ToString()] != null)
                 {
                     lstEasyFiltroItem = getCollectionCriterios();
-                    List<EasyFiltroItem> LstItemPrincipal = lstEasyFiltroItem.Where(item => item.Definitivo == false).ToList();
+                    List<EasyFiltroItem> LstItemPrincipal = lstEasyFiltroItem.Where(item => item.Definitivo==false).ToList();
                     foreach (EasyFiltroItem itemPrincipal in LstItemPrincipal)
                     {
                         itemPrincipal.Definitivo = true;
@@ -1725,13 +1730,12 @@ namespace EasyControlWeb.Filtro
 
                 OnProcessCompleted(lstEasyFiltroItem);
             }
-            else
-            {//Proceso de eliminación de filtro
+            else {//Proceso de eliminación de filtro
 
                 //string idDel = txtidFiltroDel.Text;
                 //Obtener valor del argumento 
                 HttpRequest ContextRequest = ((System.Web.UI.Page)HttpContext.Current.Handler).Request;
-                string[] arrModoValor = ContextRequest["__EVENTARGUMENT"].ToString().Split('@');
+                string []arrModoValor = ContextRequest["__EVENTARGUMENT"].ToString().Split('@');
                 string Modo = arrModoValor[0];
                 string idDel = arrModoValor[1];
 
@@ -1758,32 +1762,32 @@ namespace EasyControlWeb.Filtro
                         break;
                     case ModoEditFiltro.ApplySoloItem:
                         // OnItemCriterio(ModoEditFiltro.ApplySoloItem, oEasyFiltroItemBE);
-                        string strCriterio = oEasyFiltroItemBE.Campo + oEasyFiltroItemBE.Criterio.Replace("@", "'").Replace("[VALOR]", oEasyFiltroItemBE.ValueField);
+                        string strCriterio = oEasyFiltroItemBE.Campo + oEasyFiltroItemBE.Criterio.Replace("@","'").Replace("[VALOR]", oEasyFiltroItemBE.ValueField);
                         OnProcessCompleted(strCriterio, lstEasyFiltroItem);
                         break;
                 }
-
+               
 
             }
 
         }
 
-        protected virtual void OnItemCriterio(ModoEditFiltro Modo, EasyFiltroItem oEasyFiltroItem)
+        protected virtual void OnItemCriterio(ModoEditFiltro Modo,EasyFiltroItem oEasyFiltroItem)
         {
             //*****************************************************************************************************
-
-            string MetodoScript = this.ClientID.Replace("_", "") + MetodoBase._OpenWinModal.ToString();
+           
+            string MetodoScript = this.ClientID.Replace("_","") + MetodoBase._OpenWinModal.ToString();
             List<EasyFiltroItem> lstEasyFiltroItem;
             int NroFiltros = 0;
             bool Verifica = false;
-            string LanzaGenerador = "";
+            string LanzaGenerador="";
             lstEasyFiltroItem = new List<EasyFiltroItem>();
 
-            if (this.ViewState[VariablesViewState.DataCriterios.ToString()] != null)
-            {
+             if (this.ViewState[VariablesViewState.DataCriterios.ToString()] != null)
+             {
                 lstEasyFiltroItem = getCollectionCriterios();
                 NroFiltros = lstEasyFiltroItem.Count;
-            }
+             }
 
             switch (Modo)
             {
@@ -1821,25 +1825,24 @@ namespace EasyControlWeb.Filtro
                         Control ctrl = AllCtrlValue.Find(x => x.ID == IdControl);//Busca en la matriz el control seleccionado
                         if (ctrl != null)
                         {
-                            if ((ctrl.GetType() == typeof(EasyTextBox)) || (ctrl.GetType() == typeof(EasyDatepicker)) || (ctrl.GetType() == typeof(EasyNumericBox)))
+                            if ((ctrl.GetType() == typeof(EasyTextBox))|| (ctrl.GetType() == typeof(EasyDatepicker))|| (ctrl.GetType() == typeof(EasyNumericBox)))
                             {
                                 TextBox oTextBox = ((TextBox)ctrl);
                                 strValor = ((TextBox)ctrl).Text;
                                 oTipodeDato = (EasyUtilitario.Enumerados.TiposdeDatos)System.Enum.Parse(typeof(EasyUtilitario.Enumerados.TiposdeDatos), oTextBox.Attributes["TipodeDato"]);
                                 //Modficado 18-03-2024
-                                if (ctrl.GetType() == typeof(EasyDatepicker))
-                                {
+                                if (ctrl.GetType() == typeof(EasyDatepicker)) {
                                     EasyDatepicker oDP = ((EasyDatepicker)ctrl);
                                     DateTime ChangesOnTimeOfOfferChange = DateTime.ParseExact(strValor, oDP.FormatInPut, CultureInfo.InvariantCulture);
                                     strTexto = strValor;
                                     strValor = ChangesOnTimeOfOfferChange.ToString(oDP.FormatOutPut);
                                 }
 
-
-                                // strTexto = strValor;
+                               
+                               // strTexto = strValor;
                                 oEasyFiltroItemBE.TipodeDatos = oTipodeDato;
                                 oEasyFiltroItemBE.TemplateType = ((TextBox)ctrl).Attributes["TemplateType"];
-                                ((TextBox)ctrl).Text = "";
+                                ((TextBox)ctrl).Text="";
                             }
                             else if (ctrl.GetType() == typeof(EasyDropdownList))
                             {
@@ -1859,7 +1862,7 @@ namespace EasyControlWeb.Filtro
                                 strTexto = oEasyAutocompletar.GetText();
                                 oEasyFiltroItemBE.TipodeDatos = oTipodeDato;
                                 oEasyFiltroItemBE.TemplateType = oEasyAutocompletar.Attributes["TemplateType"];
-                                oEasyAutocompletar.SetValue("", "");
+                                oEasyAutocompletar.SetValue("","");
                             }
                         }
 
@@ -1918,8 +1921,7 @@ namespace EasyControlWeb.Filtro
                         }
 
                         oEasyFiltroItem = oEasyFiltroItemBE;//
-                        if (easyCriterioList != null)
-                        {
+                        if (easyCriterioList != null) { 
                             this.easyCriterioList.Clear();
                             foreach (EasyFiltroItem oEasyFiltroItemAdd in lstEasyFiltroItem)
                             {
@@ -1935,19 +1937,19 @@ namespace EasyControlWeb.Filtro
                     //Crea las filas segun filtros elaborados
                     ViewCriteriosGenerados();
                     //Crear la barra de criterios elaborados
-                    /*   if ((txtFlagInvoke.Text.Length == 0) && (txtFlagInvoke.Text != "ColHeadCtrlGrid"))
-                      {
-                          string javaScript =
-                          "try{\n"
-                               + MetodoScript + "('" + this.ClientID.Replace("_", "") + "_" + SubFijo.Crit.ToString() + "');\n" +
-                                LanzaGenerador +
-                          "}catch(err){\n" +
-                             "alert(err);\n" +
-                          "};\n";
+                  /*   if ((txtFlagInvoke.Text.Length == 0) && (txtFlagInvoke.Text != "ColHeadCtrlGrid"))
+                    {
+                        string javaScript =
+                        "try{\n"
+                             + MetodoScript + "('" + this.ClientID.Replace("_", "") + "_" + SubFijo.Crit.ToString() + "');\n" +
+                              LanzaGenerador +
+                        "}catch(err){\n" +
+                           "alert(err);\n" +
+                        "};\n";
 
-                          //**************************-----------SCRIPT-----------**********************************************
-                          CollecctionScript.Add(new LiteralControl("<script>\n" + javaScript + "</script>"));
-                      }*/
+                        //**************************-----------SCRIPT-----------**********************************************
+                        CollecctionScript.Add(new LiteralControl("<script>\n" + javaScript + "</script>"));
+                    }*/
 
                     break;
                 case ModoEditFiltro.Delete:
@@ -1974,16 +1976,15 @@ namespace EasyControlWeb.Filtro
                     }
                     this.ViewState[VariablesViewState.DataCriterios.ToString()] = lstEasyFiltroItem;
                     ViewCriteriosGenerados();
-                    break;
+                    break;              
             }
+         
 
-
-            ItemCriterio?.Invoke(Modo, oEasyFiltroItem);//invoca al metodo de lado del servidor en la pagina en donde el control es creado
+            ItemCriterio?.Invoke(Modo,oEasyFiltroItem);//invoca al metodo de lado del servidor en la pagina en donde el control es creado
         }
 
-        public string getFilterString()
-        {
-
+        public string getFilterString() {
+           
             string FiltroElaborado = "";
             List<EasyFiltroItem> lstEasyFiltroItem;
             lstEasyFiltroItem = new List<EasyFiltroItem>();
@@ -1991,7 +1992,7 @@ namespace EasyControlWeb.Filtro
             {
                 lstEasyFiltroItem = getCollectionCriterios();
                 //Elabora el filtro resultante
-
+               
                 List<EasyFiltroItem> LstItemPrincipal = lstEasyFiltroItem.Where(item => item.IdPadre == "0" && item.Definitivo == true).ToList();
                 foreach (EasyFiltroItem item in LstItemPrincipal)
                 {
@@ -2001,7 +2002,7 @@ namespace EasyControlWeb.Filtro
                         List<EasyFiltroItem> LstItemChildrens = lstEasyFiltroItem.Where(itemChildFind => itemChildFind.IdPadre == item.Id && item.Definitivo == true).ToList();
                         foreach (EasyFiltroItem itemChild in LstItemChildrens)
                         {
-
+                           
                             FiltroElaborado = FiltroElaborado + " " + CriterioPrimario(itemChild, "");
 
                         }
@@ -2011,7 +2012,7 @@ namespace EasyControlWeb.Filtro
                     }
                     else
                     {
-                        FiltroElaborado = FiltroElaborado + " " + CriterioPrimario(item, "");
+                        FiltroElaborado = FiltroElaborado + " " + CriterioPrimario(item,"");                       
                     }
                 }
 
@@ -2033,8 +2034,7 @@ namespace EasyControlWeb.Filtro
             return FiltroElaborado;
         }
 
-        string CriterioPrimario(EasyFiltroItem item, string Parentesis)
-        {
+        string CriterioPrimario(EasyFiltroItem item,string Parentesis) {
             string CaracterComodin = "";
             string ResultStr = "";
             string Negacion = "";
@@ -2050,7 +2050,7 @@ namespace EasyControlWeb.Filtro
             {
                 CaracterComodin = "";
                 Negacion = ((item.CriterioDescripcion == strCriterio[0, 4]) ? " NOT " : " ");
-                ResultStr = " " + item.Operador + Parentesis + Negacion + item.Campo + " " + item.Criterio.Replace("@", CaracterComodin)
+                ResultStr = " " + item.Operador  + Parentesis + Negacion + item.Campo + " " + item.Criterio.Replace("@", CaracterComodin)
                                                                                                                         .Replace("[VALOR]", item.ValueField);
 
 
@@ -2068,7 +2068,7 @@ namespace EasyControlWeb.Filtro
             {
                 CaracterComodin = "";
                 Negacion = ((item.CriterioDescripcion == strCriterio[0, 4]) ? " NOT " : " ");
-                ResultStr = " " + item.Operador + Parentesis + Negacion + item.Campo + " " + item.Criterio.Replace("@", CaracterComodin)
+                ResultStr = " " + item.Operador + Parentesis  + Negacion + item.Campo + " " + item.Criterio.Replace("@", CaracterComodin)
                                                                                                             .Replace("[VALOR]", "'" + item.ValueField + "'");
                 //.Replace("[VALOR]", "#" + item.ValueField + "#");
             }
@@ -2099,13 +2099,13 @@ namespace EasyControlWeb.Filtro
                 ProcessCompleted?.Invoke(FiltroFinal, lstEasyFiltroItem);
             }
         }
-        protected virtual void OnProcessCompleted(List<EasyFiltroItem> lstEasyFiltroItem)
+        protected virtual void OnProcessCompleted( List<EasyFiltroItem> lstEasyFiltroItem)
         {
 
             //v.RowFilter = string.Concat("CONVERT(", "ColumnName", ",System.String) LIKE '%", InputString, "%'")
             string FiltroFinal = getFilterString();
-
-            //Invoca al evento externo
+           
+                //Invoca al evento externo
             if (ProcessCompleted != null)
             {
                 ProcessCompleted?.Invoke(FiltroFinal, lstEasyFiltroItem);
@@ -2113,4 +2113,8 @@ namespace EasyControlWeb.Filtro
         }
         #endregion
     }
+
+   
 }
+
+
