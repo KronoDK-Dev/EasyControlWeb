@@ -1,76 +1,74 @@
-﻿using EasyControlWeb.Filtro;
-using EasyControlWeb.Form.Controls;
-using EasyControlWeb.Form.Estilo;
-using EasyControlWeb.InterConeccion;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing.Design;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Drawing.Design;
+using System.Web.UI.HtmlControls;
+using System.Web;
+using EasyControlWeb.Form.Controls;
+using System.Data;
+using System.Linq;
+using EasyControlWeb.Form.Estilo;
 using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
-using static iTextSharp.text.pdf.events.IndexEvents;
-
+using System.Windows.Markup;
+using EasyControlWeb.InterConeccion;
+using EasyControlWeb.Filtro;
+using EasyControlWeb.InterConecion;
+ 
 namespace EasyControlWeb
 {
+    /*
+     * Autor:Rosales Azabache Eddy 
+     * REFERENCIA DE POPUIPM MENU https://codepen.io/Danny-Dasilva/pen/wvGaMxE
+     */
+
     #region TemplateColumn
-
     public class NumberColumn : ITemplate
-    {
-        public void InstantiateIn(Control container)
         {
+            public void InstantiateIn(Control container)
+            {
+            }
         }
-    }
-
     #endregion
 
+
     [
-        ParseChildren(true, "EasyGridButtons"),
-        ToolboxData("<{0}:EasyGridView runat=server></{0}:EasyGridView>")
+    ParseChildren(true, "EasyGridButtons"),
+    ToolboxData("<{0}:EasyGridView runat=server></{0}:EasyGridView>")
     ]
-    public class EasyGridView : GridView
+    public class EasyGridView:GridView
     {
         #region Search event and delegate
+            public delegate void EasyGridButtonClickEventHandler(EasyGridButton oEasyGridButton, System.Collections.Generic.Dictionary<string, string> Recodset);
+            public event EasyGridButtonClickEventHandler EasyGridButton_Click;
 
-        public delegate void EasyGridButtonClickEventHandler(EasyGridButton oEasyGridButton, System.Collections.Generic.Dictionary<string, string> Recodset);
-        public event EasyGridButtonClickEventHandler EasyGridButton_Click;
-
-        public delegate void EasyGridClickDetalleEventHandler(System.Collections.Generic.Dictionary<string, string> Recodset);
-        public event EasyGridClickDetalleEventHandler EasyGridDetalle_Click;
-
+            public delegate void EasyGridClickDetalleEventHandler(System.Collections.Generic.Dictionary<string, string> Recodset);
+            public event EasyGridClickDetalleEventHandler EasyGridDetalle_Click;
         #endregion
 
         EasyMessageBox oeasyMessageBox = null;
 
         #region Constantes
-
-        const string SCR_TOOLBAR_CLICK_ITEM = "_ToolBar_Onclick";
-        //Constants to hold value in view state
-        /*private const string SHOW_EMPTY_FOOTER = "ShowEmptyFooter";
-        private const string SHOW_EMPTY_HEADER = "ShowEmptyHeader";*/
-        private const string TEXT_EMPTY_HEADER = "TextEmptyHeader";
-        private const string NO_OF_ROWS = "NoOfRows";
-        private const string SHOW_ROWNUM = "ShowRowNum";
-        private const string DATA_COLLECION = "dtColeccion";
-        private const string DATA_TABLE_CLIENT = "dtClient";
-        private const string ITEM_COLOR_SELECT = "ItemColorSelect";
-        private const string ITEM_COLOR_MOUSEMOVE = "ItemColorMouseMove";
-        private const string ITEM_EVENT_ONCLICK = "RowItemClick";
+            const string SCR_TOOLBAR_CLICK_ITEM = "_ToolBar_Onclick";
+            //Constants to hold value in view state
+            /*private const string SHOW_EMPTY_FOOTER = "ShowEmptyFooter";
+            private const string SHOW_EMPTY_HEADER = "ShowEmptyHeader";*/
+            private const string TEXT_EMPTY_HEADER = "TextEmptyHeader";
+            private const string NO_OF_ROWS = "NoOfRows";
+            private const string SHOW_ROWNUM = "ShowRowNum";
+            private const string DATA_COLLECION = "dtColeccion";
+            private const string DATA_TABLE_CLIENT = "dtClient";
+            private const string ITEM_COLOR_SELECT = "ItemColorSelect";
+            private const string ITEM_COLOR_MOUSEMOVE = "ItemColorMouseMove";
+            private const string ITEM_EVENT_ONCLICK = "RowItemClick";
         private const string NO_DATA_FOUND = "NO DATA FOUND";
-
         #endregion
 
         #region Controls and constants
-
-        //Controls to implement the search feature
-        //Panel _pnlSearchFooter;
+        // Controls to implement the search feature
+        // Panel _pnlSearchFooter;
         //Controles Auxiliares
         TextBox _txtRowIndex;
         TextBox _txtNroRegSelect;
@@ -89,93 +87,101 @@ namespace EasyControlWeb
 
         HtmlButton btnIrDetalle;
 
-        List<EasyMessageBox> LstMsgBoxs = new List<EasyMessageBox>();
+            List<EasyMessageBox> LstMsgBoxs = new List<EasyMessageBox>();
 
-        Table tblToolBar;
-        HtmlButton oBtn;
+            Table tblToolBar;
+            HtmlButton oBtn;
+
 
         #endregion
 
         #region Variables Simples
-
         //bool DataNull = false;
         int NroColHeader = 0;
-        string NroItem;
-        string ArrDataBE = "";
-        string Cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
-        List<LiteralControl> _Scripts = new List<LiteralControl>();
-
+            string NroItem;
+            string ArrDataBE = "";
+            string Cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
+            List<LiteralControl> _Scripts = new List<LiteralControl>();
         #endregion
 
         #region Constructor
+        // Constructor
+        public EasyGridView(): base()
+                {
+                    //Initialise controls
+                    //_pnlSearchFooter = new Panel();
+                   
+                    //By default turn on the footer shown property
+                    //ShowFooter = true;
 
-        public EasyGridView() : base()
-        {
-            //Initialise controls
-            //_pnlSearchFooter = new Panel();
-
-            //By default turn on the footer shown property
-            //ShowFooter = true;
-
-            //Adicionales
-            _txtNroRegSelect = new TextBox();
-            _txtNroRegSelect.ID = "txtIdRegSelected";
+                   //Adicionales
+                    _txtNroRegSelect = new TextBox();
+                    _txtNroRegSelect.ID = "txtIdRegSelected";
             //Control de fila seleccionnada
-            _txtRowIndex = new TextBox();
-            _txtRowIndex.ID = "txtRowIndex";
+                    _txtRowIndex = new TextBox();
+                    _txtRowIndex.ID= "txtRowIndex";
             //Control de paginacion
-            _txtNroPag = new TextBox();
-            _txtNroPag.ID = "txtIdxPag";
-            _txtNroPag.Text = "0";
+                    _txtNroPag = new TextBox();
+                    _txtNroPag.ID = "txtIdxPag";
+                    _txtNroPag.Text = "0";
             //Control de Sorting
-            _txtSort = new TextBox();
-            _txtSort.ID = "txtSort";
+                    _txtSort = new TextBox();
+                    _txtSort.ID = "txtSort";
 
-            _txtSortField = new TextBox();
-            _txtSortField.ID = "txtIdSortField";
+                    _txtSortField = new TextBox();
+                    _txtSortField.ID = "txtIdSortField";
 
-            _txtSortAscDesc = new TextBox();
-            _txtSortAscDesc.ID = "txtIdSortA_D";
+                    _txtSortAscDesc = new TextBox();
+                    _txtSortAscDesc.ID = "txtIdSortA_D";
 
-            btnIrDetalle = new HtmlButton();
-            btnIrDetalle.ID = "btnExtendDet";
+                    btnIrDetalle = new HtmlButton();
+                    btnIrDetalle.ID = "btnExtendDet";
 
-            oBtn = new HtmlButton();
-            oBtn.ID = "CmdCommit";
+                    oBtn = new HtmlButton();
+                    oBtn.ID = "CmdCommit";
 
-            txtDemo = new TextBox();
-            txtDemo.ID = "IdDemo";
 
-            arrEasyGridButtons = new List<EasyGridButton>();
-            this.RowDataBound += new GridViewRowEventHandler(OnRowDataBound);
-            this.PageIndexChanging += new GridViewPageEventHandler(OnPageIndexChanging);
-            this.Sorting += new GridViewSortEventHandler(OnSorting);
+                    txtDemo = new TextBox();
+                    txtDemo.ID = "IdDemo";
+
+
+
+                    arrEasyGridButtons = new List<EasyGridButton>();
+                    this.RowDataBound += new GridViewRowEventHandler(OnRowDataBound);
+                    this.PageIndexChanging += new GridViewPageEventHandler(OnPageIndexChanging);
+                    this.Sorting += new GridViewSortEventHandler(OnSorting);
+            
+
         }
-
         #endregion
+
 
         #region Propiedades de Colección
+        DataTable dtPorPag =new DataTable();
 
-        DataTable dtPorPag = new DataTable();
+            [Browsable(true)]
+            List<EasyGridButton> arrEasyGridButtons;
+            [
+               Category("Behavior"),
+               Description("Colleccion de Botones de extension de funcionalidades"),
+               DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
+               Editor(typeof(EasyControlCollection.EasyFormCollectionGridButtonEditor), typeof(UITypeEditor)),
+               PersistenceMode(PersistenceMode.InnerProperty)
+           ]
+            public List<EasyGridButton> EasyGridButtons
+            {
+                get { return arrEasyGridButtons; }
+            }
 
-        [Browsable(true)]
-        List<EasyGridButton> arrEasyGridButtons;
-        [
-            Category("Behavior"),
-            Description("Colleccion de Botones de extension de funcionalidades"),
-            DesignerSerializationVisibility(DesignerSerializationVisibility.Content),
-            Editor(typeof(EasyControlCollection.EasyFormCollectionGridButtonEditor), typeof(UITypeEditor)),
-            PersistenceMode(PersistenceMode.InnerProperty)
-        ]
-        public List<EasyGridButton> EasyGridButtons
-        {
-            get { return arrEasyGridButtons; }
-        }
 
         #endregion
 
-        #region Properties
 
+        #region properties
+       
+
+        /*TITULO DE LA CABECERA*/
+        /*-------------------------------------------------------------------------------------------------------------------*/
         [Category("Appearance")]
         [Bindable(BindableSupport.No)]
         [DefaultValue("Titulo")]
@@ -196,10 +202,11 @@ namespace EasyControlWeb
             }
         }
 
+
         EasyBtnStyle oEasyBtnStyle = new EasyBtnStyle();
         [TypeConverter(typeof(Type_StyleToolBarButtom))]
         [Description("Define estilo vigente para cada control button"),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         public EasyBtnStyle EasyStyleBtn
         {
@@ -207,11 +214,13 @@ namespace EasyControlWeb
             set { oEasyBtnStyle = (EasyBtnStyle)value; }
         }
 
+
+
         EasyDataInterConect oEasyDataInterConect = new EasyDataInterConect();
         [TypeConverter(typeof(Type_DataInterConect))]
         [Category("Editor"),
-         Description("Conexion a un servicios de donde se obtiene los datos."),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+           Description("Conexion a un servicios de donde se obtiene los datos."),
+           DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
@@ -220,6 +229,8 @@ namespace EasyControlWeb
             get { return oEasyDataInterConect; }
             set { oEasyDataInterConect = value; }
         }
+
+
 
         [Category("Appearance")]
         [Bindable(BindableSupport.No)]
@@ -235,34 +246,35 @@ namespace EasyControlWeb
                 return (bool)this.ViewState[SHOW_ROWNUM];
             }
             set
-            {
+            {               
                 this.ViewState[SHOW_ROWNUM] = value;
             }
         }
+
         
         EasyGridExtended oEasyGridExtended = new EasyGridExtended();
-        [Category("Editor"), Description("Define el comportamiento de colores de cada fila"),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        [Category("Editor"),Description("Define el comportamiento de colores de cada fila"),
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         public EasyGridExtended EasyExtended
         {
-            get
-            {
-                if (oEasyGridExtended == null)
-                {
-                    oEasyGridExtended = new EasyGridExtended();
+            get {
+                    if (oEasyGridExtended == null)
+                    {
+                        oEasyGridExtended = new EasyGridExtended();
+                    }
+                return oEasyGridExtended; 
                 }
-                return oEasyGridExtended;
-            }
             set
             {
                 oEasyGridExtended = value;
             }
         }
 
+
         EasyGridRowGroup oEasyGridRowGroup = new EasyGridRowGroup();
         [Category("Editor"), Description("Define estilo vigente para cada control button"),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         public EasyGridRowGroup EasyRowGroup
         {
@@ -279,6 +291,7 @@ namespace EasyControlWeb
                 oEasyGridRowGroup = value;
             }
         }
+
 
         [Category("Function Cliente")]
         [Bindable(BindableSupport.No)]
@@ -299,7 +312,6 @@ namespace EasyControlWeb
                 this.ViewState["ToolBarButtonClick"] = value;
             }
         }
-
         [Category("Function Cliente")]
         [Bindable(BindableSupport.No)]
         [DefaultValue(true)]
@@ -314,15 +326,13 @@ namespace EasyControlWeb
                 this.ViewState["fncExecBeforeServer"] = value;
             }
         }
-
         #endregion
 
-        #region Suprimir Propiedades Innecesarias
-
+        #region Suprimir  Propiedades Innecesarias
         [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
         public new string EmptyDataText { get; set; }
-        /*  [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
-          public new bool AutoGenerateColumns { get; set; }*/
+      /*  [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
+        public new bool AutoGenerateColumns { get; set; }*/
 
         [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
         public new bool AutoGenerateDeleteButton { get; set; }
@@ -337,134 +347,134 @@ namespace EasyControlWeb
         public new string Caption { get; set; }
 
         [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
-        public new TableCaptionAlign CaptionAlign { get; set; }
+        public new  TableCaptionAlign CaptionAlign { get; set; }
 
         #endregion
 
-        #region Titulo de Grilla
 
+
+        #region Titulo de la grilla
+       
         GridViewRow gridRowTitulo(int NroCols)
         {
-            GridViewRow r = new GridViewRow(-1, 0, DataControlRowType.Header, DataControlRowState.Normal);
-            TableCell tc = new TableCell();
-            tc.ColumnSpan = NroCols;
-            tc.Text = TituloHeader;
-            r.Controls.Add(tc);
-            r.Attributes.Add("TipoRow", "1");
-            NroColHeader++;
+                GridViewRow r = new GridViewRow(-1, 0, DataControlRowType.Header, DataControlRowState.Normal);
+                TableCell tc = new TableCell();
+                tc.ColumnSpan = NroCols;
+                tc.Text = TituloHeader;
+                r.Controls.Add(tc);
+                r.Attributes.Add("TipoRow", "1");
+                NroColHeader++;
             return r;
         }
 
         #endregion
 
         #region ToolBar
-
         void CrearToolBar()//Definicion de la tabla que contendra los botones
-        {
-            tblToolBar = new Table();
-            tblToolBar.Style.Add("width", "100%");
-            TableRow trToolBar = new TableRow();
-            if (IsDesign())
             {
-                tblToolBar.Attributes.Add("border", "1px");
-                trToolBar.BorderStyle = BorderStyle.Dotted;
-                trToolBar.BorderColor = System.Drawing.Color.FromArgb(127, 127, 127);
+                tblToolBar = new Table();
+                tblToolBar.Style.Add("width", "100%");
+                TableRow trToolBar = new TableRow();
+                if (IsDesign()) { 
+                    tblToolBar.Attributes.Add("border", "1px");
+                    trToolBar.BorderStyle = BorderStyle.Dotted;
+                    trToolBar.BorderColor = System.Drawing.Color.FromArgb(127, 127, 127);
+                }
+
+                TableCell tcToolBar = new TableCell();
+                tcToolBar.Style.Add("width", "33.33%");
+                tcToolBar.Attributes.Add("align","left");
+                //tcToolBar.Attributes.Add("align", "right");
+                tcToolBar.Style.Add("white-space", "pre-wrap");
+                tcToolBar.Style.Add("word-wrap", "break-word");
+                trToolBar.Controls.Add(tcToolBar);
+            
+                tcToolBar = new TableCell();
+                tcToolBar.Style.Add("width", "33.33%");
+                tcToolBar.Attributes.Add("align", "justify");
+                tcToolBar.Style.Add("white-space", "pre-wrap");
+                tcToolBar.Style.Add("word-wrap", "break-word");
+                trToolBar.Controls.Add(tcToolBar);
+
+                tcToolBar = new TableCell();
+                tcToolBar.Style.Add("width", "33.33%");
+                tcToolBar.Style.Add("white-space", "pre-wrap");
+                tcToolBar.Style.Add("word-wrap", "break-word");
+
+                tcToolBar.Attributes.Add("align", "right");
+                //tcToolBar.Attributes.Add("align", "left");
+                trToolBar.Controls.Add(tcToolBar);
+                tblToolBar.Controls.Add(trToolBar);
+                //Controles de manipulacion de la grilla
+
+                #region Controles de manipulacion
+                    btnIrDetalle.Attributes.Add("runat", "server");
+                    btnIrDetalle.InnerText = "CallWebForm";
+                    btnIrDetalle.Style.Add("display", "none");
+                    btnIrDetalle.ServerClick += new System.EventHandler(OnEasyGridDetalle_Click);
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(btnIrDetalle);
+
+                    /*Crear el boton para la ejecucion de los comandos de los botones de la barra de herramientas del grid*/
+                    oBtn.InnerText = "Commit;";
+                    oBtn.Attributes.Add("runat", "server");
+                    oBtn.ServerClick += new System.EventHandler(OnEasyGridButton_Click);
+                    oBtn.Style.Add("display", "none");
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(oBtn);
+
+
+
+                    _txtNroRegSelect.Style.Add("display", "none");
+                    _txtRowIndex.Style.Add("display", "none");
+
+
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtNroRegSelect);
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtRowIndex);
+                    //COntrol  de paginacion de la grilla
+                    _txtNroPag.Style.Add("display", "none");
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtNroPag);
+                    //Control de Ordenamiento de la grilla
+                    _txtSort.Style.Add("display", "none");
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSort);
+
+                    _txtSortField.Style.Add("display", "none");
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSortField);
+
+                    _txtSortAscDesc.Style.Add("display", "none");
+                    tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSortAscDesc);
+
+                #endregion
+
             }
-
-            TableCell tcToolBar = new TableCell();
-            tcToolBar.Style.Add("width", "33.33%");
-            tcToolBar.Attributes.Add("align", "left");
-            //tcToolBar.Attributes.Add("align", "right");
-            tcToolBar.Style.Add("white-space", "pre-wrap");
-            tcToolBar.Style.Add("word-wrap", "break-word");
-            trToolBar.Controls.Add(tcToolBar);
-
-            tcToolBar = new TableCell();
-            tcToolBar.Style.Add("width", "33.33%");
-            tcToolBar.Attributes.Add("align", "justify");
-            tcToolBar.Style.Add("white-space", "pre-wrap");
-            tcToolBar.Style.Add("word-wrap", "break-word");
-            trToolBar.Controls.Add(tcToolBar);
-
-            tcToolBar = new TableCell();
-            tcToolBar.Style.Add("width", "33.33%");
-            tcToolBar.Style.Add("white-space", "pre-wrap");
-            tcToolBar.Style.Add("word-wrap", "break-word");
-
-            tcToolBar.Attributes.Add("align", "right");
-            //tcToolBar.Attributes.Add("align", "left");
-            trToolBar.Controls.Add(tcToolBar);
-            tblToolBar.Controls.Add(trToolBar);
-            //Controles de manipulacion de la grilla
-
-            #region Controles de manipulacion
-            btnIrDetalle.Attributes.Add("runat", "server");
-            btnIrDetalle.InnerText = "CallWebForm";
-            btnIrDetalle.Style.Add("display", "none");
-            btnIrDetalle.ServerClick += new System.EventHandler(OnEasyGridDetalle_Click);
-            tblToolBar.Rows[0].Cells[0].Controls.Add(btnIrDetalle);
-
-            /*Crear el boton para la ejecucion de los comandos de los botones de la barra de herramientas del grid*/
-            oBtn.InnerText = "Commit;";
-            oBtn.Attributes.Add("runat", "server");
-            oBtn.ServerClick += new System.EventHandler(OnEasyGridButton_Click);
-            oBtn.Style.Add("display", "none");
-            tblToolBar.Rows[0].Cells[0].Controls.Add(oBtn);
-
-
-
-            _txtNroRegSelect.Style.Add("display", "none");
-            _txtRowIndex.Style.Add("display", "none");
-
-
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtNroRegSelect);
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtRowIndex);
-            //COntrol  de paginacion de la grilla
-            _txtNroPag.Style.Add("display", "none");
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtNroPag);
-            //Control de Ordenamiento de la grilla
-            _txtSort.Style.Add("display", "none");
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSort);
-
-            _txtSortField.Style.Add("display", "none");
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSortField);
-
-            _txtSortAscDesc.Style.Add("display", "none");
-            tblToolBar.Rows[0].Cells[0].Controls.Add(_txtSortAscDesc);
-
-            #endregion
-
-        }
-
+          
         GridViewRow gridRowToolBar(int NroCols)
         {
             GridViewRow r = new GridViewRow(-1, 0, DataControlRowType.Header, DataControlRowState.Normal);
             r.BackColor = System.Drawing.Color.White;
             TableCell HeaderTC = new TableCell();
             HeaderTC.ColumnSpan = NroCols;
-            foreach (EasyGridButton oEasyGridButton in this.EasyGridButtons.Where(oBE => oBE.Ubicacion != EasyUtilitario.Enumerados.Ubicacion.Footer && (oBE.Id != null || oBE.Id.Length > 0)))
-            {
-                HtmlGenericControl btnItem = oEasyGridButton.Materialized(this.EasyStyleBtn.ClassName, this.EasyStyleBtn.TextColor);
-                if (!IsDesign())
+                foreach (EasyGridButton oEasyGridButton in this.EasyGridButtons.Where(oBE => oBE.Ubicacion != EasyUtilitario.Enumerados.Ubicacion.Footer && (oBE.Id != null || oBE.Id.Length > 0)))
                 {
-                    btnItem.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + SCR_TOOLBAR_CLICK_ITEM + "(" + oEasyGridButton.ToString(true) + ");");
+                    HtmlGenericControl btnItem = oEasyGridButton.Materialized(this.EasyStyleBtn.ClassName, this.EasyStyleBtn.TextColor);
+                    if (!IsDesign())
+                    {
+                        btnItem.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + SCR_TOOLBAR_CLICK_ITEM + "(" + oEasyGridButton.ToString(true) + ");");
+                    }
+
+                    switch (oEasyGridButton.Ubicacion)
+                    {
+                        case EasyUtilitario.Enumerados.Ubicacion.Izquierda:
+                            tblToolBar.Rows[0].Cells[0].Controls.Add(btnItem);
+                            break;
+                        case EasyUtilitario.Enumerados.Ubicacion.Centro:
+                            tblToolBar.Rows[0].Cells[1].Controls.Add(btnItem);
+                            break;
+                        case EasyUtilitario.Enumerados.Ubicacion.Derecha:
+                            tblToolBar.Rows[0].Cells[2].Controls.Add(btnItem);
+                            break;
+                    }
                 }
 
-                switch (oEasyGridButton.Ubicacion)
-                {
-                    case EasyUtilitario.Enumerados.Ubicacion.Izquierda:
-                        tblToolBar.Rows[0].Cells[0].Controls.Add(btnItem);
-                        break;
-                    case EasyUtilitario.Enumerados.Ubicacion.Centro:
-                        tblToolBar.Rows[0].Cells[1].Controls.Add(btnItem);
-                        break;
-                    case EasyUtilitario.Enumerados.Ubicacion.Derecha:
-                        tblToolBar.Rows[0].Cells[2].Controls.Add(btnItem);
-                        break;
-                }
-            }
-
-
+           
             HeaderTC.Controls.Add(tblToolBar);
 
             //Crear y enlazar los controles
@@ -475,8 +485,12 @@ namespace EasyControlWeb
 
         #endregion
 
-        #region Overridden Functions
 
+
+     
+       
+
+        #region overridden functions
         protected override int CreateChildControls(System.Collections.IEnumerable dataSource, bool dataBinding)
         {
             ConData++;
@@ -484,7 +498,7 @@ namespace EasyControlWeb
             /*----------------------------------------------------------------------------------------*/
             CrearToolBar();
             /*----------------------------------------------------------------------------------------*/
-            int count = base.CreateChildControls(dataSource, dataBinding);
+                int count = base.CreateChildControls(dataSource, dataBinding);
 
             /*--------------------------------------------------------------------------------------------------*/
             //this.GenerarScriptDataSource(dataSource);//17-11-2022
@@ -559,7 +573,7 @@ namespace EasyControlWeb
 
                 emptyRow.Cells.Add(cell);
                 table.Rows.Add(emptyRow);*/
-
+                
 
 
                 //if (ShowEmptyFooter)
@@ -568,14 +582,14 @@ namespace EasyControlWeb
                     //  row en blanco
                     GridViewRow RowNull = base.CreateRow(-1, -1, DataControlRowType.DataRow, DataControlRowState.Normal);
                     RowNull.Attributes.Add("TipoRow", "4");
-                    //  RowNull.Style["Display"] = "none";
+                  //  RowNull.Style["Display"] = "none";
                     this.InitializeRow(RowNull, fields);
                     OnRowCreated(new GridViewRowEventArgs(RowNull));
                     table.Rows.Add(RowNull);
 
 
                     //  create footer row que se usara para ubicar el control de resutaldps del filtro
-                    if (ShowFooter && this.oEasyGridExtended.IdGestorFiltro.Length > 0)
+                    if (ShowFooter && ((this.oEasyGridExtended.IdGestorFiltro!=null)||(this.oEasyGridExtended.IdGestorFiltro.Length > 0)))
                     {
                         GridViewRow footerRow = base.CreateRow(-1, -1, DataControlRowType.Footer, DataControlRowState.Normal);
                         this.InitializeRow(footerRow, fields);
@@ -588,7 +602,7 @@ namespace EasyControlWeb
                 //this.Controls.Clear();
                 this.Controls.Add(table);
                 //llamar a la creacion de cabecera
-
+              
 
             }
 
@@ -605,7 +619,7 @@ namespace EasyControlWeb
 
         protected override void OnInit(EventArgs e)
         {
-
+           
             if (!this.IsDesign())
             {
                 CrearColumnaNro(ShowRowNumber);
@@ -615,9 +629,9 @@ namespace EasyControlWeb
             }
             base.OnInit(e);
         }
-
-        void CrearColumnaNro(bool _ShowRowNumber)
-        {
+        
+      
+        void CrearColumnaNro(bool _ShowRowNumber) {
             if (_ShowRowNumber)
             {
                 TemplateField tmpCol = new TemplateField();
@@ -628,6 +642,7 @@ namespace EasyControlWeb
             }
         }
 
+    
         void OnEasyGridDetalle_Click(object sender, EventArgs e)
         {
             try
@@ -640,8 +655,7 @@ namespace EasyControlWeb
                 }
                 if (EasyGridDetalle_Click != null) EasyGridDetalle_Click?.Invoke(Data);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 oeasyMessageBox = new EasyMessageBox();
                 oeasyMessageBox.ID = "MsgGrid";
                 oeasyMessageBox.Titulo = "Error";
@@ -652,15 +666,13 @@ namespace EasyControlWeb
                 Page.Controls.Add(oeasyMessageBox);
             }
         }
-
         protected virtual void OnEasyGridButton_Click(object sender, EventArgs e)
         {
             //string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
             bool ExcecuteConData = true;
             string strID = "";
             string TipoBtn = ((Type)sender.GetType()).Name;
-            switch (TipoBtn)
-            {
+            switch (TipoBtn) {
                 case "HtmlButton":
                     strID = ((HtmlButton)sender).ID;
 
@@ -677,8 +689,8 @@ namespace EasyControlWeb
                 strID = ContextRequest["__EVENTARGUMENT"];
 
                 var item = this.EasyGridButtons.Find(x => x.Id == strID);//Boton seleccionado
-                                                                         //Almacena el Boton Seleccionado quedando disponible para su verificacion
-                                                                         //  ViewState["btnSelected"] = item;
+                //Almacena el Boton Seleccionado quedando disponible para su verificacion
+              //  ViewState["btnSelected"] = item;
 
                 Dictionary<string, string> Data = new Dictionary<String, string>();
                 if (_txtNroRegSelect.Text.Length > 0)
@@ -688,41 +700,42 @@ namespace EasyControlWeb
                 }
                 if (EasyGridButton_Click != null) EasyGridButton_Click?.Invoke(item, Data);
             }
-            /*
-              if (this._txtNroRegSelect.Text.Trim().Length > 0) {
-                      string _ScriptSelectItem = @"<script>
-                                                      (function(){
-                                                                  try{
-                                                                      var ogridView=document.getElementById('" + this.ClientID + @"');
-                                                                      var rows = ogridView.querySelectorAll('[TipoRow=" + Cmll + "2" + Cmll + @"]'); 
-                                                                      var GuidRegSelect = '" + this._txtNroRegSelect.Text + @"';
-                                                                          alert(GuidRegSelect);
-                                                                          rows.forEach(function(row,idx){
-                                                                                          if(jNet.get(row).attr('Guid')==GuidRegSelect){
-                                                                                              SIMA.GridView.Extended.OnEventClickChangeColor(row);
-                                                                                          }
-                                                                                     }
-                                                                                   );
-                                                                      }
-                                                                      catch(ex){
-                                                                      } 
-                                                                   }
-                                                          )();
-                                                  </script>
-                                                 ";
+          /*
+            if (this._txtNroRegSelect.Text.Trim().Length > 0) {
+                    string _ScriptSelectItem = @"<script>
+                                                    (function(){
+                                                                try{
+                                                                    var ogridView=document.getElementById('" + this.ClientID + @"');
+                                                                    var rows = ogridView.querySelectorAll('[TipoRow=" + Cmll + "2" + Cmll + @"]'); 
+                                                                    var GuidRegSelect = '" + this._txtNroRegSelect.Text + @"';
+                                                                        alert(GuidRegSelect);
+                                                                        rows.forEach(function(row,idx){
+                                                                                        if(jNet.get(row).attr('Guid')==GuidRegSelect){
+                                                                                            SIMA.GridView.Extended.OnEventClickChangeColor(row);
+                                                                                        }
+                                                                                   }
+                                                                                 );
+                                                                    }
+                                                                    catch(ex){
+                                                                    } 
+                                                                 }
+                                                        )();
+                                                </script>
+                                               ";
 
 
-                  _Scripts.Add(new LiteralControl(_ScriptSelectItem));
-              }
-              */
+                _Scripts.Add(new LiteralControl(_ScriptSelectItem));
+            }
+            */
         }
 
+        // Dictionary<string, string> FindRegSelected(int NroReg) {
         Dictionary<string, string> FindRegSelected(string NroReg)
         {
             Dictionary<string, string> DataExist = new Dictionary<String, string>();
             try
             {
-                // if (NroReg == -1) { return null; }
+               // if (NroReg == -1) { return null; }
                 DataTable dtRowSelected = (DataTable)ViewState[DATA_COLLECION];
                 DataRow[] drs = dtRowSelected.Select("Guid='" + NroReg + "'");
                 DataRow dr = drs[0];
@@ -784,8 +797,7 @@ namespace EasyControlWeb
                     if (this.EasyExtended.IdGestorFiltro != null)//Si el nombre del control de filtros asociados existe
                     {
                         EasyGestorFiltro oGFiltro = (EasyGestorFiltro)Page.FindControl(this.EasyExtended.IdGestorFiltro);
-                        if (oGFiltro != null)
-                        {
+                        if(oGFiltro!=null) {
                             int idx = 0;
                             string _DataField = "";
                             string _DataFieldTitle = "";
@@ -900,7 +912,7 @@ namespace EasyControlWeb
 
                 if (!IsDesign() && ShowRowNumber)
                 {
-                    e.Row.Cells[0].Text = "NRO";
+                    e.Row.Cells[0].Text = "NRO";                        
                 }
                 e.Row.Attributes.Add("TipoRow", "1");//Para ser usuado por las funcinalidades JScript
                 NroColHeader++;
@@ -944,24 +956,24 @@ namespace EasyControlWeb
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
-
-                if ((ShowFooter && e.Row.Cells.Count > 0) && ((this.oEasyGridExtended.IdGestorFiltro != null) || (this.oEasyGridExtended.IdGestorFiltro.Length > 0)))
+              
+                if ((ShowFooter && e.Row.Cells.Count > 0)&& ((this.oEasyGridExtended.IdGestorFiltro!=null)||(this.oEasyGridExtended.IdGestorFiltro.Length>0)))
                 {
                     int NroColSpan = e.Row.Cells.Count;
                     e.Row.Cells[0].ColumnSpan = NroColSpan;
-                    for (int i = 1; i <= e.Row.Cells.Count - 1; i++) { e.Row.Cells[i].Visible = false; }
+                    for (int i = 1; i <= e.Row.Cells.Count-1 ; i++){e.Row.Cells[i].Visible = false;}
 
                     e.Row.Attributes.Add("TipoRow", "3");
-
+                   
                     //Crear una tabla para los botones
                     e.Row.Cells[0].Controls.Add(BoxFooter());//agrega los botones en el footer
 
-                }
+                }  
             }
-        }
 
-        void SetRowScriptFunctions(GridViewRow gvr)
-        {
+           
+        }
+        void SetRowScriptFunctions(GridViewRow gvr) {
             if (ShowRowNumber)//Numeracion de registro
             {
                 gvr.Cells[0].Style.Add("Width", "3%");
@@ -987,8 +999,7 @@ namespace EasyControlWeb
             }
         }
 
-        public GridViewRow InsertGridRow(int Posicion, DataRow drItem)
-        {
+        public GridViewRow InsertGridRow(int Posicion,DataRow drItem) {
             GridViewRow dgr = new GridViewRow(Posicion, -1, DataControlRowType.DataRow, DataControlRowState.Normal);
             dgr.Attributes.Add("TipoRow", "2");
             dgr.DataItem = drItem;
@@ -1001,15 +1012,13 @@ namespace EasyControlWeb
 
             GridView dg = (GridView)this;
             Table t = (Table)dg.Controls[0];
-            //eSTABLECE LOS EENTOS A NIVEL DE JS
-            this.SetRowScriptFunctions(dgr);
+                //eSTABLECE LOS EENTOS A NIVEL DE JS
+                this.SetRowScriptFunctions(dgr);
             t.Rows.Add(dgr);
             //Crea el script de DataRow de lado del cliente
-            if (dgr.DataItem != null)
-            {
+            if (dgr.DataItem != null) {
                 DataRow drRowItem = (DataRow)dgr.DataItem;
-                try
-                {
+                try {
                     DataColumn dc = new DataColumn("Guid", System.Type.GetType("System.String"));
                     drRowItem.Table.Columns.Add(dc);
                 }
@@ -1024,6 +1033,7 @@ namespace EasyControlWeb
                 ScripTDataRow += "\n   oDR_" + this.ClientID + "[" + Cmll + "Guid" + Cmll + "] = " + Cmll + myuuidAsString + Cmll + ";";
                 ScripTDataRow += "\n   oDR_" + this.ClientID + "[" + Cmll + "Modo" + Cmll + "] = " + Cmll + "M" + Cmll + ";";
 
+
                 DataTable dttmp = (DataTable)ViewState[DATA_COLLECION];
                 DataRow drNew = dttmp.NewRow();
 
@@ -1033,41 +1043,38 @@ namespace EasyControlWeb
                     drNew[dcn.ColumnName] = drRowItem[dcn.ColumnName];
                 }
                 ScripTDataRow += "\n oDT_" + this.ClientID + ".Rows.Add(oDR_" + this.ClientID + ");\n";
-
-                dttmp.Rows.Add(drNew);
-                ViewState[DATA_COLLECION] = dttmp;
+                 
+                 dttmp.Rows.Add(drNew);
+                ViewState[DATA_COLLECION]= dttmp;
                 // this.Controls.Add(new LiteralControl("\n <script>" + ViewState[DATA_TABLE_CLIENT].ToString() +"" + "</script>"));
             }
 
+
             return dgr;
         }
-
         public void LoadData()
         {
             string ctrlFiltro = "";
-            if (this.EasyExtended.IdGestorFiltro != null)
-            {
+            if (this.EasyExtended.IdGestorFiltro != null) {
                 ctrlFiltro = this.EasyExtended.IdGestorFiltro;
             }
-
+            
             if (ctrlFiltro.Length > 0)
             {
-                EasyGestorFiltro oGFiltro = (EasyGestorFiltro)Page.FindControl(ctrlFiltro);
+                EasyGestorFiltro oGFiltro = (EasyGestorFiltro) Page.FindControl(ctrlFiltro);
                 if (oGFiltro != null)
                 {
                     this.LoadData(oGFiltro.getFilterString());
                 }
-                else
-                {
+                else {
                     this.LoadData("");
                 }
             }
-            else
-            {
+            else {
                 this.LoadData("");
             }
-        }
 
+        }
         public void LoadData(string CriterioFiltro)
         {
             DataTable dt = this.DataInterconect.GetDataTable();
@@ -1083,10 +1090,14 @@ namespace EasyControlWeb
                 this.DataSource = dt;
             }
             this.DataBind();
+
+
         }
 
-        HtmlTable BoxFooter()
-        {
+
+
+
+        HtmlTable BoxFooter() {
             HtmlTable otblBtn = EasyUtilitario.Helper.HtmlControlsDesign.CrearTabla(1, 3);
             otblBtn.ID = "FooterButtons";
             otblBtn.Attributes.Add("border", "0px");
@@ -1153,18 +1164,16 @@ namespace EasyControlWeb
             setSorting(column, sortDirection);
         }
 
+
         protected void OnPageIndexChanging(object sender, GridViewPageEventArgs e)
         {
             this.PageIndex = e.NewPageIndex;
             _txtNroPag.Text = this.PageIndex.ToString();
             _txtNroRegSelect.Text = "0";
         }
-
         char Enter = (char)13;
         char Enter2 = (char)10;
-
-        protected void OnRowDataBound(object sender, GridViewRowEventArgs e)
-        {//nueva implementacion para obtener el registeo seleccionado
+        protected  void OnRowDataBound(object sender, GridViewRowEventArgs e) {//nueva implementacion para obtener el registeo seleccionado
 
             if (e.Row.RowType == DataControlRowType.DataRow)
             {
@@ -1173,7 +1182,7 @@ namespace EasyControlWeb
                 DataRow dr = drv.Row;
                 string NoDataFound = ((ShowRowNumber) ? e.Row.Cells[0].Text : e.Row.Cells[1].Text);
 
-                if (e.Row.RowIndex == 0)//genera la definicion de la estructura del datatable como objeto de lado del cliente
+                if (e.Row.RowIndex== 0)//genera la definicion de la estructura del datatable como objeto de lado del cliente
                 {
                     //Marcar la fila para que no sea tocada
                     e.Row.Attributes.Add("NoDelete", "No");
@@ -1185,7 +1194,7 @@ namespace EasyControlWeb
                     {
                         dc = new DataColumn("Guid", System.Type.GetType("System.String"));
                         dtPorPag.Columns.Add(dc);
-
+                    
                         /*--------------------------------------------------------------------------------*/
                         /*ScriptDataTableDefDC += " oDC_" + this.ClientID + " = new SIMA.Data.DataColumn(" + Cmll + "bookmark" + Cmll + ");"
                                                                  + " oDT_" + this.ClientID + ".Columns.Add(oDC_" + this.ClientID + ");";*/
@@ -1244,7 +1253,7 @@ namespace EasyControlWeb
                 }
 
                 DataRow drow = dtPorPag.NewRow();
-                // drow["bookmark"] = NroItem;
+               // drow["bookmark"] = NroItem;
                 Guid myuuid = Guid.NewGuid();//Identificador unico que servira para relacionar la fila de la grilla con sus data en script
                 string myuuidAsString = myuuid.ToString();
                 drow["Guid"] = myuuidAsString;
@@ -1258,19 +1267,19 @@ namespace EasyControlWeb
                 ScripTDataRow += "\n   oDR_" + this.ClientID + "[" + Cmll + "Modo" + Cmll + "] = " + Cmll + "M" + Cmll + ";";
 
 
-
+              
 
                 foreach (DataColumn dcn in dr.Table.Columns)
                 {
                     drow[dcn.ColumnName] = dr[dcn.ColumnName];
                     /*-----------------------------------------------------------------------*/
-                    ScripTDataRow += "   oDR_" + this.ClientID + "[" + Cmll + dcn.ColumnName + Cmll + "] = '" + dr[dcn.ColumnName].ToString().Replace("'", "").Replace(Enter.ToString(), "").Replace(Enter2.ToString(), "") + "';";
+                    ScripTDataRow += "   oDR_" + this.ClientID + "[" + Cmll + dcn.ColumnName + Cmll + "] = '" + dr[dcn.ColumnName].ToString().Replace("'","").Replace(Enter.ToString(), "").Replace(Enter2.ToString(), "") + "';";
 
                 }
                 dtPorPag.Rows.Add(drow);
                 /*---------------------------------------------*/
                 ScripTDataRow += "\n oDT_" + this.ClientID + ".Rows.Add(oDR_" + this.ClientID + ");\n";
-                if ((e.Row.RowIndex + 1) <= this.PageSize)// almacena solo la cantidad de registros delimitado por el Nro de registros en la paginacion
+                if ((e.Row.RowIndex+1) <= this.PageSize)// almacena solo la cantidad de registros delimitado por el Nro de registros en la paginacion
                 {
                     ViewState[DATA_COLLECION] = dtPorPag;
                 }
@@ -1280,31 +1289,28 @@ namespace EasyControlWeb
 
                 if (NoDataFound == NO_DATA_FOUND)
                 {
-
-                    e.Row.Cells[0].ColumnSpan = e.Row.Cells.Count;
+                   
+                    e.Row.Cells[0].ColumnSpan = e.Row.Cells.Count ;
                     e.Row.Cells[0].Text = NO_DATA_FOUND;
                     e.Row.Attributes.Add("NoDelete", "No");
                     e.Row.Cells[0].Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), "");
-                    for (int col = 1; col <= e.Row.Cells.Count - 1; col++)
+                    for (int col = 1; col <= e.Row.Cells.Count-1; col++)
                     {
                         e.Row.Cells[col].Visible = false;
                     }
                 }
             }
-            else if (e.Row.RowType == DataControlRowType.Footer)
-            {
-
+            else if (e.Row.RowType == DataControlRowType.Footer) {
+              
             }
         }
 
         int ConData = 0;
-
         protected override void OnPreRender(EventArgs e)
         {
             base.OnPreRender(e);
-
-            if (ConData == 0)
-            {
+          
+            if (ConData == 0) {
                 this.AllowSorting = false;
                 this.AllowPaging = false;
 
@@ -1329,7 +1335,7 @@ namespace EasyControlWeb
                         if (field.GetType() == typeof(BoundField))
                         {
                             oBoundField = (BoundField)field;
-                            if (oBoundField.DataField.Length > 0)
+                            if (oBoundField.DataField.Length >0)
                             {
                                 workRow[oBoundField.DataField] = NO_DATA_FOUND;
                             }
@@ -1340,6 +1346,7 @@ namespace EasyControlWeb
                     this.DataBind();
                 }
             }
+           
         }
 
         private bool IsDesign()
@@ -1348,11 +1355,12 @@ namespace EasyControlWeb
                 return this.Site.DesignMode;
             return false;
         }
-
         #endregion
+          
+       
 
+        /*Para la Agrupacion de los registro merge rows*/
         #region Merege Rows
-
         protected override void OnDataBound(EventArgs e)
         {
             base.OnDataBound(e);
@@ -1365,14 +1373,14 @@ namespace EasyControlWeb
                     this.EasyRowGroup.GroupedDepth = Grp;
                     ColMerg = this.EasyRowGroup.ColIniRowMerge + 1;//No permitira que se ejecute con la columna 0
                 }
-                this.SpanCellsRecursive(ColMerg, 0, this.Rows.Count);
+            this.SpanCellsRecursive(ColMerg, 0, this.Rows.Count);
             }
         }
 
         private void SpanCellsRecursive(int columnIndex, int startRowIndex, int endRowIndex)
         {
-            if (columnIndex >= (this.EasyRowGroup.GroupedDepth) || columnIndex >= this.Columns.Count)
-                return;
+             if (columnIndex >= (this.EasyRowGroup.GroupedDepth) || columnIndex >= this.Columns.Count)
+                    return;
 
             TableCell groupStartCell = null;
             int groupStartRowIndex = startRowIndex;
@@ -1402,14 +1410,16 @@ namespace EasyControlWeb
             SpanCellsRecursive(columnIndex + 1, groupStartRowIndex, endRowIndex);
         }
 
+
+
         protected override void Render(HtmlTextWriter writer)
         {
             Attributes.Remove("align");
             base.Render(writer);
-
+                      
             #region Efectos de Paginacion
-            string ScriptPaginacionStyle = @"SIMA.GridView.Extended.Paginacion.Apply('" + this.ClientID + "', '');";
-            (new LiteralControl("<script>" + ScriptPaginacionStyle + "</script>")).RenderControl(writer);
+                string ScriptPaginacionStyle = @"SIMA.GridView.Extended.Paginacion.Apply('" + this.ClientID + "', '');";
+                (new LiteralControl("<script>" + ScriptPaginacionStyle + "</script>")).RenderControl(writer);
             #endregion
 
 
@@ -1420,9 +1430,8 @@ namespace EasyControlWeb
             if (!IsDesign())
             {
                 string scriptOnClickRow = "";
-                string StamentSeccion = "";
-                if (this.EasyExtended.RowCellItemClick != null)
-                {
+                   string StamentSeccion = "";
+                if (this.EasyExtended.RowCellItemClick != null){
                     StamentSeccion = ((this.EasyExtended.RowCellItemClick.Length > 0) ? this.EasyExtended.RowCellItemClick + "(ItemRowBE);" : "SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + ".PostBack();");
                 }
                 scriptOnClickRow = @"function " + this.ClientID + @"_OnDetalle(otr) {
@@ -1458,7 +1467,7 @@ namespace EasyControlWeb
                 /*************************************************************************************************/
                 if (this.EasyExtended.RowItemClick != null)
                 {
-                    StamentSeccion = ((this.EasyExtended.RowItemClick.Length > 0) ? this.EasyExtended.RowItemClick + "(ItemRowBE);" : "");
+                    StamentSeccion = ((this.EasyExtended.RowItemClick.Length>0)? this.EasyExtended.RowItemClick + "(ItemRowBE);":"");
                     //Adicionado el 27-10-2023 solo para uso de la seleccion de una fila
                     scriptOnClickRow = @"function " + this.ClientID + @"_OnRowClick(otr) {
                                                                            var oDataRow =   ((oDT_" + this.ClientID + @"==null)?new Array():oDT_" + this.ClientID + @".Select('Guid', '=', otr.attr('Guid')));
@@ -1487,7 +1496,7 @@ namespace EasyControlWeb
                 (new LiteralControl("\n <script>" + ViewState[DATA_TABLE_CLIENT].ToString() + "</script>")).RenderControl(writer);
             }
             //Clonar Fila
-
+           
 
             string strRowsCount = this.ClientID + @".RowCount=function(){
                                                          var ogridView = jNet.get('" + this.ClientID + @"');
@@ -1642,7 +1651,7 @@ namespace EasyControlWeb
                                                             }
                                                    ";
 
-
+           
             _Scripts.Add(new LiteralControl("<script>" + strRowBound + "</script>"));
 
             string strNtoFila = this.ClientID + @".GetNroFila=function(){
@@ -1730,7 +1739,7 @@ namespace EasyControlWeb
             //string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
             string VerificaMetodoScript = (((this.ToolBarButtonClick != null) || (this.ToolBarButtonClick.Length > 0)) ? this.ToolBarButtonClick + "(btnItem,ItemRowBE);" : "alert('No se ha definido funcion script para esta propiedad: ToolBarButtonClick');");
             string ExecServerOrClient = @"if(btnItem.RunAtServer.toLowerCase()=='true'){
-                                                if(" + (((this.fncExecBeforeServer != null) && (this.fncExecBeforeServer.Length > 0)) ? this.fncExecBeforeServer + @"(btnItem,ItemRowBE)" : "true") + @"==true){ 
+                                                if(" + (((this.fncExecBeforeServer != null)&& (this.fncExecBeforeServer.Length>0)) ? this.fncExecBeforeServer + @"(btnItem,ItemRowBE)" : "true") + @"==true){ 
                                                     if(btnItem.SilenceWait.toLowerCase()=='false'){//Simula Carga 17/10/2025
                                                        SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });
                                                     }
@@ -1899,27 +1908,23 @@ namespace EasyControlWeb
 
 
             /*Los nuevos Script*/
-            foreach (LiteralControl ScriptLC in _Scripts)
-            {
+            foreach (LiteralControl ScriptLC in _Scripts) {
                 ScriptLC.RenderControl(writer);
             }
             //
-
+          
 
         }
 
-        public string getPagina()
-        {
+        public string getPagina() {
             return _txtNroPag.Text;
         }
-
         public void setPagina(string NroPagina)
         {
             _txtNroPag.Text = NroPagina;
         }
 
-        string SaveSorting(string SE, string SD)
-        {
+        string  SaveSorting(string SE, string SD) {
             ViewState["SortExpression"] = SE;
             ViewState["SortDirection"] = SD;
 
@@ -1932,9 +1937,8 @@ namespace EasyControlWeb
 
         public string getSorting(int i)
         {
-            string strResult = "";
-            switch (i)
-            {
+            string strResult= "";
+            switch (i) {
                 case 0:
                     strResult = _txtSort.Text;
                     break;
@@ -1947,37 +1951,39 @@ namespace EasyControlWeb
             }
             return strResult;
         }
-
-        public string getNroRegSelect()
-        {
+        public string getNroRegSelect() {
             return _txtNroRegSelect.Text;
         }
-
         public void setNroRegSelect(string NroReg)
         {
-            _txtNroRegSelect.Text = NroReg;
+            _txtNroRegSelect.Text= NroReg;
+        }
+        public string getRowIndex() { 
+            return _txtRowIndex.Text;   
+        }
+        public void setRowIndex(string Index){
+            _txtRowIndex.Text= Index;
         }
 
-        public string getRowIndex()
-        {
-            return _txtRowIndex.Text;
-        }
-
-        public void setRowIndex(string Index)
-        {
-            _txtRowIndex.Text = Index;
-        }
-
-        public string getSorting()
-        {
+        public string getSorting() {
             return getSorting(0);
         }
+      
 
         public void setSorting(string SE, string SD)
         {
-            _txtSort.Text = SaveSorting(SE, SD);
+             _txtSort.Text = SaveSorting(SE, SD);
         }
 
+        /* public Dictionary<string, string> getDataItemSelected() {
+             Dictionary<string, string> Data = new Dictionary<String, string>();
+             if (_txtNroRegSelect.Text.Length > 0)
+             {
+                 //Data = FindRegSelected(Convert.ToInt32(_txtNroRegSelect.Text)-1);
+                 Data = FindRegSelected(_txtNroRegSelect.Text);
+             }
+             return Data;
+         }*/
         public Dictionary<string, string> getDataItemSelected()
         {
             Dictionary<string, string> Data = new Dictionary<String, string>();
@@ -1988,18 +1994,32 @@ namespace EasyControlWeb
             return Data;
         }
 
-        private Dictionary<string, string> getData(string _Guid)
+
+        private  Dictionary<string, string> getData(string _Guid)
         {
             Dictionary<string, string> Data = new Dictionary<String, string>();
-            Data = FindRegSelected(_Guid);
+                Data = FindRegSelected(_Guid);
             return Data;
         }
-
         public Dictionary<string, string> getDataRow(string _Guid)
         {
             return getData(_Guid);
         }
 
         #endregion
+
+
+
+
+
+
+
+
+
     }
+
+
+
+
 }
+

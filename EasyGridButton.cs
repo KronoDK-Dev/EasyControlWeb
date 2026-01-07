@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 
@@ -10,9 +9,11 @@ namespace EasyControlWeb
 {
     public class EasyGridButton
     {
-        public EasyGridButton() : this(String.Empty, String.Empty, String.Empty, String.Empty, false, false, false, String.Empty, EasyUtilitario.Enumerados.Ubicacion.Centro, false) { }
 
-        public EasyGridButton(string _Id, string _Texto, string _Descripcion, string _Icono, bool _RunAtServer, bool _RequiereSelecciondeReg, bool _SolicitaConfirmar, string _MsgConfirm, EasyUtilitario.Enumerados.Ubicacion _Ubicacion, bool _SilenceWait)
+
+        public EasyGridButton() : this(String.Empty, String.Empty, String.Empty, String.Empty, false, false, false, String.Empty, EasyUtilitario.Enumerados.Ubicacion.Centro,false) { }
+        //public EasyGridButton(string _Id ,string _Texto,string _Descripcion,string _Icono,bool _RunAtServer,bool _MsgValidar,string _MsgConfirm,bool _MsgRequiereConfirm,EasyUtilitario.Enumerados.Ubicacion _Ubicacion)
+        public EasyGridButton(string _Id, string _Texto, string _Descripcion, string _Icono, bool _RunAtServer, bool _RequiereSelecciondeReg, bool _SolicitaConfirmar, string _MsgConfirm, EasyUtilitario.Enumerados.Ubicacion _Ubicacion,bool _SilenceWait)
         {
             this.Id = _Id;
             this.Texto = _Texto;
@@ -24,35 +25,39 @@ namespace EasyControlWeb
             this.MsgConfirm = _MsgConfirm;
             this.Ubicacion = _Ubicacion;
             this.SilenceWait = _SilenceWait;
-        }
+    }
 
         public string Id { get; set; }
         public string Texto { get; set; }
         public string Descripcion { get; set; }
         public string Icono { get; set; }
         public bool RunAtServer { get; set; }
+
         public bool RequiereSelecciondeReg { get; set; }
-        public bool SolicitaConfirmar { get; set; }
+        public bool SolicitaConfirmar{ get; set; }
 
-        //public bool MsgValidar { get; set; }
-        public string MsgConfirm { get; set; }
-        //public bool MsgRequiereConfirm { get; set; }
+        // public bool MsgValidar { get; set; }
+        public string MsgConfirm{ get; set; }
+       // public bool MsgRequiereConfirm { get; set; }
+
         public EasyUtilitario.Enumerados.Ubicacion Ubicacion { get; set; }
-
         public bool SilenceWait { get; set; }
-        public string ToString(bool ver)
+
+        public  string ToString(bool ver)
         {
+            
             string Structura = "";
             foreach (var propertyInfo in this.GetType().GetProperties())
             {
                 Structura += propertyInfo.Name + ":" + EasyUtilitario.Constantes.Caracteres.ComillaDoble + propertyInfo.GetValue(this, propertyInfo.GetIndexParameters()) + EasyUtilitario.Constantes.Caracteres.ComillaDoble + EasyUtilitario.Constantes.Caracteres.Coma;
             }
             Structura = Structura.Substring(0, Structura.Length - 1);
-            return "{" + Structura + "}";
+            return "{" + Structura +"}";
         }
-
         public HtmlGenericControl Materialized(string ClassName, string TextColor)
         {
+           
+            
             HtmlGenericControl btnItem = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("a", ClassName);
             btnItem.Attributes.Add("href", "#");
             HtmlGenericControl _I = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("i", this.Icono);
@@ -66,6 +71,9 @@ namespace EasyControlWeb
             btnItem.Style.Add("margin-top", "5px");
             btnItem.Style.Add("margin-right", "5px");
             return btnItem;
+
         }
+
+     
     }
 }

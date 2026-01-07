@@ -2,15 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace EasyControlWeb
 {
     public static class EasyEncrypta
     {
-        ///<summary>
-        /// Enccripta una cadena
-        /// </summary>
+        /// Encripta una cadena
         public static string Encriptar(this string _cadenaAencriptar)
         {
             string result = string.Empty;
@@ -19,9 +16,7 @@ namespace EasyControlWeb
             return result;
         }
 
-        ///<summary>
-        /// Esta función desenccripta la cadena que le enviamosen el parámetro de entrada
-        /// </summary>
+        /// Esta función desencripta la cadena que le envíamos en el parámentro de entrada.x
         public static string DesEncriptar(this string _cadenaAdesencriptar)
         {
             string result = string.Empty;
