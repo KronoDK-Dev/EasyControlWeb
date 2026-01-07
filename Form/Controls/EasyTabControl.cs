@@ -10,6 +10,7 @@ using static EasyControlWeb.EasyUtilitario.Helper;
 using EasyControlWeb.Filtro;
 using System.Web.UI.WebControls;
 using System.Windows.Forms;
+using System.Windows.Controls;
 using System.Windows;
 
 namespace EasyControlWeb.Form.Controls

@@ -11,6 +11,8 @@ using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Windows.Documents;
+using System.Windows.Resources;
 
 namespace EasyControlWeb.Form.Controls
 {

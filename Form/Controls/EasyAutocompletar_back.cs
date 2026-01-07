@@ -4,7 +4,7 @@ using EasyControlWeb.Form.Estilo;
 using EasyControlWeb.InterConeccion;
 using System;
 using System.Collections;
-using System.Collections.Generic; 
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Drawing.Design;
@@ -25,7 +25,7 @@ namespace EasyControlWeb.Form.Controls
     public class EasyAutocompletar: CompositeControl 
     {
         string txtID="";
-        public TextBox txtText;
+        TextBox txtText;
         TextBox txtVal;
         TextBox txtRecordSelected;
 
@@ -91,12 +91,6 @@ namespace EasyControlWeb.Form.Controls
         [NotifyParentProperty(true)]
         public string fnOnSelected { get; set; }
 
-        [Category("FuncionesJScript"), Description("function javascript que permite detectar la acción del mouse al dar click "), DefaultValue("")]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public string fnOnClick { get; set; }
-
-
         
 
         [Browsable(false)]
@@ -104,12 +98,6 @@ namespace EasyControlWeb.Form.Controls
         {
             txtText.Text = Text;
             txtVal.Text = Value;
-        }
-
-        [Browsable(false)]
-        public void SetReadOnly()
-        {
-            txtText.ReadOnly = true;
         }
 
         Bootstrap oBootstrap = new Bootstrap();
@@ -194,16 +182,16 @@ namespace EasyControlWeb.Form.Controls
         {
             Controls.Clear();
             txtID =  this.ID;
+            //txtText.ID = txtID + "Text";
             txtText.ID = "Text";
             txtText.Attributes.Add("class", "form-control autocomplete");
             txtText.Attributes.Add("placeholder", ((this.Placeholder==string.Empty)?"Ingrese texto a localizar":this.Placeholder) );
             txtText.Attributes.Add("autocomplete", "off");
-            txtText.Attributes.Add("Type", "COMPLETE");
-            txtText.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.fnOnClick + "(this)");
-
+           
             this.Controls.Add(txtText);
             if (!IsDesign())
             {
+                //txtVal.ID = txtID + "Value";
                 txtVal.ID = "Value";
                 txtVal.Style.Add("display", "none");
                 this.Controls.Add(txtVal);
@@ -222,7 +210,7 @@ namespace EasyControlWeb.Form.Controls
         }
         public string GetText() { return txtText.Text; }
 
-        public string GetValue() { return (((txtText.Text.Length>0)?txtVal.Text:"")); }
+        public string GetValue() { return txtVal.Text; }
 
 
         public void SetData(Dictionary<string, string> RecordSet)
@@ -252,83 +240,80 @@ namespace EasyControlWeb.Form.Controls
 
         protected override void Render(HtmlTextWriter writer)
         {
-            txtText.BackColor = this.BackColor;
-            string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
-            string AttrParamsCollection = "";
             // base.Render(writer);
-            txtText.RenderControl(writer);
-
-           // txtText.Style.Add("display", "none");
-            txtVal.Style.Add("display", "none");
-            txtRecordSelected.Style.Add("display", "none");
-
-
-
             if (!IsDesign())
             {
                 txtVal.RenderControl(writer);
                 txtRecordSelected.RenderControl(writer);
-
-                //Agrega el parametro pordefecto del la configuracion del atrubto DisplayText como parte del parametro que debe de estar en primer lugar en el metodo
+            }
+            txtText.BackColor = this.BackColor;
+            string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
+            string AttrParamsCollection = "";
+            if (!IsDesign())
+            { //Agrega el parametro pordefecto del la configuracion del atrubto DisplayText como parte del parametro que debe de estar en primer lugar en el metodo
                 EasyFiltroParamURLws oParamMethod = new EasyFiltroParamURLws();
                 oParamMethod.ParamName = this.DisplayText;
                 oParamMethod.ObtenerValor = EasyFiltroParamURLws.TipoObtenerValor.CriterioInput;
-                this.DataInterconect.UrlWebServicieParams.Insert(0, oParamMethod);
+                this.DataInterconect.UrlWebServicieParams.Insert(0,oParamMethod);
+            }
 
-
-                if ((this.DataInterconect.UrlWebServicieParams != null) && (this.DataInterconect.UrlWebServicieParams.Count != 0))
-                {
+            if ((this.DataInterconect.UrlWebServicieParams != null) && (this.DataInterconect.UrlWebServicieParams.Count != 0))
+            {
                     foreach (EasyFiltroParamURLws oEasyFiltroParamURLws in this.DataInterconect.UrlWebServicieParams)
                     {
                         string Valor = "";
-                        if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL)
+                        if (oEasyFiltroParamURLws.ObtenerValor== EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL)
                         {
                             Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParamURLws.ParamName].ToString();
                         }
-                        else if ((oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Fijo)|| (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.FunctionScript))
+                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Fijo)
                         {
                             Valor = oEasyFiltroParamURLws.Paramvalue;
                         }
-                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Session)
-                        {
-                            Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Session[oEasyFiltroParamURLws.Paramvalue.ToString()].ToString();
-                        }
                         else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.FormControl)
                         {
+                           // string NomContext = "";
                             string NomCtrlContext = this.Attributes["CtrlContext"];
                             string NomCtrl = oEasyFiltroParamURLws.Paramvalue;
-
+                        /*  if ((NomCtrlContext != "")&&(NomCtrlContext!=null))
+                          {
+                              NomContext = NomCtrlContext +"_"+ NomCtrl +"Text";
+                          }
+                          else
+                          {
+                              NomContext = this.ClientID.Replace(this.ID, "") + NomCtrl;
+                          }
+                          Valor = NomContext;*/
                             Valor = NomCtrl;
                         }
-                        //AttrParamsCollection += "{Name:" + cmll +  oEasyFiltroParamURLws.ParamName + cmll +"," + "Value:" + cmll + Valor + cmll + "," + "TipoParam:" + cmll + oEasyFiltroParamURLws.ObtenerValor.ToString() + cmll + "},";
-                        AttrParamsCollection += "{Name:" + cmll + oEasyFiltroParamURLws.ParamName + cmll + "," + "Value:" + cmll + Valor + cmll + "," + "ObtenerValor:" + cmll + oEasyFiltroParamURLws.ObtenerValor.ToString() + cmll + ",Tipo:" + cmll + oEasyFiltroParamURLws.TipodeDato + cmll + "},";
-                    }
-                    AttrParamsCollection = "[" + AttrParamsCollection.Substring(0, AttrParamsCollection.Length - 1) + "]";
-                    txtText.Attributes.Add("ParamCollection", AttrParamsCollection );
-                    //txtText.Attributes.Add("ParamCollection", "[" + AttrParamsCollection + "]");
+                    //AttrParamsCollection += "{Name:" + cmll +  oEasyFiltroParamURLws.ParamName + cmll +"," + "Value:" + cmll + Valor + cmll + "," + "TipoParam:" + cmll + oEasyFiltroParamURLws.ObtenerValor.ToString() + cmll + "},";
+                    AttrParamsCollection += "{Name:" + cmll + oEasyFiltroParamURLws.ParamName + cmll + "," + "Value:" + cmll + Valor + cmll + "," + "ObtenerValor:" + cmll + oEasyFiltroParamURLws.ObtenerValor.ToString() + cmll + "},";
                 }
+                    AttrParamsCollection = AttrParamsCollection.Substring(0, AttrParamsCollection.Length - 1);
+                    txtText.Attributes.Add("ParamCollection", "[" + AttrParamsCollection + "]");
+                }
+            txtText.RenderControl(writer);
 
+            if (!IsDesign())
+            {
+                string TemplateCustom = ((this.fncTempaleCustom!=null)&&(this.fncTempaleCustom.Length > 0)) ? "return " + this.fncTempaleCustom + "(ul,item);" : "return $( '<li></li>').data('item.autocomplete', item).append('<a>' + item." + this.DisplayText + @"+ '<br>' + item." + this.ValueField + @" + '</a>').appendTo(ul);";
 
-                //txtText.RenderControl(writer);
+                //string fnSelect = ((fnOnSelected != null) && (fnOnSelected.ToString().Length > 0) ? fnOnSelected + "(ui.item." + this.ValueField + ", ui.item)" : "");
+                string fnSelectExterna = ((fnOnSelected != null) && (fnOnSelected.ToString().Length > 0) ? fnOnSelected + "(ItemValue,ItemBE);" : "");
+                string fnSelect = this.ClientID + "_OnSelected(ui.item." + this.ValueField + ", ui.item);";
 
-                string TemplateCustom = ((this.fncTempaleCustom != null) && (this.fncTempaleCustom.Length > 0)) ? "return " + this.fncTempaleCustom + "(ul,item);" : "return $( '<li></li>').data('item.autocomplete', item).append('<a>' + item." + this.DisplayText + @"+ '<br>' + item." + this.ValueField + @" + '</a>').appendTo(ul);";
-
-                    //string fnSelect = ((fnOnSelected != null) && (fnOnSelected.ToString().Length > 0) ? fnOnSelected + "(ui.item." + this.ValueField + ", ui.item)" : "");
-                    string fnSelectExterna = ((fnOnSelected != null) && (fnOnSelected.ToString().Length > 0) ? fnOnSelected + "(ItemValue,ItemBE);" : "");
-                    string fnSelect = this.ClientID + "_OnSelected(ui.item." + this.ValueField + ", ui.item);";
-
-                    string findOnSelected = "";
-                    if ((this.EasyCtrlDepend != null) && (this.EasyCtrlDepend.Count > 0))
+                string findOnSelected = "";
+                if ((this.EasyCtrlDepend != null) && (this.EasyCtrlDepend.Count > 0))
+                {
+                    string lstCtrl = "";
+                    int post = 0;
+                    foreach (EasyControlBE oEasyControlBE in this.EasyCtrlDepend)
                     {
-                        string lstCtrl = "";
-                        int post = 0;
-                        foreach (EasyControlBE oEasyControlBE in this.EasyCtrlDepend)
-                        {
-                            lstCtrl += ((post == 0) ? "" : "; ") + oEasyControlBE.Nombre;
-                            post++;
-                        }
+                        lstCtrl += ((post == 0) ? "" : "; ") + oEasyControlBE.Nombre;
+                        post++;
+                    }
 
-                        findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
+                    findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
                                                 var strTranslate = '';
                                                     jNet.get('" + this.txtRecordSelected.ClientID + @"').value = strTranslate.Serialized(ItemBE);
                                                  " + fnSelectExterna + @"
@@ -346,46 +331,38 @@ namespace EasyControlWeb.Form.Controls
                                                     });
                                     }
                                 ";
-                    }
-                    else
-                    {
-                        findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
+                }
+                else
+                {
+                    findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
                                                     var strTranslate = '';
                                                     jNet.get('" + this.txtRecordSelected.ClientID + @"').value = strTranslate.Serialized(ItemBE);
                                                  " + fnSelectExterna + @"
                                     }
                                 ";
-                    }
+                }
 
-                 (new LiteralControl("\n <script>\n" + findOnSelected + "\n" + "</script>\n")).RenderControl(writer);
+             (new LiteralControl("\n <script>\n" + findOnSelected + "\n" + "</script>\n")).RenderControl(writer);
 
 
 
-                    string CadenaConexion = "";
-                    EasyDataInterConect.MetododeConexion MetodoConexionSelect = EasyDataInterConect.MetododeConexion.WebServiceInterno;
-                    string PageWebService = "";
-                    string WSMetoodo = "";
-                    if (this.DataInterconect != null)
-                    {
-                        MetodoConexionSelect = this.DataInterconect.MetodoConexion;
-                        PageWebService = this.DataInterconect.UrlWebService;
-                        WSMetoodo = this.DataInterconect.Metodo;
-                        if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
-                        {
-                            CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService + "/" + this.DataInterconect.Metodo;//aqui hay un error
-                        }
-                        else
-                        {
-                            CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;//aqui hay un error
-                        }
 
-                    }
-                //// var CollectionParams" + this.ClientID + @" = eval(jNet.get(" + this.ClientID + @").attr(" + cmll + "ParamCollection" + cmll + @"));
-                string JavaScriptCode = @"  
-                                            var " + this.ClientID + @"= $(" + cmll + "#" + txtText.ClientID + cmll + @");
-                                           
-                                            var CollectionParams" + this.ClientID + @" = eval('" + AttrParamsCollection + @"');
-                                            " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
+
+                string CadenaConexion = "";
+                if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceeLocal)
+                {
+                    CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService + "/" + this.DataInterconect.Metodo;//aqui hay un error
+                }
+                else
+                {
+                    CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;//aqui hay un error
+                }
+
+                //string CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService + "/" + this.DataInterconect.Metodo;//aqui hay un error
+                string JavaScriptCode = @"  var " + this.ClientID + @"= $(" + cmll + "#" + txtText.ClientID + cmll + @");
+                                            var CollectionParams" + this.ClientID + @" = eval(" + this.ClientID + @".attr(" + cmll + "ParamCollection" + cmll + @"));
+                                          //imagen base
+                                            " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @"); 
                                             " + this.ClientID + @".autocomplete({
                                                                         minLength: " + NroCarIni.ToString() + @",
                                                                         Text: '" + this.DisplayText + @"',//atributos adicionales para el control de display y seleccion
@@ -394,7 +371,7 @@ namespace EasyControlWeb.Form.Controls
                                                                         DataLoad: null,
                                                                         source: function(request, response) {
                                                                                 if(CollectionParams" + this.ClientID + @"==undefined){
-                                                                                    " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
+                                                                                    " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @"); 
                                                                                     $(" + cmll + "#" + txtText.ClientID + cmll + @").val('Error no se ha definido parámetro de búsqueda');
                                                                                 }
                                                                                 var cmll = " + cmll + "'" + cmll + @";
@@ -402,8 +379,8 @@ namespace EasyControlWeb.Form.Controls
                                                                                 var _SeletectValue = this.options.Value;
                                                                                 var _SeletectText = this.options.Text;
                                                                                 var oParam = null;
-                                                                                var oParamCollections = new SIMA.ParamCollections();
-                                                                                //CollectionParams se obtiene del atributo assignado al control su formato es {Campo:valor}
+                                                                                var oParamCollections = new SIMA.Data.OleDB.ParamCollections();
+                                                                                //Adiciona a la Collection el parametro de busqueda ingresada
                                                                                   CollectionParams" + this.ClientID + @".forEach(function(Param){
                                                                                                                 var Valor = Param.Value;
                                                                                                                     if(Param.ObtenerValor=='FormControl'){
@@ -419,58 +396,33 @@ namespace EasyControlWeb.Form.Controls
                                                                                                                     else if(Param.ObtenerValor=='CriterioInput'){
                                                                                                                         Valor = request.term;//Valor a ser localizado
                                                                                                                     }
-                                                                                                                    else if(Param.ObtenerValor=='FunctionScript'){
-                                                                                                                        eval('Valor=' + Param.Value);
-                                                                                                                    }
-
-                                                                                                                oParam = new SIMA.Param(Param.Name,Valor,Param.Tipo); 
+                                                                                                                oParam = new SIMA.Data.OleDB.Param(Param.Name,Valor);
                                                                                                                 oParamCollections.Add(oParam);
-                                                                                                           }); 
-                                                                                  //Establece el valor actual en un atributo del control
-                                                                                  jNet.get('" + this.txtText.ClientID + @"').value = request.term;
-                                                                                if (((this.options.TextSearch != request.term) && (this.options.TextSearch.indexOf(request.term) == -1)) || (request.term.length > this.options.TextSearch.length)){
-                                                                                    this.options.TextSearch = request.term;
-
-                                                                                    try{
-                                                                                              //Prepara la cadena de conexion  por el objeto interconect
-                                                                                              var oEasyDataInterConect = new EasyDataInterConect();
-                                                                                                oEasyDataInterConect.MetododeConexion = ModoInterConect." + MetodoConexionSelect.ToString() + @";
-                                                                                                oEasyDataInterConect.UrlWebService =  ((" + this.ClientID + ".UrlWebService==null)?'" + PageWebService + @"':" + this.ClientID + ".UrlWebService" + @");
-                                                                                                oEasyDataInterConect.Metodo = '" + WSMetoodo + @"';
-                                                                                                oEasyDataInterConect.ParamsCollection = oParamCollections;
-
-                                                                                             //Se conecta y Obtiene los datos en formato DataTable
-                                                                                             var oEasyDataResult = new EasyDataResult(oEasyDataInterConect);
-
-                                                                                             var oDataTable = new SIMA.Data.DataTable('tbl');
-                                                                                                 oDataTable = oEasyDataResult.getDataTable('EasyAutocompletar');
-                                                                                                 if(oDataTable!=null){  
-                                                                                                         oDataTable.Rows.forEach(function(oDataRow,idr) {
-                                                                                                            var strEntity = " + cmll + cmll + @";
-                                                                                                            var EntityRst=null;
-                                                                                                            oDataRow.Columns.forEach(function(oDataColumn,idc) {
-                                                                                                                strEntity += oDataColumn.Name + " + cmll + ":" + cmll + " + cmll + oDataRow[oDataColumn.Name].toString() + cmll + " + cmll + "," + cmll + @";
-                                                                                                            });
-                                                                                                            strEntity = strEntity.substring(0, strEntity.length - 1);
-                                                                                                        
-                                                                                                            strEntity = " + cmll + "{" + cmll + " + " + cmll + "label: " + cmll + " + cmll + oDataRow[_SeletectText] + cmll +" + cmll + "," + cmll + " + strEntity + " + cmll + "}" + cmll + @";
-                                                                                                            eval(" + cmll + "EntityRst= " + cmll + @" + strEntity);
-                                                                                                       
-                                                                                                            rowsData[rowsData.length] = new Array();
-                                                                                                            rowsData[rowsData.length - 1] = EntityRst;
-                                                                                                        });
-                                                                                                        this.options.DataLoad = rowsData;
-                                                                                                 }
+                                                                                                           });
+                                                                                if (((this.options.TextSearch != request.term) && (this.options.TextSearch.indexOf(request.term) == -1)) || (request.term.length > this.options.TextSearch.length))
+                                                                                {//para evitar volver a cargar del lado del servidor
+                                                                                    this.options.TextSearch = request.term;//asigna para luego comparar en la llamada al response()
+                                                                                    var OleDBCommand = new SIMA.Data.OleDB.Command();
+                                                                                    OleDBCommand.CadenadeConexion = '" + CadenaConexion + @"';
+                                                                                    var oDataTable = new SIMA.Data.DataTable('tbl');
+                                                                                    oDataTable = OleDBCommand.ExecuteDataSet(oParamCollections);
+                                                                                    if(oDataTable!=null){
+                                                                                        oDataTable.Rows.forEach(function(oDataRow,idr) {
+                                                                                            var strEntity = " + cmll + cmll + @";
+                                                                                            oDataRow.Columns.forEach(function(oDataColumn,idc) {
+                                                                                                strEntity += oDataColumn.Name + " + cmll + ":" + cmll + " + cmll + oDataRow[oDataColumn.Name].toString() + cmll + " + cmll + "," + cmll + @";
+                                                                                            });
+                                                                                            strEntity = strEntity.substring(0, strEntity.length - 1);
+                                                                                            strEntity = " + cmll + "{" + cmll + " + " + cmll + "label: " + cmll + " + cmll + oDataRow[_SeletectText] + cmll +" + cmll + "," + cmll + " + strEntity + " + cmll + "}" + cmll + @";
+                                                                                            eval(" + cmll + "var Entity= " + cmll + @" + strEntity);
+                                                                                            rowsData[rowsData.length] = new Array();
+                                                                                            rowsData[rowsData.length - 1] = Entity;
+                                                                                        });
+                                                                                        this.options.DataLoad = rowsData;
                                                                                     }
-                                                                                    catch(oException){
-                                                                                        var strexception =''
-                                                                                         if (oException instanceof SIMA.WebServiceException){
-                                                                                            var msgConfig = { Titulo: 'Error', Descripcion:'Origen:'+  oException.Point + '\n' + 'Mensaje:' + oException.Message};
-                                                                                            var oMsg = new SIMA.MessageBox(msgConfig);
-                                                                                            oMsg.Alert();
-                                                                                         }
+                                                                                    else{
+                                                                                        this.options.DataLoad = null;
                                                                                     }
-
                                                                                 }
                                                                                 else
                                                                                 {//en caso el criterio sea diferente a lo ya cargado
@@ -478,37 +430,29 @@ namespace EasyControlWeb.Form.Controls
                                                                                 }
 
                                                                                 if(rowsData.length==0){
-                                                                                      " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconWriter + " + cmll + "') right center no-repeat " + cmll + @");
+                                                                                      " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconWriter + "') right center no-repeat " + cmll + @");
                                                                                       jNet.get('" + txtVal.ClientID + @"').value = '';
                                                                                 }
 
                                                                                 var retorno=false;
                                                                                 response(
                                                                                             $.grep(rowsData, function(item) {
-                                                                                                                    return true;
-                                                                                                            })
-                                                                                         );
-
-
-
-                                                                               /* debera de usuarse cuando la data no sea obtenida usando llamadas al servidos y esta sea contruida array JS por el desarrollador
-                                                                                response(
-                                                                                            $.grep(rowsData, function(item) {
                                                                                                                         var TextFieldResultValue = item." + this.DisplayText + @".toUpperCase();
                                                                                                                         retorno = ((TextFieldResultValue.indexOf(request.term.toUpperCase()) == -1) ? false : true);
                                                                                                                     return retorno;
                                                                                                         })
-                                                                                         );*/
+                                                                                         );
                                                                             },
                                                                             search:function(){
-                                                                                 " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconWriter + " + cmll + "') right center no-repeat " + cmll + @"); 
+                                                                                 " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.ImgLoandig + "') right center no-repeat " + cmll + @"); 
                                                                             },
                                                                             close: function(event, ui){
-                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
+                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @"); 
                                                                             },
                                                                             open: function() {
-                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
-                                                                               
+                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @"); 
+                                                                               /* 
+                                                                                $('.ui-widget-content').css('background', '" + ColorTranslator.ToHtml(this.BackColor) + @"');*/
                                                                             },
                                                                             focus: function(event, ui) {
                                                                                 event.preventDefault();
@@ -532,37 +476,53 @@ namespace EasyControlWeb.Form.Controls
 
                                                                                 $(" + cmll + "#" + txtText.ClientID + cmll + @").val(ui.item.label);
                                                                                 $(" + cmll + "#" + txtVal.ClientID + cmll + @").val(ui.item." + this.ValueField + @");
-                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @");
-                                                                               // try{
+                                                                                " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @");
+                                                                                try{
                                                                                     " + fnSelect + @";
-                                                                                    " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
-                                                                                /*}
+                                                                                    " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconFind + "') right center no-repeat " + cmll + @"); 
+                                                                                }
                                                                                 catch(ex){
                                                                                     alert(ex.message);
-                                                                                }*/
+                                                                                }
                                                                     }
                                                                 });
                                                                 " + this.ClientID + @".data('autocomplete')._renderItem = function(ul,item){ " + TemplateCustom + @"};
                                                                 
                                                                 ";
 
-                    (new LiteralControl("\n<script>\n" + JavaScriptCode + "\n" + "</script>\n")).RenderControl(writer);
-                    //functiones de lectura
-                    string scriptGet = this.ClientID + @".GetValue=function(){
+
+
+                /*
+                 * .append('<a>' + item." + this.DisplayText + @"+ '<br>' + item." + this.ValueField + @" + '</a>')
+                 
+
+
+                   obj" + this.ClientID + @"Searh.data('autocomplete')._renderItem = function(ul,item){
+                                                                                                                                         return $( '<li></li>').data('item.autocomplete', item)
+                                                                                                                                                                .append('<a><table><tr><td><a><img  src=  " + cmll + cmll + @"></a></td>'
+                                                                                                                                                                           +     '<td>' + item." + this.DisplayText + @"+ '<br>' + item." + this.ValueField + @" + '</td>'
+                                                                                                                                                                           +     '<td><label>Qty:</label>'
+                                                                                                                                                                           +         '<button  type=" + cmll +"button" + cmll + " class=" + cmll + "primary" + cmll + @">Update Count</button>'
+                                                                                                                                                                           +     '</td>'
+                                                                                                                                                                           + '</tr>'
+                                                                                                                                                                          +'</table></a>')
+                                                                                                                                                              .appendTo(ul);
+                                                                                                                                                };
+
+
+
+                 */
+
+
+
+                (new LiteralControl("\n<script>\n" + JavaScriptCode + "\n" + "</script>\n")).RenderControl(writer);
+                //functiones de lectura
+                string scriptGet =  this.ClientID + @".GetValue=function(){
                                                                 return jNet.get('" + txtVal.ClientID + @"').value;
                                                             }
                                     " + this.ClientID + @".GetText=function(){
                                                                    return jNet.get('" + txtText.ClientID + @"').value;
                                                             }
-
-                                    " + this.ClientID + @".GetValueOld=function(){
-                                                                   return '" + txtVal.Text + @"';
-                                                            }
-
-                                    " + this.ClientID + @".GetTextOld=function(){
-                                                                   return '" + txtText.Text + @"';
-                                                            }
-
                                     " + this.ClientID + @".SetValue=function(value,text){
                                                                    jNet.get('" + txtText.ClientID + @"').value=text;
                                                                    jNet.get('" + txtVal.ClientID + @"').value = value;
@@ -576,20 +536,14 @@ namespace EasyControlWeb.Form.Controls
                                         this.item=_Item;
                                         this.BodyTemplate = _BodyTemplate;
                                     }
-                                    " + this.ClientID + @".UrlWebService =null;
-                                    
                                     " + this.ClientID + @".SetCustomTemplate = function(CustomTemplateBE){
                                                                                          return $('<li></li>').data('item.autocomplete', CustomTemplateBE.item)
                                                                                                                    .append(CustomTemplateBE.BodyTemplate)
                                                                                                                    .appendTo(CustomTemplateBE.ul);
                                                                                    }                                                    
                                     ";
-                    (new LiteralControl("\n <script>\n" + scriptGet + "\n" + "</script>\n")).RenderControl(writer);
-
-
-
+                (new LiteralControl("\n <script>\n" + scriptGet + "\n" + "</script>\n")).RenderControl(writer);
             }
-
         }
 
     }

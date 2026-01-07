@@ -11,6 +11,7 @@ using System.Web.UI.WebControls;
 using System.Web.UI.HtmlControls;
 using System.Drawing;
 using System.Windows.Markup;
+using System.Windows.Controls;
 
 namespace EasyControlWeb.Form.Controls
 {

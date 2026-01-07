@@ -192,7 +192,8 @@ namespace EasyControlWeb.Form.Controls
             output.Write("            <div class=" + cmll + sModal  + cmll + " style='box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;'>\n");
             output.Write("                <div class=" + cmll + "modal-content" + cmll + " >\n");
             output.Write("                    <div id='Header_" + this.ClientID + "' class=" + cmll + "modal-header" + cmll + ">\n");
-            output.Write("                        <h4 id= " + cmll +"Title_" + this.ClientID + cmll + " class=" + cmll + "modal-title" + cmll + " > " + Titulo + "</h4>\n");
+            //output.Write("                        <img id='s' src=" + cmll + EasyUtilitario.Constantes.ImgDataURL.IconConfig + cmll + " onclick=" + cmll + ClientID + ".InfoParametro();" + cmll + " />");
+            output.Write("                        <h4 id= " + cmll +"Title_" + this.ClientID + cmll + " class=" + cmll + "modal-title" + cmll + "  ondblclick=" + cmll + ClientID + ".InfoParametro();" + cmll + "  > " + Titulo + "</h4>\n");
             output.Write("                              <div id='PanelProgress_" + this.ClientID + "' style ='width:80%;height: 25px;position: fixed;right: 0; padding-right: 40px;'>");
             output.Write(HtmlProgress);
             output.Write("                              </div>");
@@ -306,7 +307,42 @@ namespace EasyControlWeb.Form.Controls
                                             " + scriptBTN + @"
                                         }
                                     }
+                                    " + ClientID  + @".InfoParametro=function(){
+                                            var lsParam='';
+                                            if(" + ClientID + @".ParamCollection!=undefined){
+                                                        var tblMap = SIMA.Utilitario.Helper.HtmlControlsDesign.HtmlTable(" + ClientID + @".ParamCollection.getCollection().length,3);
+                                                        tblMap.css('margin-top','15px');
+                                                        " + ClientID + @".ParamCollection.getCollection().forEach(function(oParamItem,i){
+                                                                                                                    var oCellC =jNet.get(tblMap.rows[i].cells[0]);
+                                                                                                                    oCellC.innerHTML = oParamItem.Nombre;
+                                                                                                                    oCellC.css('background','#fefefe')
+                                                                                                                            .css('color','#15428b')
+                                                                                                                            .css('cursor','default')
+                                                                                                                            .css('font','14px tahoma,arial,sans-serif')
+                                                                                                                            .css('font-weight','bold')
+                                                                                                                            .css('border','1px dotted #5394C8')
+                                                                                                                            .css('height','auto')
+                                                                                                                            .css('width','60%')
+                                                                                                                            .css('padding','5px')
+                                                                                                                            .css('background-color','#E1EFFA')
+                                                                                                                            .css('vertical-align','middle');
+                                                                                                                    var oCellIgual = jNet.get(tblMap.rows[i].cells[1]);
+                                                                                                                        oCellIgual.innerHTML = '=';
+                                                                                                                        oCellIgual.css('font','11px tahoma,arial,sans-serif')
+                                                                                                                                    .css('color','#15428b');
+                                                                                                                    var oCellVal=jNet.get(tblMap.rows[i].cells[2]);
+                                                                                                                        oCellVal.innerHTML = oParamItem.Valor;
+                                                                                                                        oCellVal.css('font','14px tahoma,arial,sans-serif')
+                                                                                                                                .css('color','#15428b')
+                                                                                                                                .css('border','1px dotted #5394C8');
+                                                                                                                });
+                                                    var msgConfig = { Titulo: 'Parámetros de Página:', Descripcion: tblMap.innerHTML};
+                                                    var oMsg = new SIMA.MessageBox(msgConfig);
+                                                    oMsg.Alert();
+                                            }
+                                    }
                                     " + ClientID + @".Load=function(UrlPagina,ParamCollection,LoadjNet){
+                                                  " + ClientID + @".ParamCollection=ParamCollection;
                                                   " + ClientID + @".FormContextName = document.forms[0].id;
                                                   var LstParams='';
                                                   if(ParamCollection!=undefined){

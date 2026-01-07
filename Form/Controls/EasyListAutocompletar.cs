@@ -6,18 +6,19 @@ using System.Runtime.CompilerServices;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Windows.Resources;
 
 
 namespace EasyControlWeb.Form.Controls
 {
     [Serializable]
-    public class EasyListAutocompletar : EasyAutocompletar
+    public  class EasyListAutocompletar:EasyAutocompletar
     {
         TextBox txtLstItems;
         string OldfncOnSelected = "";
         string NewFncOnSelected = "";
-
-
+          
+         
 
         #region Propiedades
         [Category("FuncionesJScript"), Description("Contructor de Plantillas para los items de la Lista"), DefaultValue("")]
@@ -71,19 +72,19 @@ namespace EasyControlWeb.Form.Controls
 
 
 
-        public EasyListAutocompletar() : base()
-        {
+        public EasyListAutocompletar():base() {
             arrEasyListItems = new List<EasyListItem>();
-            if (txtLstItems == null) { txtLstItems = new TextBox(); }
+            if (txtLstItems == null) { txtLstItems = new TextBox();  }
         }
+      
 
-
-        HtmlGenericControl ContentItems()
-        {
+        HtmlGenericControl ContentItems() {
             HtmlGenericControl dvContent = new HtmlGenericControl("div");
             dvContent.Attributes["id"] = this.ClientID + "_Content";
-            dvContent.Style.Add("border", "1px solid grey;");
-            dvContent.Style.Add("class", this.CssClass);
+            dvContent.Style.Add("height", "auto");
+
+            dvContent.Attributes.Add("class", this.CssClass);
+
             return dvContent;
         }
 
@@ -97,11 +98,10 @@ namespace EasyControlWeb.Form.Controls
             base.CreateChildControls();
             txtText.Attributes["TypeIn"] = "COMPLETE_LIST";
             txtText.Attributes["IdList"] = this.ID;
-            if (this.Attributes["required"] != null)
-            {
+            if (this.Attributes["required"] != null) {
                 txtText.Attributes["required"] = "";
             }
-
+            
             OldfncOnSelected = this.fnOnSelected;
             NewFncOnSelected = this.ClientID + "_CrearItem";
             if (!IsDesign())
@@ -115,15 +115,15 @@ namespace EasyControlWeb.Form.Controls
 
         }
 
-
+       
 
         protected override void Render(HtmlTextWriter writer)
         {
-
+            
             base.Render(writer);
             ContentItems().RenderControl(writer);
             txtLstItems.RenderControl(writer);
-
+          
 
             string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble.ToString();
             string fncDefaultTemplate = this.ClientID + "_TemplateDefault";
@@ -137,20 +137,18 @@ namespace EasyControlWeb.Form.Controls
 
             /**********************************************************************************************************/
 
-            if ((fncTemplateCustomItemList != null) && (fncTemplateCustomItemList.Length > 0))
+            if ((fncTemplateCustomItemList !=null) &&(fncTemplateCustomItemList .Length > 0))
             {
                 //fncDefaultTemplate = fncTempaleCustomItemList;
-                FNTEMPLATE = this.fncTemplateCustomItemList + "(oItemBE);";
+                FNTEMPLATE = this.fncTemplateCustomItemList  + "(oItemBE);";
             }
-            else
-            {
+            else {
                 FNTEMPLATE = "oItemBE." + this.DisplayText;
             }
             string ScripTempateDefault = @"function " + fncDefaultTemplate + @"(oItemBE){
                                                     var HTMLCustome=" + FNTEMPLATE + @"
                                                     var cmll =SIMA.Utilitario.Constantes.Caracter.Comilla;
-                                                    var objSerialize = '';
-                                                    var objS=objSerialize.Serialized(oItemBE).toString().Replace(cmll," + cmll + "'" + cmll + @");
+                                                    var objS=''.Serialized(oItemBE).toString().Replace(cmll," + cmll + "'" + cmll + @");
                                                     var tblItem = '<table cellpadding=' + cmll + '2' + cmll +' border='+ cmll + '0' + cmll +' id=' + cmll + oItemBE." + this.ValueField + " + cmll + ' class=' + cmll + '" + this.ClassItem + @"' + cmll + ' > <tr Data=' + cmll + objS + cmll + ' > <td   style='+ cmll + 'width:100%;height:auto;' + cmll +' onclick='+ cmll + '" + this.ClientID + "_LstItemOnClick(this);" + "' + cmll + ' >' + HTMLCustome + '</td><td><img  onclick='+ cmll + '" + this.ClientID + "_LstItemOnDelete(this);" + @"' + cmll + ' src=' + cmll + SIMA.Utilitario.Constantes.ImgDataURL.ImgClose + cmll +'/></td></tr></table>';
                                                     return tblItem;
                                                 }
@@ -244,7 +242,6 @@ namespace EasyControlWeb.Form.Controls
                                                     }
                                             }
                                             function " + this.ClientID + @"_SetListCollection(){
-                                                var Dencript='';
                                                 var objTxtLst = jNet.get('" + txtLstItems.ClientID + @"');
                                                     objTxtLst.value = '';
                                                  " + this.ClientID + @"_Collection.forEach(function(oItem,i){
@@ -287,18 +284,17 @@ namespace EasyControlWeb.Form.Controls
                                     }
                                                                 ";
 
-            (new LiteralControl("\n <script>\n" + ScriptMetodos + "\n" + "</script>\n")).RenderControl(writer);
+             (new LiteralControl("\n <script>\n" + ScriptMetodos + "\n" + "</script>\n")).RenderControl(writer);
 
             //Agreaga los items cargados  en el lado del servidor
             string ScriptAddItem = this.ClientID + @"_Paint=function(){
                                                             var ObjContent=jNet.get('" + this.ClientID + @"_Content');
                                                             ";
-            foreach (EasyListItem oitem in this.ListItems)
-            {
-                ScriptAddItem += "oItemBE = " + EasyUtilitario.Helper.Data.SeriaizedDiccionario(oitem.DataComplete) + ";\n";
-                ScriptAddItem += this.ClientID + "_Collection.Add(oItemBE);\n";
-            }
-            ScriptAddItem += this.ClientID + @"_SetListCollection();
+                                                                foreach (EasyListItem oitem in this.ListItems) {
+                                                                        ScriptAddItem += "oItemBE = " + EasyUtilitario.Helper.Data.SeriaizedDiccionario(oitem.DataComplete)+";\n" ; 
+                                                                        ScriptAddItem += this.ClientID + "_Collection.Add(oItemBE);\n";
+                                                                }
+                                                        ScriptAddItem += this.ClientID + @"_SetListCollection();
                                                         " + this.ClientID + @"_Collection.forEach(function(oItem, i){
                                                                     var ItemList  =" + fncDefaultTemplate + @"(oItem);
                                                                 ObjContent.insertAdjacentHTML('beforeend',ItemList);
@@ -306,18 +302,16 @@ namespace EasyControlWeb.Form.Controls
                                                     }
                             " + this.ClientID + @"_Paint();
                           ";
-            (new LiteralControl("\n <script>\n" + ScriptAddItem + "\n" + "</script>\n")).RenderControl(writer);
+                (new LiteralControl("\n <script>\n" + ScriptAddItem + "\n" + "</script>\n")).RenderControl(writer);
         }
 
-        string[] GetData()
-        {
+        string[] GetData() {
             string[] LstItems = txtLstItems.Text.Split(EasyUtilitario.Constantes.Caracteres.Separador.ToCharArray());
             return LstItems;
         }
 
-        public List<EasyListItem> GetCollection()
-        {
-            List<EasyListItem> oCollection = new List<EasyListItem>();
+        public List<EasyListItem> GetCollection() {
+            List< EasyListItem>oCollection = new List< EasyListItem >();   
             string[] LstItems = GetData();
             if (LstItems.Length > 0)
             {
@@ -340,5 +334,8 @@ namespace EasyControlWeb.Form.Controls
                 return this.Site.DesignMode;
             return false;
         }
+
+
     }
+
 }

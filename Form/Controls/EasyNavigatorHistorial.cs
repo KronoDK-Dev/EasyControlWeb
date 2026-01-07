@@ -1,25 +1,25 @@
-﻿using EasyControlWeb.Errors;
-using EasyControlWeb.Filtro;
-using EasyControlWeb.Form.Base;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Security.Permissions;
-using System.Web;
 using System.Web.UI;
-using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Data;
+using System.Security.Permissions;
+using System.Web.UI.HtmlControls;
+using EasyControlWeb.Errors;
+using EasyControlWeb.Filtro;
+using System.Windows.Resources;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
+using System.Drawing; 
 
 namespace EasyControlWeb.Form.Controls
 {
 
     /**********************************************************************************************************/
     public enum TipoValorRetorno
-    {
+    { 
         Simple,
         Doble,
     }
@@ -36,53 +36,52 @@ namespace EasyControlWeb.Form.Controls
     {
 
         #region Variables Locales
-        string BlockScript = "";
-        List<LiteralControl> _ScriptsHS = new List<LiteralControl>();
-        string scriptSelect = "";
+            string BlockScript = "";
+            List<LiteralControl> _ScriptsHS = new List<LiteralControl>();
+            string scriptSelect = "";
         #endregion
 
         #region Controles
         HtmlGenericControl _Navigator;
-        HtmlButton btnPostBack;
-        HtmlGenericControl _btnAtras;
+            HtmlButton btnPostBack;
+            HtmlGenericControl _btnAtras;
         #endregion
 
         #region Propiedades Simples
 
 
-        /*  public string ApplicationPath
-          {
-              get {
-                  string NomAPP = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.ApplicationPath.Replace("/", "");
-                  string StringUrl = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Url.OriginalString;
-                  int MaxLeng = StringUrl.IndexOf(NomAPP);
-                  string UrlAbsoluta = StringUrl.Substring(0, ((MaxLeng + NomAPP.Length) + 1));
-                  return UrlAbsoluta;
-              }
-          }*/
-        public string IconColor { get; set; }
-        public string IconColorOver { get; set; }
-
-
-        private string defaultPageName;
-        public string DefaultPageName
+      /*  public string ApplicationPath
         {
-            get
-            {
-                if (defaultPageName == null)
-                {
-                    defaultPageName = "Default.aspx";
-                }
-                return defaultPageName;
+            get {
+                string NomAPP = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.ApplicationPath.Replace("/", "");
+                string StringUrl = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Url.OriginalString;
+                int MaxLeng = StringUrl.IndexOf(NomAPP);
+                string UrlAbsoluta = StringUrl.Substring(0, ((MaxLeng + NomAPP.Length) + 1));
+                return UrlAbsoluta;
             }
-            set
-            {
-                defaultPageName = value;
-            }
-        }
-        public string ParamMenuText { get; set; }
-        public string ParamMenuDescrip { get; set; }
+        }*/
+            public string IconColor { get; set; }
+            public string IconColorOver { get; set; }
 
+       
+            private string defaultPageName;
+            public string DefaultPageName {
+                get
+                {
+                    if (defaultPageName == null)
+                    {
+                        defaultPageName = "Default.aspx";
+                    }
+                    return defaultPageName;
+                }
+                set
+                {
+                    defaultPageName = value;
+                }
+            } 
+            public string ParamMenuText { get; set; }
+            public string ParamMenuDescrip { get; set; }
+        
         #endregion
 
 
@@ -95,8 +94,7 @@ namespace EasyControlWeb.Form.Controls
             {
                 oEasyNavigatorBElst = (List<EasyNavigatorBE>)((System.Web.UI.Page)HttpContext.Current.Handler).Session[EasyUtilitario.Constantes.Sessiones.Historial];
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 oEasyNavigatorBElst = null;
             }
             return oEasyNavigatorBElst;
@@ -106,27 +104,26 @@ namespace EasyControlWeb.Form.Controls
             ((System.Web.UI.Page)HttpContext.Current.Handler).Session[EasyUtilitario.Constantes.Sessiones.Historial] = oHistorial;
         }
 
-        HtmlGenericControl CrearHistorial()
-        {
+        HtmlGenericControl CrearHistorial() {
             int idx = 1;
-            _Navigator = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("nav");
+            _Navigator =  EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("nav");
             _Navigator.Attributes.Add("aria-label", "breadcrumb");
 
             //_Navigator.Attributes.CssStyle.Add("opacity", "0.5");
-            // _Navigator.Attributes.CssStyle.Add("background-color","transparent");
-
+           // _Navigator.Attributes.CssStyle.Add("background-color","transparent");
+            
 
             HtmlGenericControl _ol = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("ol", "breadcrumb breadcrumb-arrow HistoryBar");
-        //_ol.Attributes.Add("class", "breadcrumb breadcrumb-arrow p-0");
+            //_ol.Attributes.Add("class", "breadcrumb breadcrumb-arrow p-0");
 
-        PaintBrush:
+            PaintBrush:
             this.History = getHistorial();
             if (this.History != null)
             {
                 foreach (EasyNavigatorBE oEasyNavigatorBE in this.History)
                 {
                     HtmlGenericControl _li = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("li");
-                    // _li.Attributes.CssStyle.Add("opacity", "0.5");
+                   // _li.Attributes.CssStyle.Add("opacity", "0.5");
 
                     HtmlGenericControl _a = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("a");
                     _a.Attributes.Add("href", "#");
@@ -159,12 +156,10 @@ namespace EasyControlWeb.Form.Controls
                 }
                 _Navigator.Controls.Add(_ol);
             }
-            else
-            {
-                if (!IsDesign())
-                {
+            else {
+                if (!IsDesign()) {
                     string pathPag = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.RawUrl;
-                    string App = "/" + EasyUtilitario.Helper.Pagina.AppName();
+                    string App = "/"+EasyUtilitario.Helper.Pagina.AppName();
                     pathPag = pathPag.Replace(App, "");
                     //Dibuja la pagina por defecto
                     EasyNavigatorBE oEasyNavigatorBE = new EasyNavigatorBE();
@@ -186,13 +181,12 @@ namespace EasyControlWeb.Form.Controls
                 }
             }
 
-
+          
 
             return _Navigator;
         }
 
-        HtmlGenericControl CrearBotonAtras()
-        {
+        HtmlGenericControl CrearBotonAtras() {
             HtmlGenericControl btnNull = new HtmlGenericControl();
             _btnAtras = new HtmlGenericControl();
 
@@ -222,8 +216,7 @@ namespace EasyControlWeb.Form.Controls
             }
             return _btnAtras;
         }
-        string StyleColorBtnMerge()
-        {
+        string StyleColorBtnMerge() {
             string _style = @".float-nav-2 {
                                   position: fixed;
                                   bottom: 20px;
@@ -237,10 +230,9 @@ namespace EasyControlWeb.Form.Controls
             return _style;
         }
 
+    
 
-
-        public void getAllCtrlMemoryValue()
-        {
+        public void getAllCtrlMemoryValue() {
             //Restaura los valores de los controles guardados
             string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
 
@@ -248,7 +240,7 @@ namespace EasyControlWeb.Form.Controls
             this.History = getHistorial();
             if (this.History == null) { return; }
             foreach (EasyNavigatorBE oEasyNavigatorBE in this.History.Where(oBE => oBE.Pagina + ((oBE.ToString().Length > 0) ? "?" : "") + oBE.ToString() == UrlActual))
-            //foreach (EasyNavigatorBE oEasyNavigatorBE in this.History.Where(oBE => oBE.Url == UrlActual))
+                //foreach (EasyNavigatorBE oEasyNavigatorBE in this.History.Where(oBE => oBE.Url == UrlActual))
             {
                 if (oEasyNavigatorBE.LstCtrlValue != null)
                 {
@@ -295,12 +287,10 @@ namespace EasyControlWeb.Form.Controls
                                 string[] PagSort = Ctrl_Value[1].Split(EasyUtilitario.Constantes.Caracteres.SignoArroba.ToCharArray());
                                 oEasyGridView.setPagina(PagSort[0]);
                                 oEasyGridView.PageIndex = Convert.ToInt32(PagSort[0]);
-                                if ((PagSort[1].Length > 0) && (PagSort[2].Length > 0))
-                                {
+                                if ((PagSort[1].Length > 0) && (PagSort[2].Length > 0)){
                                     oEasyGridView.setSorting(PagSort[1], PagSort[2]);
                                 }
-                                if (PagSort[3].Length > 0)
-                                {//Script para el registro seleccionado
+                                if (PagSort[3].Length > 0) {//Script para el registro seleccionado
                                     string NroFila = PagSort[3];
                                     string _RowIndex = PagSort[4];
                                     oEasyGridView.setNroRegSelect(NroFila);
@@ -315,51 +305,11 @@ namespace EasyControlWeb.Form.Controls
                                                                                         }
                                                                                     });
                                                                 }
-                                                       ";
+                                                        ";
+                                    ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + fncSelectedRow + "</script>"));
 
-                                    try
-                                    {
-                                        ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + fncSelectedRow + "</script>"));
-                                        scriptSelect = @" setTimeout(" + oEasyGridView.ClientID + @"_onSeleted(),9000);";
-                                        ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + scriptSelect + "</script>"));
-
-                                    }
-                                    catch (Exception ex) // 20.11.2024 se adiciona validacion de errores (<% ... %>)
-                                    {
-
-                                        string fncSelectedRow2 = $@"
-                                            function {oEasyGridView.ClientID}_onSelected() {{
-                                                var ogridView = document.getElementById('{oEasyGridView.ClientID}');
-                                                var rows = ogridView.querySelectorAll('[TipoRow=""{cmll}2""]'); 
-                                                rows.forEach(function(row, idx) {{
-                                                    if (row.rowIndex == '{_RowIndex}') {{
-                                                        {oEasyGridView.ClientID}_OnRowClick(row);
-                                                        SIMA.GridView.Extended.OnEventClickChangeColor(row);
-                                                    }}
-                                                }});
-                                            }}
-                                        ";
-
-                                        // Registrar el script de la función en la página
-                                        ((System.Web.UI.Page)HttpContext.Current.Handler).ClientScript.RegisterStartupScript(
-                                            typeof(Page),
-                                            "SelectedRowScript",
-                                            $"<script>{fncSelectedRow2}</script>",
-                                            false
-                                        );
-
-                                        // Registrar el script de ejecución diferida
-                                        string scriptSelect = $@"setTimeout({oEasyGridView.ClientID}_onSelected, 9000);";
-                                        ((System.Web.UI.Page)HttpContext.Current.Handler).ClientScript.RegisterStartupScript(
-                                            typeof(Page),
-                                            "ExecuteSelectedRowScript",
-                                            $"<script>{scriptSelect}</script>",
-                                            false
-                                        );
-
-                                    }
-                                    //--------------------------------------------------------------
-
+                                    scriptSelect = @" setTimeout(" + oEasyGridView.ClientID + @"_onSeleted(),9000);";
+                                    ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + scriptSelect + "</script>"));
 
 
                                 }
@@ -377,24 +327,23 @@ namespace EasyControlWeb.Form.Controls
                 string UrlActual = "/" + EasyUtilitario.Helper.Pagina.UrlContextActual();//Modificado 08-11-2022 se agrego el caracter /
                 this.History = getHistorial();
 
-                foreach (EasyNavigatorBE oEasyNavigatorBE in this.History.Where(oBE => oBE.Pagina + ((oBE.ToString().Length > 0) ? "?" : "") + oBE.ToString() == UrlActual))
+                foreach (EasyNavigatorBE oEasyNavigatorBE in this.History.Where(oBE =>  oBE.Pagina  +  ((oBE.ToString().Length>0)?"?":"") + oBE.ToString() == UrlActual))
                 {
                     oEasyNavigatorBE.LstCtrlValue = null;
                     //Localiza los controles del array para guardar su valor
                     foreach (object ObjCtrl in LstCtrl)
                     {
-                        object obj; string objName;
+                        object obj;string objName;
                         if (ObjCtrl.GetType() == typeof(string))
                         {
                             objName = ((string)(ObjCtrl));
                             obj = ((System.Web.UI.Page)HttpContext.Current.Handler).Page.FindControl(objName);
                         }
-                        else
-                        {
+                        else {
                             //objName = ((string)(ObjCtrl));
                             obj = ObjCtrl;
                         }
-
+                        
                         //oEasyNavigatorBE.LstCtrlValue += objName + EasyUtilitario.Constantes.Caracteres.SignoIgual;
                         if (obj.GetType() == typeof(TextBox))
                         {
@@ -451,7 +400,7 @@ namespace EasyControlWeb.Form.Controls
 
                         }
 
-
+                        
 
                         oEasyNavigatorBE.LstCtrlValue += EasyUtilitario.Constantes.Caracteres.SignoAmperson;
 
@@ -514,8 +463,8 @@ namespace EasyControlWeb.Form.Controls
                 _Navigator.RenderControl(writer);
                 if (!IsDesign())
                 {
-                    btnPostBack.RenderControl(writer);
-                    _btnAtras.RenderControl(writer);
+                     btnPostBack.RenderControl(writer);
+                     _btnAtras.RenderControl(writer);
                 }
                 LiteralControl lcStyle = new LiteralControl("<style>" + StyleColorBtnMerge() + "</style>");
                 lcStyle.RenderControl(writer);
@@ -525,8 +474,7 @@ namespace EasyControlWeb.Form.Controls
                  }*/
                 //(new LiteralControl(scriptSelect)).RenderControl(writer);
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex) {
                 string msg = ex.Message;
             }
 
@@ -536,7 +484,7 @@ namespace EasyControlWeb.Form.Controls
         #region Metodos Internos
         protected virtual void EasyHistorial_Click(object sender, EventArgs e)
         {
-            string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
+            string Argument= ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
             if (Argument.Length > 0)
             {
                 UbicateEn(Argument);
@@ -552,28 +500,27 @@ namespace EasyControlWeb.Form.Controls
         public void UbicateEn(string Argument, bool OnlyRemove)
         {
             char MiCar = (char)Convert.ToChar(EasyUtilitario.Constantes.Caracteres.SeparadorHorizontal.ToString());
-            this.History = getHistorial();
-            string[] arrHistSelect = Argument.Split(MiCar);
-            int PosActual = Convert.ToInt32(arrHistSelect[0]);
-            int PosUlt = this.History.Count;
-            if (PosActual == this.History.Count) { return; }//esta en ña mima posicion
-            for (int p = PosActual; p <= PosUlt; p++)
-            {
-                this.History.RemoveAt(PosActual);
-                PosUlt--;
-            }
-            setHistorial(this.History);
-            EasyNavigatorBE oNavBE = (EasyNavigatorBE)this.History[PosActual - 1];
+                this.History = getHistorial();
+                string[] arrHistSelect = Argument.Split(MiCar);
+                int PosActual = Convert.ToInt32(arrHistSelect[0]);
+                int PosUlt = this.History.Count;
+                if (PosActual == this.History.Count) { return; }//esta en ña mima posicion
+                for (int p = PosActual; p <= PosUlt; p++)
+                {
+                    this.History.RemoveAt(PosActual);
+                    PosUlt--;
+                }
+                setHistorial(this.History);
+                EasyNavigatorBE oNavBE = (EasyNavigatorBE)this.History[PosActual - 1];
             if (OnlyRemove == false)
             {
                 Go(oNavBE);
                 //((System.Web.UI.Page)HttpContext.Current.Handler).Response.Redirect(EasyUtilitario.Helper.Pagina.PathSite() + oNavBE.Url, false);               
             }
         }
-        bool ExisteInLast(EasyNavigatorBE oEasyNavigatorBE)
-        {
+        bool ExisteInLast(EasyNavigatorBE oEasyNavigatorBE) {
             this.History = getHistorial();
-            if (this.History != null)
+            if(this.History!=null)
             {
                 EasyNavigatorBE LastEasyNavigatorBE = (EasyNavigatorBE)this.History[this.History.Count - 1];
                 /*string[] Local = LastEasyNavigatorBE.Url.Split('/');
@@ -587,23 +534,20 @@ namespace EasyControlWeb.Form.Controls
                 string[] Remoto = oEasyNavigatorBE.Pagina.Split('/');
                 string LocalyParams = Local[Local.Length - 1] + LastEasyNavigatorBE.ToString();
                 string RemotoyParams = Remoto[Remoto.Length - 1] + LastEasyNavigatorBE.ToString();
-                if (LocalyParams == RemotoyParams)
-                {
+                if (LocalyParams == RemotoyParams) {
                     return true;
                 }
             }
             return false;
         }
-
-        public void IrA(EasyNavigatorBE oEasyNavigatorBE)
-        {
+         
+        public void IrA(EasyNavigatorBE oEasyNavigatorBE) {
             this.ColleccionarNavegacion(oEasyNavigatorBE);
             Go(oEasyNavigatorBE);
             //((System.Web.UI.Page)HttpContext.Current.Handler).Response.Redirect(EasyUtilitario.Helper.Pagina.PathSite() + oEasyNavigatorBE.Url, false);
         }
 
-        private void ColleccionarNavegacion(EasyNavigatorBE oEasyNavigatorBE)
-        {
+        private void ColleccionarNavegacion(EasyNavigatorBE oEasyNavigatorBE) {
             if (ExisteInLast(oEasyNavigatorBE) == false)
             {
                 this.History = getHistorial();
@@ -617,8 +561,7 @@ namespace EasyControlWeb.Form.Controls
         }
 
 
-        public void Atras()
-        {
+        public void Atras() {
             this.History = getHistorial();
             if (this.History != null)
             {
@@ -630,8 +573,7 @@ namespace EasyControlWeb.Form.Controls
                 //((System.Web.UI.Page)HttpContext.Current.Handler).Response.Redirect(EasyUtilitario.Helper.Pagina.PathSite() + oEasyNavigatorBE.Url, false);
             }
         }
-        void Go(EasyNavigatorBE oEasyNavigatorBE)
-        {
+        void Go(EasyNavigatorBE oEasyNavigatorBE) {
             string _url = oEasyNavigatorBE.Pagina + EasyUtilitario.Constantes.Caracteres.SignoInterrogacion + oEasyNavigatorBE.ToString();
             ((System.Web.UI.Page)HttpContext.Current.Handler).Response.Redirect(EasyUtilitario.Helper.Pagina.PathSite() + _url, false);
         }
@@ -643,5 +585,13 @@ namespace EasyControlWeb.Form.Controls
             return false;
         }
         #endregion
+
+
+
+
+
+
+
+
     }
 }

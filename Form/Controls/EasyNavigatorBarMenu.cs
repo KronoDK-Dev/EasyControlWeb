@@ -63,21 +63,21 @@ namespace EasyControlWeb.Form.Controls
 
 
         #region Controles
-        HtmlGenericControl contentMenu;
-        List<LiteralControl> lcMenu = new List<LiteralControl>();
+            HtmlGenericControl contentMenu;
+            List<LiteralControl> lcMenu = new List<LiteralControl>();
 
 
-        HtmlTable objTblMenu;
-        EasyNavigatorHistorial oEasyNavigatorHistorial;
-        EasyPopupBase easyPopupBase;
-        HtmlButton btnAccion;
-        HtmlButton btnItemMenu;
-        TextBox txtDescripcion;
+            HtmlTable objTblMenu;
+            EasyNavigatorHistorial oEasyNavigatorHistorial;
+            EasyPopupBase easyPopupBase;
+            HtmlButton btnAccion;
+            HtmlButton btnItemMenu;
+            TextBox txtDescripcion;
         #endregion
 
         #region Propiedades
 
-        //  public int NroAlertas { get; set; }
+      //  public int NroAlertas { get; set; }
 
         [Category("Imagen")]
         [Browsable(true)]
@@ -89,7 +89,7 @@ namespace EasyControlWeb.Form.Controls
             {
                 if (this.ViewState[IMG_LOGO_HEADER] == null)
                 {
-                    this.ViewState[IMG_LOGO_HEADER] = ResolveUrl("~/Recursos/img/header.jpg");  // 23.12.2024 antes: "Image/header.jpg"
+                    this.ViewState[IMG_LOGO_HEADER] = "Image/header.jpg";
                 }
                 return (string)this.ViewState[IMG_LOGO_HEADER];
             }
@@ -200,32 +200,16 @@ namespace EasyControlWeb.Form.Controls
         HtmlTable TablaBarMenu()
         {
             objTblMenu = EasyUtilitario.Helper.HtmlControlsDesign.CrearTabla(4, 1);
-
+            
             objTblMenu.Attributes.Add("Border", "0px");
             objTblMenu.Style.Add("width", "100%");
 
             objTblMenu.Rows[0].Cells[0].Controls.Add(NavigatorBar());//Celda del logo
 
 
-            HtmlGenericControl jqxMenu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
-            jqxMenu.Style.Add("visibility", "hidden");
-            jqxMenu.ID = "jqxMenu";
-            jqxMenu.Controls.Add(MenuBar1_1());
-            //Contenedor del menu
-            contentMenu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
-            contentMenu.ID = "content";
-            contentMenu.Attributes.Add("class", "ContentMnu");
-            contentMenu.Style.Add("display", "none");
-            //contentMenu.Style.Add("backgroundColor", "gray");
-
-            // LiteralControl lcMenu = new LiteralControl("<script>" + ScriptConfigMenu() + "</script>");
-            lcMenu.Add(new LiteralControl("<script>" + ScriptConfigMenu() + "</script>"));
-            //contentMenu.Controls.Add(lcMenu);
-            contentMenu.Controls.Add(jqxMenu);
-
             if (!DesignMode)
             {
-                jqxMenu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
+                    HtmlGenericControl jqxMenu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
                 jqxMenu.Style.Add("visibility", "hidden");
                 jqxMenu.ID = "jqxMenu";
                 jqxMenu.Controls.Add(MenuBar1_1());
@@ -245,11 +229,10 @@ namespace EasyControlWeb.Form.Controls
                 objTblMenu.Rows[1].Cells[0].Style.Add("height", "35px");
                 this.Controls.Add(contentMenu);
             }
-            else
-            {
+            else {
                 objTblMenu.Rows[1].Cells[0].Controls.Add(new LiteralControl("Menú"));
             }
-
+         
 
 
 
@@ -272,20 +255,20 @@ namespace EasyControlWeb.Form.Controls
 
             return _aref;
         }
-
+       
         #endregion
-
+      
         HtmlGenericControl MenuBar1_1()
         {
             HtmlGenericControl Menu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("ul");
-            /* Menu.Attributes.Add("class", "bg-secondary text-white");
-             Menu.Style.Add("padding-left", "0px");
-             Menu.Style.Add("padding-top", "0px");
-             Menu.Style.Add("padding-bottom", "0px");*/
+           /* Menu.Attributes.Add("class", "bg-secondary text-white");
+            Menu.Style.Add("padding-left", "0px");
+            Menu.Style.Add("padding-top", "0px");
+            Menu.Style.Add("padding-bottom", "0px");*/
 
             if ((LstEasyNavigatorBarMenuBE != null) && (LstEasyNavigatorBarMenuBE.Count > 0))
             {
-
+                
                 foreach (EasyNavigatorBarMenuBE oEasyNavigatorBarMenuBE in LstEasyNavigatorBarMenuBE.Where(oBE => oBE.IdOpcionPadre == 0))
                 {
                     HtmlGenericControl MenuItem = new HtmlGenericControl();
@@ -293,7 +276,7 @@ namespace EasyControlWeb.Form.Controls
                     {
                         MenuItem = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("li");
                         MenuItem.Controls.Add(new LiteralControl(oEasyNavigatorBarMenuBE.Nombre));
-                        SubMenuBar1_1(oEasyNavigatorBarMenuBE.IdOpcion, MenuItem, oEasyNavigatorBarMenuBE.AnchoGrp, true);
+                        SubMenuBar1_1(oEasyNavigatorBarMenuBE.IdOpcion, MenuItem, oEasyNavigatorBarMenuBE.AnchoGrp,true);
                     }
                     else
                     {
@@ -303,15 +286,15 @@ namespace EasyControlWeb.Form.Controls
                         a.Attributes.Add("href", "#");
                         MenuItem.Controls.Add(a);
                     }
-
+                  
                     Menu.Controls.Add(MenuItem);
                 }
             }
             return Menu;
         }
 
-
-        void SubMenuBar1_1(int IdPadre, HtmlGenericControl opMenu, int AnchoGrp, bool Principal)
+        
+        void SubMenuBar1_1(int IdPadre, HtmlGenericControl opMenu,int AnchoGrp,bool Principal)
         {
             HtmlGenericControl SubMenuItem;
             SubMenuItem = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("ul");
@@ -319,7 +302,7 @@ namespace EasyControlWeb.Form.Controls
 
             foreach (EasyNavigatorBarMenuBE oEasyNavigatorBarMenuBE in LstEasyNavigatorBarMenuBE.Where(oBE => oBE.IdOpcionPadre == IdPadre))
             {
-
+                
                 string strParamName = "";
                 string strParamDescrip = "";
                 string strQueryStringBase = "";
@@ -332,7 +315,7 @@ namespace EasyControlWeb.Form.Controls
                     MenuItem.Controls.Add(new LiteralControl(oEasyNavigatorBarMenuBE.Nombre));
                     MenuItem.Style.Add("width", AnchoGrp.ToString() + "px");
 
-                    SubMenuBar1_1(oEasyNavigatorBarMenuBE.IdOpcion, MenuItem, oEasyNavigatorBarMenuBE.AnchoGrp, false);
+                    SubMenuBar1_1(oEasyNavigatorBarMenuBE.IdOpcion, MenuItem, oEasyNavigatorBarMenuBE.AnchoGrp,false);
                 }
                 else
                 {
@@ -349,8 +332,7 @@ namespace EasyControlWeb.Form.Controls
                     {
                         strQueryString = arrParam[1] + EasyUtilitario.Constantes.Caracteres.SignoAmperson + strQueryStringBase;
                     }
-                    else
-                    {
+                    else {
                         strQueryString = strQueryStringBase;
                     }
                     UrlReference = arrParam[0];//Ruta de la pagina
@@ -371,11 +353,10 @@ namespace EasyControlWeb.Form.Controls
                 //Establece linea divisora para aquellos que tienen hijos
                 if ((oEasyNavigatorBarMenuBE.NroSubItems > 0) && (Principal == false))
                 {
-                    if (opMenu.Controls.Count > 0)
-                    {
-                        HtmlGenericControl Separador = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("li");
-                        Separador.Attributes.Add("Type", "separator");
-                        SubMenuItem.Controls.Add(Separador);
+                    if(opMenu.Controls.Count>0){ 
+                      HtmlGenericControl Separador = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("li");
+                      Separador.Attributes.Add("Type", "separator");
+                      SubMenuItem.Controls.Add(Separador);
                     }
                 }
                 SubMenuItem.Controls.Add(MenuItem);
@@ -389,7 +370,7 @@ namespace EasyControlWeb.Form.Controls
         {
             HtmlImage img = new HtmlImage();
             img.Src = this.ImagenLogoHeader;
-            img.Attributes["Style"] = "height:50; opacity: 0.5; filter:alpha(opacity =30);";
+            img.Attributes["Style"] = "height:50; opacity: 0.5; filter:alpha(opacity =30);"; 
             return img;
         }
 
@@ -403,7 +384,7 @@ namespace EasyControlWeb.Form.Controls
             NB.Style.Add("padding-left", "1px");
             NB.Style.Add("padding-top", "1px");
             NB.Style.Add("padding-bottom", "1px");
-
+          
 
             NB.Controls.Add(ImgLogo());
             if (!DesignMode)
@@ -412,7 +393,7 @@ namespace EasyControlWeb.Form.Controls
             }
             return NB;
         }
-
+       
 
         #region screen SNAPSHOT
         string ScriptSnapShotFlash()
@@ -482,7 +463,7 @@ namespace EasyControlWeb.Form.Controls
                                 $('#' + NomMENU).jqxMenu({ width: '100%', height: '35px' });
                                 //$('#' + NomMENU ).css('visibility', 'visible');
                                 window.setTimeout(function () {
-                                                                var MnuAndScript=jNet.get('" + this.ClientID + @"_content');
+                                                                var MnuAndScript=jNet.get('"+ this.ClientID + @"_content');
                                                                 MnuAndScript.css('display','block');
                                                                 var tblBar = jNet.get('" + this.ClientID + @"_tblBar');
                                                                 jNet.get(tblBar.rows[1].cells[0]).insert(MnuAndScript);
@@ -535,8 +516,7 @@ namespace EasyControlWeb.Form.Controls
                             _a.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), oEasyNavigatorBarIconBE.call_fcScript);
                         }
                     }
-                    else
-                    {
+                    else {
                         HtmlImage img = new HtmlImage();
                         img.Src = oEasyNavigatorBarIconBE.fa_icon;
                         img.Attributes["style"] = "width: 25px;height:25px;";
@@ -557,23 +537,23 @@ namespace EasyControlWeb.Form.Controls
         {
             public struct Usuario
             {
-                public static HtmlGenericControl Perfil(string _PathFotos, string NombreUsuario, string NroDocumento, string ExtensionFile, string ColorText)
+                public static HtmlGenericControl Perfil(string _PathFotos, string NombreUsuario, string NroDocumento, string ExtensionFile,string ColorText)
                 {
 
                     HtmlGenericControl _a = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("a", "nav-item nav-link dropdown-toggle user-action");
                     _a.Attributes.Add("data-toggle", "dropdown");
 
-                    HtmlGenericControl _Container = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div", "icon-container");
-                    HtmlImage oimg = new HtmlImage();
-                    oimg.Attributes["src"] = EasyUtilitario.Helper.Archivo.UrlImagen.DownloadToUrlData(new Uri(_PathFotos + NroDocumento + ExtensionFile));
+                        HtmlGenericControl _Container = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div", "icon-container");
+                            HtmlImage oimg = new HtmlImage();
+                            oimg.Attributes["src"] = EasyUtilitario.Helper.Archivo.UrlImagen.DownloadToUrlData(new Uri(_PathFotos + NroDocumento + ExtensionFile));
 
-                    oimg.Attributes.Add("class", "avatar Usu");
-                    oimg.Attributes["style"] = "width:50px;height:50px;display: inline;";
-                    _Container.Controls.Add(oimg);
+                            oimg.Attributes.Add("class", "avatar Usu");
+                            oimg.Attributes["style"] = "width:50px;height:50px;display: inline;";
+                        _Container.Controls.Add(oimg);
 
-                    HtmlGenericControl _Status = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div", "status-circle");
-                    _Status.ID = "ChatStatus";
-                    _Container.Controls.Add(_Status);
+                            HtmlGenericControl _Status = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div", "status-circle");
+                            _Status.ID = "ChatStatus";
+                        _Container.Controls.Add(_Status);
 
                     _a.Controls.Add(_Container);
 
@@ -637,7 +617,7 @@ namespace EasyControlWeb.Form.Controls
             }
             //Pefil de usuario
             HtmlGenericControl _pu = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div", "dropdown");
-            _pu.Controls.Add(NavigatorRight.Usuario.Perfil(this.PathFotos, NombreUsuario, NroDocumento, this.ExtensionFoto, this.IconColor));
+            _pu.Controls.Add(NavigatorRight.Usuario.Perfil(this.PathFotos, NombreUsuario, NroDocumento, this.ExtensionFoto,this.IconColor));
             _pu.Controls.Add(NavigatorRight.Usuario.MenuConfig(this.fc_OnMenuItem_Click, IdUsuario));
 
             return _pu;
@@ -699,7 +679,7 @@ namespace EasyControlWeb.Form.Controls
                 oImgSnapShot.ID = NOMCTRL_IMG;
                 oImgSnapShot.Style.Add("Width", "100%");
                 oImgSnapShot.Style.Add("Height", "100%");
-                oImgSnapShot.Src = ResolveUrl("~/Recursos/img/header.jpg");//Aqui la ruta el nombre de la imagen generada / antes: "image/header.jpg"  , corregida el 23/12/2024 
+                oImgSnapShot.Src = "Image/header.jpg";//Aqui la ruta el nombre de la imagen generada
                 tblWindows.Rows[0].Cells[0].Controls.Add(oImgSnapShot);
                 tblWindows.Rows[0].Cells[0].Style.Add("Height", "300px");
 
@@ -746,8 +726,10 @@ namespace EasyControlWeb.Form.Controls
             return tblWindows;
         }
 
+
         protected override void CreateChildControls()
         {
+            
             objTblMenu = TablaBarMenu();
             objTblMenu.ID = "tblBar";// se agrego
             btnAccion = new HtmlButton();
@@ -777,8 +759,7 @@ namespace EasyControlWeb.Form.Controls
                 easyPopupBase.Controls.Add(WindowDetalleSanpShot());
                 easyPopupBase.RenderControl(writer);
                 contentMenu.RenderControl(writer);//Contenedor del menu
-                foreach (LiteralControl lc in lcMenu)
-                {
+                foreach (LiteralControl lc in lcMenu) { 
                     lc.RenderControl(writer);
                 }
             }
@@ -798,6 +779,9 @@ namespace EasyControlWeb.Form.Controls
             LCScript = (new LiteralControl("\n<script>" + ScriptMenuItemOnCLick() + "</script>"));
             LCScript.RenderControl(writer);
 
+
+
+
             // btnAccion.RenderControl(writer);
         }
 
@@ -805,7 +789,6 @@ namespace EasyControlWeb.Form.Controls
         {
             oUsuario = easyUsuario;
         }
-
         protected virtual void EasyItemMenuSeleted_Click(object sender, EventArgs e)
         {
             string Argument = "";
@@ -847,7 +830,6 @@ namespace EasyControlWeb.Form.Controls
                 oEasyNavigatorHistorial.IrA(oEasyNavigatorBE);
             }
         }
-
         void RequestParamToData(string Params, char SplitBase, char delimitador)
         {
             string[] arrData = Params.Split(SplitBase);
@@ -858,6 +840,7 @@ namespace EasyControlWeb.Form.Controls
             }
 
         }
+
 
         protected virtual void EasySnapShot_Click(object sender, EventArgs e)
         {

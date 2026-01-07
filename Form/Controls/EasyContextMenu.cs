@@ -11,7 +11,9 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Windows.Resources;
 using static EasyControlWeb.EasyUtilitario.Helper;
 
 namespace EasyControlWeb.Form.Controls

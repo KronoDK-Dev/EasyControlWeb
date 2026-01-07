@@ -12,6 +12,7 @@ using System.Web.UI.Design;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Windows;
+using System.Windows.Resources;
 using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
 
 namespace EasyControlWeb.Form.Controls
