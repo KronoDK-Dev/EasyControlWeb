@@ -1,18 +1,20 @@
-﻿using System;
+﻿using EasyControlWeb.Form.Controls;
+using EasyControlWeb.Form.Editor;
+using EasyControlWeb.Form.Estilo;
+using System; 
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Web.UI;
 using System.Web.UI.WebControls;
-using EasyControlWeb.Form.Editor;
-using EasyControlWeb.Form.Estilo;
+using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
 
 namespace EasyControlWeb.Form.Base
 {
-    public class EasyTexto : TextBox
+    public class EasyTexto:TextBox
     {
+
         private bool enableOnChange;
         [Category("Validación"), Description("")]
         [Browsable(true)]
@@ -33,7 +35,7 @@ namespace EasyControlWeb.Form.Base
         [NotifyParentProperty(true)]
         public bool Requerido { get { return requerido; } set { requerido = value; } }
 
-
+       
         private string mensajeValida;
         [Category("Validación"), Description("Descripcion que se debe mostrar si el campo es requerido u obligatorio")]
         [Browsable(true)]
@@ -43,23 +45,22 @@ namespace EasyControlWeb.Form.Base
 
 
         Bootstrap oBootstrap = new Bootstrap();
-        [TypeConverter(typeof(EasyFormColletionsEditor.Type_Style))]
+        [TypeConverter(typeof(Type_Style))]
         [Description("Define estilo vigente para cada control"),
-         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
+        DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
         public Bootstrap EasyStyle
         {
-            get { return oBootstrap; }
-            set { oBootstrap = (Bootstrap)value; }
+            get{return oBootstrap;}
+            set{oBootstrap = (Bootstrap)value;}
         }
 
+       
 
-
-        public EasyTexto()
-        {
+        public EasyTexto() {
             this.CssClass = EasyStyle.ClassName;
             this.Attributes.Add("autocomplete", "off");
             this.Attributes.Add("data-validate", "true");
@@ -67,12 +68,13 @@ namespace EasyControlWeb.Form.Base
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
-            this.Attributes["disabled"] = ((this.Enabled) ? null : "disabled");
+            this.Attributes["disabled"] = ((this.Enabled) ?null: "disabled" );
             if (this.Enabled == false)
             {
                 this.Style["border-color"] = "#C0C0C0";
                 this.Style["color"] = "#0000";
             }
         }
+
     }
 }

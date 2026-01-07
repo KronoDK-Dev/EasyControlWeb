@@ -4,20 +4,22 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Web.UI;
 using System.Web.UI.HtmlControls;
+using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Diagnostics;
+using System.Windows.Resources;
 using EasyControlWeb.Form.Controls;
 
 namespace EasyControlWeb.Form.Base
 {
-    public class EasyProgressbarBase : CompositeControl
+    public class EasyProgressbarBase: CompositeControl
     {
+
         EasyTextBox oTxtAvance;
 
         //Refrencia:https://www.jose-aguilar.com/blog/como-mover-una-barra-de-progreso-con-javascript/
-        public EasyProgressbarBase()
-        {
+        public EasyProgressbarBase() {
             oTxtAvance = new EasyTextBox();
             oTxtAvance.SetValue("0");
         }
@@ -42,16 +44,15 @@ namespace EasyControlWeb.Form.Base
             Progress.Attributes["style"] = "width: " + this.Progreso + "%; ";
 
             HtmlGenericControl TextPorc = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("span", "progress-bar-text");
-            TextPorc.InnerText = this.Progreso + "%";
+                TextPorc.InnerText=this.Progreso +"%";
 
-            Progress.Controls.Add(TextPorc);
+                Progress.Controls.Add(TextPorc);
 
             ProgressContainer.Controls.Add(Progress);
             return ProgressContainer;
         }
 
-        public void SetValue(int value)
-        {
+        public void SetValue(int value){
             this.Progreso = value;
             oTxtAvance.SetValue(value.ToString());
         }

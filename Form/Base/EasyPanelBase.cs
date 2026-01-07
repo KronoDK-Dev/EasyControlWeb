@@ -2,19 +2,23 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI;
+using System.Web;
 using System.Web.UI.WebControls;
 
 namespace EasyControlWeb.Form.Base
 {
-    public class EasyPanelBase : CompositeControl
+  
+    public  class EasyPanelBase:CompositeControl
     {
         [Category("Scripts"), Description("")]
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
+
         public string fncItemOnClick { get; set; }
 
         #region evento naturales
@@ -52,5 +56,7 @@ namespace EasyControlWeb.Form.Base
             return false;
         }
         #endregion
+
+
     }
 }
