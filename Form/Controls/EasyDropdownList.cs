@@ -23,7 +23,7 @@ namespace EasyControlWeb.Form.Controls
 
         [Browsable(false)]
         public void SetReadOnly()
-        {
+        { 
             this.Enabled = false;
         }
 

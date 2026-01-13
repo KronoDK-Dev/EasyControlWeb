@@ -23,7 +23,7 @@ namespace EasyControlWeb.Form.Controls
     [ToolboxData("<{0}:EasyAutocompletar runat=server></{0}:EasyAutocompletar>")]
     [Serializable]
     public class EasyAutocompletar: CompositeControl 
-    {
+    { 
         string txtID="";
         public TextBox txtText;
         TextBox txtVal;
