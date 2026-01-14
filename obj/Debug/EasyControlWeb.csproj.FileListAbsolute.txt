@@ -21,3 +21,17 @@ D:\NETSUITE\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.CoreCompileInputs.cac
 D:\NETSUITE\EasyControlWeb\obj\Debug\EasyCont.B87C9F1F.Up2Date
 D:\NETSUITE\EasyControlWeb\obj\Debug\EasyControlWeb.dll
 D:\NETSUITE\EasyControlWeb\obj\Debug\EasyControlWeb.pdb
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\EasyControlWeb.dll.config
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\EasyControlWeb.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\EasyControlWeb.pdb
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\BouncyCastle.Cryptography.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\itextsharp.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\Newtonsoft.Json.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\BouncyCastle.Cryptography.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\itextsharp.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Debug\Newtonsoft.Json.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.AssemblyReference.cache
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.CoreCompileInputs.cache
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyCont.B87C9F1F.Up2Date
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.pdb
