@@ -230,7 +230,35 @@ namespace EasyControlWeb.Form.Controls
             return _style;
         }
 
-    
+        //metodo para limpiar literales en paginas
+        private void RegisterStartupScript(string key, string script)
+        {
+            var page = this.Page ?? (Page)HttpContext.Current?.CurrentHandler;
+            if (page == null) return;
+
+            if (ScriptManager.GetCurrent(page) != null)
+            {
+                // Compatible con UpdatePanel / ASP.NET AJAX
+                ScriptManager.RegisterStartupScript(
+                    page,
+                    typeof(EasyNavigatorHistorial),
+                    key,
+                    script,
+                    addScriptTags: true
+                );
+            }
+            else
+            {
+                // Página sin UpdatePanel
+                page.ClientScript.RegisterStartupScript(
+                    typeof(EasyNavigatorHistorial),
+                    key,
+                    script,
+                    addScriptTags: true
+                );
+            }
+        }
+
 
         public void getAllCtrlMemoryValue() {
             //Restaura los valores de los controles guardados
@@ -294,6 +322,7 @@ namespace EasyControlWeb.Form.Controls
                                     string NroFila = PagSort[3];
                                     string _RowIndex = PagSort[4];
                                     oEasyGridView.setNroRegSelect(NroFila);
+                                    /*
                                     string fncSelectedRow = @"function " + oEasyGridView.ClientID + @"_onSeleted(){
                                                                   var ogridView=document.getElementById('" + oEasyGridView.ClientID + @"');
                                                                   var rows = ogridView.querySelectorAll('[TipoRow=" + cmll + "2" + cmll + @"]'); 
@@ -306,10 +335,33 @@ namespace EasyControlWeb.Form.Controls
                                                                                     });
                                                                 }
                                                         ";
+                                    /*  reemplazamos estas lineas para optmizar el error de literales
                                     ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + fncSelectedRow + "</script>"));
 
                                     scriptSelect = @" setTimeout(" + oEasyGridView.ClientID + @"_onSeleted(),9000);";
                                     ((System.Web.UI.Page)HttpContext.Current.Handler).Controls.Add(new LiteralControl("<script>" + scriptSelect + "</script>"));
+                                    */
+
+                                    string functionName = oEasyGridView.ClientID + "_onSelected";
+                                    string fncSelectedRow = $@"
+                                                function {functionName}(){{
+                                                    var ogridView = document.getElementById('{oEasyGridView.ClientID}');
+                                                    if(!ogridView) return;
+                                                    var rows = ogridView.querySelectorAll('[TipoRow=""2""]');
+                                                    rows.forEach(function(row, idx){{
+                                                        var orow = jNet.get(row);
+                                                        if(row.rowIndex == '{_RowIndex}'){{
+                                                            {oEasyGridView.ClientID}_OnRowClick(row);
+                                                            SIMA.GridView.Extended.OnEventClickChangeColor(row);
+                                                        }}
+                                                    }});
+                                                }}";
+
+                                       // Conservamos tu delay (9000 ms) tal como estaba.
+                                          string startup = $"setTimeout(function(){{ {functionName}(); }}, 9000);";
+
+                                        // Registramos ambos en un solo bloque, con clave única por Grid.
+                                          RegisterStartupScript("ENH_SelectedRow_" + oEasyGridView.ClientID, fncSelectedRow + "\n" + startup);
 
 
                                 }

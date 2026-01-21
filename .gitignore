@@ -3,6 +3,10 @@
 # Visual Studio / .NET
 # =========================
 
+# ¡OJO! Ignorar .sln significa que el archivo de solución NO se versiona.
+# se hace esto solo si se acuerda que no habran mas dependecias de proyectos.
+#*.sln
+
 # Build outputs
 [Bb]in/
 [Oo]bj/
@@ -88,3 +92,27 @@ TestResult*/
 # Thumbs / OS
 Thumbs.db
 .DS_Store
+
+
+# Archivos de usuario y de IDE (siempre ignorar)
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# .csproj.user (config local por usuario)
+*.csproj.user
+
+# Rider / ReSharper / VS Code (opcional pero recomendado)
+_ReSharper*/
+*.DotSettings.user
+.idea/
+.vscode/
+
+# Build outputs / artefactos generados
+[Bb]in/
+[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+.vs/
+
