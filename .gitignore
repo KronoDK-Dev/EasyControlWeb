@@ -1,0 +1,90 @@
+
+# =========================
+# Visual Studio / .NET
+# =========================
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+**/[Dd]ebug/
+**/[Rr]elease/
+**/[Rr]eleases/
+artifacts/
+publish/
+out/
+
+# VS cache
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Logs / temporales
+*.log
+[Ll]og/
+[Ll]ogs/
+[Tt]emp/
+[Tt]mp/
+*.tmp
+*.bak
+*.orig
+
+# NuGet
+*.nupkg
+# Si NO deseas versionar paquetes descargados:
+packages/
+**/packages/*
+
+# Config locales / secretos
+*.local.settings.json
+appsettings.Local.json
+
+# IIS Express / ASP.NET locales
+IISExpress/
+App_Data/
+
+# Rider / ReSharper / VS Code
+_ReSharper*/
+*.DotSettings.user
+.idea/
+.vscode/
+
+# Publicaciones (si usas Publish local)
+**/obj/**/Package/
+**/obj/**/Publish/
+**/obj/**/ProfileTransforms/
+**/Properties/PublishProfiles/*.pubxml.user
+
+# Archivos de proyecto generados por el IDE
+UpgradeLog*.XML
+UpgradeLog*.htm
+ServiceFabricBackup/
+*.dbmdl
+
+# Archivos de test
+TestResult*/
+[Tt]est[Rr]esult*/
+*.coverage
+*.coveragexml
+
+# Otros comunes
+*.cache
+*.pdb
+*.mdb
+*.ilk
+*.obj
+*.pch
+*.tlog
+*.lastcodeanalysissucceeded
+*.lastbuildstate
+
+# Office/Docs accidentales
+*.docx
+*.xlsx
+*.pptx
+~$*
+
+# Thumbs / OS
+Thumbs.db
+.DS_Store

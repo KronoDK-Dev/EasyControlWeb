@@ -137,7 +137,7 @@ namespace EasyControlWeb.InterConecion
             }
             catch (Exception ex)
             {
-                throw new Exception($"Error inesperado al invocar el método '{methodname}': {ex.Message}", ex);
+                throw new Exception($"Error inesperado al invocar el método '{methodname}' desde la dirección '{url}'. Detalle del error: {ex.Message}", ex);
             }
         }
         // metodo con control de tiempo  12.01.2025
