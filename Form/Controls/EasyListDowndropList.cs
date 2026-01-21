@@ -23,7 +23,7 @@ namespace EasyControlWeb.Form.Controls
             //txtLstItems.Style.Add("display", "none");
             //this.Controls.Add(txtLstItems);
 
-        }
+        } 
 
         protected override void Render(HtmlTextWriter writer)
         {

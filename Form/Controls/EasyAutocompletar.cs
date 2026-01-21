@@ -23,7 +23,7 @@ namespace EasyControlWeb.Form.Controls
     [ToolboxData("<{0}:EasyAutocompletar runat=server></{0}:EasyAutocompletar>")]
     [Serializable]
     public class EasyAutocompletar: CompositeControl 
-    {
+    { 
         string txtID="";
         public TextBox txtText;
         TextBox txtVal;
@@ -329,8 +329,7 @@ namespace EasyControlWeb.Form.Controls
                         }
 
                         findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
-                                                var strTranslate = '';
-                                                    jNet.get('" + this.txtRecordSelected.ClientID + @"').value = strTranslate.Serialized(ItemBE);
+                                                 jNet.get('" + this.txtRecordSelected.ClientID + @"').value = ''.toString().Serialized(ItemBE);
                                                  " + fnSelectExterna + @"
                                                 var arrCtrl = '" + lstCtrl + @"'.split(';');
                                                     arrCtrl.forEach(function(str,i){
@@ -345,23 +344,30 @@ namespace EasyControlWeb.Form.Controls
                                                                 }
                                                     });
                                     }
+
                                 ";
                     }
                     else
                     {
                         findOnSelected = @" function " + this.ClientID + @"_OnSelected(ItemValue, ItemBE){
-                                                    var strTranslate = '';
-                                                    jNet.get('" + this.txtRecordSelected.ClientID + @"').value = strTranslate.Serialized(ItemBE);
+                                                    jNet.get('" + this.txtRecordSelected.ClientID + @"').value = ''.toString().Serialized(ItemBE);
                                                  " + fnSelectExterna + @"
-                                    }
+                                        }
                                 ";
                     }
 
                  (new LiteralControl("\n <script>\n" + findOnSelected + "\n" + "</script>\n")).RenderControl(writer);
 
+                 
+                /* string GetItemSelected = this.ClientID + @".GetItemSelected=function(){
+                                                            var strBE =  jNet.get('" + this.txtRecordSelected.ClientID + @"').value;
+                                                            return  strBE;
+                                                        }";
+
+                (new LiteralControl("\n <script>\n" + GetItemSelected + "\n" + "</script>\n")).RenderControl(writer);*/
 
 
-                    string CadenaConexion = "";
+                string CadenaConexion = "";
                     EasyDataInterConect.MetododeConexion MetodoConexionSelect = EasyDataInterConect.MetododeConexion.WebServiceInterno;
                     string PageWebService = "";
                     string WSMetoodo = "";
@@ -383,7 +389,6 @@ namespace EasyControlWeb.Form.Controls
                 //// var CollectionParams" + this.ClientID + @" = eval(jNet.get(" + this.ClientID + @").attr(" + cmll + "ParamCollection" + cmll + @"));
                 string JavaScriptCode = @"  
                                             var " + this.ClientID + @"= $(" + cmll + "#" + txtText.ClientID + cmll + @");
-                                           
                                             var CollectionParams" + this.ClientID + @" = eval('" + AttrParamsCollection + @"');
                                             " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
                                             " + this.ClientID + @".autocomplete({
@@ -583,7 +588,14 @@ namespace EasyControlWeb.Form.Controls
                                                                                                                    .append(CustomTemplateBE.BodyTemplate)
                                                                                                                    .appendTo(CustomTemplateBE.ul);
                                                                                    }                                                    
+
+                                    " + this.ClientID + @".GetItemSelected=function(){
+                                                                                 var strBE =  jNet.get('" + this.txtRecordSelected.ClientID + @"').value;
+                                                                                 var oItemBE = strBE.toString().SerializedToObject();
+                                                                                 return  oItemBE;
+                                                                             }                                                                                  
                                     ";
+
                     (new LiteralControl("\n <script>\n" + scriptGet + "\n" + "</script>\n")).RenderControl(writer);
 
 

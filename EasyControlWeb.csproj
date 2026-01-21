@@ -101,6 +101,7 @@
     <Compile Include="Form\Controls\EasyInputRange.cs" />
     <Compile Include="Form\Controls\EasyItemLog.cs" />
     <Compile Include="Form\Controls\EasyListAutocompletar.cs" />
+    <Compile Include="Form\Controls\EasyListDowndropList.cs" />
     <Compile Include="Form\Controls\EasyListItem.cs" />
     <Compile Include="Form\Controls\EasyListViewItemTipo.cs" />
     <Compile Include="Form\Controls\EasyPathHistory.cs" />

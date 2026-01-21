@@ -9,6 +9,7 @@ using System.Web.Script.Serialization;
 using System.Web.UI;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Windows.Resources;
 
 namespace EasyControlWeb.Form.Controls.Cards
 {
