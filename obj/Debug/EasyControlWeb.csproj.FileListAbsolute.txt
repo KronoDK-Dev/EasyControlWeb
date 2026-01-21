@@ -35,3 +35,19 @@ C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.CoreCompil
 C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyCont.B87C9F1F.Up2Date
 C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.dll
 C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Debug\EasyControlWeb.pdb
+<<<<<<< Updated upstream
+=======
+D:\Repositorios\EasyControlWeb\bin\Debug\EasyControlWeb.dll.config
+D:\Repositorios\EasyControlWeb\bin\Debug\EasyControlWeb.dll
+D:\Repositorios\EasyControlWeb\bin\Debug\EasyControlWeb.pdb
+D:\Repositorios\EasyControlWeb\bin\Debug\BouncyCastle.Cryptography.dll
+D:\Repositorios\EasyControlWeb\bin\Debug\itextsharp.dll
+D:\Repositorios\EasyControlWeb\bin\Debug\Newtonsoft.Json.dll
+D:\Repositorios\EasyControlWeb\bin\Debug\BouncyCastle.Cryptography.xml
+D:\Repositorios\EasyControlWeb\bin\Debug\itextsharp.xml
+D:\Repositorios\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.AssemblyReference.cache
+D:\Repositorios\EasyControlWeb\obj\Debug\EasyControlWeb.csproj.CoreCompileInputs.cache
+D:\Repositorios\EasyControlWeb\obj\Debug\EasyCont.B87C9F1F.Up2Date
+D:\Repositorios\EasyControlWeb\obj\Debug\EasyControlWeb.dll
+D:\Repositorios\EasyControlWeb\obj\Debug\EasyControlWeb.pdb
+>>>>>>> Stashed changes
