@@ -324,7 +324,7 @@ namespace EasyControlWeb.Form.Controls
                 string ScriptTabOnclick = @"<script>
                                                     var " + this.ClientID + @"={};
                                                         " + this.ClientID + @".TabsCollections=new Array();
-                                                    var " + this.ClientID + @"_TabSelect = '" + TabDefault + @"';
+                                                    var " + this.ClientID + @"_TabSelect = '" + TabDefault + @"'; 
                                                         " + this.ClientID + @".TabActivo =null;
                                                     " + this.ClientID + @".RefreshTabSelect=function(IdTabSelected){
                                                            if(IdTabSelected==undefined){
