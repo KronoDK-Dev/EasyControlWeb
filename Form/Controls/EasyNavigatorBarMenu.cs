@@ -89,7 +89,8 @@ namespace EasyControlWeb.Form.Controls
             {
                 if (this.ViewState[IMG_LOGO_HEADER] == null)
                 {
-                    this.ViewState[IMG_LOGO_HEADER] = "Image/header.jpg";
+                    // 22.01.2026 se corrige la ruta de la imagen
+                    this.ViewState[IMG_LOGO_HEADER] = "~/Recursos/Img/header.jpg";
                 }
                 return (string)this.ViewState[IMG_LOGO_HEADER];
             }
@@ -369,7 +370,8 @@ namespace EasyControlWeb.Form.Controls
         HtmlImage ImgLogo()
         {
             HtmlImage img = new HtmlImage();
-            img.Src = this.ImagenLogoHeader;
+            //img.Src = this.ImagenLogoHeader;  // 22.01.2026 obtiene ruta segura
+            img.Src = this.ResolveClientUrl(this.ImagenLogoHeader);
             img.Attributes["Style"] = "height:50; opacity: 0.5; filter:alpha(opacity =30);"; 
             return img;
         }
@@ -679,7 +681,9 @@ namespace EasyControlWeb.Form.Controls
                 oImgSnapShot.ID = NOMCTRL_IMG;
                 oImgSnapShot.Style.Add("Width", "100%");
                 oImgSnapShot.Style.Add("Height", "100%");
-                oImgSnapShot.Src = "Image/header.jpg";//Aqui la ruta el nombre de la imagen generada
+                //oImgSnapShot.Src = "Image/header.jpg";//Aqui la ruta el nombre de la imagen generada
+                // 22.01.2026 se corrgie la ruta a la imagen
+                oImgSnapShot.Src = this.ResolveClientUrl("~/Recursos/Img/header.jpg");
                 tblWindows.Rows[0].Cells[0].Controls.Add(oImgSnapShot);
                 tblWindows.Rows[0].Cells[0].Style.Add("Height", "300px");
 
