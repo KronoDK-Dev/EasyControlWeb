@@ -249,6 +249,49 @@ namespace EasyControlWeb.Form
                                 ScriptObtenerDatos += "             DataColletion[" + cmll + IdCtrl + cmll + "] = " + IdCtrl + ".GetValue();\n";
                             }
                         }
+                        else if (ctrl is EasyTimepicker)
+                        {
+                            EasyTimepicker oTP = (EasyTimepicker)ctrl;
+
+                            _grp.Controls.Add(
+                                EasyUtilitario.Helper.HtmlControlsDesign.CrearControlBase(
+                                    oTP,
+                                    oTP.Etiqueta,
+                                    oTP.Requerido,
+                                    oTP.MensajeValida,
+                                    oTP.EasyStyle
+                                )
+                            );
+
+                            if (!IsDesign())
+                            {
+                                string _doPost = (((oTP.EnableOnChange) && (Change != null))
+                                    ? "__doPostBack('" + this.ClientID + @"$btnAction', '" + oTP.ID + @"');"
+                                    : "");
+
+                                string defFNC = oTP.fncSelectTime;
+                                if (defFNC != null)
+                                {
+                                    defFNC = defFNC + "(value);";
+                                }
+
+                                string NombreFCAC = oTP.ID + "_OnSelectTime";
+                                oTP.fncSelectTime = NombreFCAC;
+
+                                string ScriptSelectTime = "function " + NombreFCAC + @"(value){ 
+                        " + defFNC + @"
+                        " + _doPost + @"
+                   }";
+
+                                BloqueScript.Add(
+                                    new LiteralControl("<script>\n" + ScriptSelectTime + "</script>")
+                                );
+
+                                // Datos script
+                                IdCtrl = this.ClientID + "_" + oTP.ID;
+                                ScriptObtenerDatos += "             DataColletion[" + cmll + IdCtrl + cmll + "] = " + IdCtrl + ".GetValue();\n";
+                            }
+                        }
                         else if (ctrl is EasyAutocompletar)
                         {
                             EasyAutocompletar oDP = (EasyAutocompletar)ctrl;
@@ -756,6 +799,10 @@ namespace EasyControlWeb.Form
                 {
                     objReturn = ((EasyDatepicker)(ctrl)).Text;
                 }
+                else if (ctrl is EasyTimepicker)
+                {
+                    objReturn = ((EasyTimepicker)(ctrl)).Text;
+                }
                 else if (ctrl is EasyNumericBox)
                 {
                     objReturn = ((EasyNumericBox)(ctrl)).Text;
@@ -781,7 +828,7 @@ namespace EasyControlWeb.Form
                             idx++;
                         }
                     }
-                    objReturn =  LstFiles;
+                    objReturn = LstFiles;
                 }
                 else if (ctrl is EasyCheckBox)
                 {
