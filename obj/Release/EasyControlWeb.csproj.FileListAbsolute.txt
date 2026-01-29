@@ -1,0 +1,14 @@
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\EasyControlWeb.dll.config
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\EasyControlWeb.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\EasyControlWeb.pdb
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\BouncyCastle.Cryptography.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\itextsharp.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\Newtonsoft.Json.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\BouncyCastle.Cryptography.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\itextsharp.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\bin\Release\Newtonsoft.Json.xml
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Release\EasyControlWeb.csproj.AssemblyReference.cache
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Release\EasyControlWeb.csproj.CoreCompileInputs.cache
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Release\EasyCont.B87C9F1F.Up2Date
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Release\EasyControlWeb.dll
+C:\AppWebs\SimaNetCtrl\EasyControlWeb\obj\Release\EasyControlWeb.pdb
