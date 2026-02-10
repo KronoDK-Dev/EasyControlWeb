@@ -201,6 +201,12 @@ namespace EasyControlWeb.Form.Controls
             txtText.Attributes.Add("Type", "COMPLETE");
             txtText.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.fnOnClick + "(this)");
 
+            if (this.Attributes["required"] != null)
+            {
+                txtText.Attributes["required"] = "";
+            }
+
+
             this.Controls.Add(txtText);
             if (!IsDesign())
             {
