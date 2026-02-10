@@ -1907,6 +1907,22 @@ namespace EasyControlWeb
 
 
 
+
+
+            string strQuerySelector = this.ClientID + @".querySelector=function(Filtro,fncLoop){
+                                                                  var AllCtrl = document.getElementById('" + this.ClientID + @"').querySelectorAll('[' + Filtro + ']');
+                                                                  Array.prototype.forEach.call(AllCtrl, function(el){
+                                                                                                            fncLoop(jNet.get(el));
+                                                                                                          }); 
+                                                            }";
+
+            _Scripts.Add(new LiteralControl("\n<script>" + strQuerySelector + "</script>"));
+
+
+
+
+
+
             /*Los nuevos Script*/
             foreach (LiteralControl ScriptLC in _Scripts) {
                 ScriptLC.RenderControl(writer);

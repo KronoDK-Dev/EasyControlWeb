@@ -34,7 +34,6 @@ namespace EasyControlWeb.Form.Controls
         #region Propiedades Simples
             public string Titulo { get; set; }
             public bool ValidarDatos{ get; set; }
-            public string CtrlDisplayMensaje { get; set; }
 
         /*[Category("Archivo de conexion a formularios")]
         [Browsable(true)]
@@ -201,6 +200,12 @@ namespace EasyControlWeb.Form.Controls
             output.Write("                    </div>\n");
             output.Write("                    <div id=" + cmll + ClientID +"_body" + cmll + " class=" + cmll + "modal-body" + cmll + PrintBorder + ">" + TextHolder + "\n");
             this.RenderChildren(output);
+            if (this.ValidarDatos== true)//Para mostrar el mensaje de error resultado de la validacion
+            {
+                output.Write("                      <div id=" + cmll + ClientID + "_MsgValidaDatos" + cmll + "  style='height: 100%; width: 100%;'>\n");
+                output.Write("                      </div>\n ");
+            }
+
             if (this.ModoContenedor == TipoContenido.LoadPage)
             {
                 output.Write("                      <div id=" + cmll + ClientID + "_LoadPage" + cmll + "  style='height: 100%; width: 100%;'>\n ");
@@ -298,7 +303,7 @@ namespace EasyControlWeb.Form.Controls
                                     " + ClientID + @".FormValidacion=function(){
                                         if('" + this.ValidarDatos.ToString().ToUpper() + @"'=='TRUE'){
                                             " + ClientID + @".Task.Excecute('Un Momento por favor grabando información',function(){
-                                                   if(SIMA.Utilitario.Helper.Form.Validar('" + this.CtrlDisplayMensaje + @"')){                                              
+                                                   if(SIMA.Utilitario.Helper.Form.Validar('" + this.ClientID + "_MsgValidaDatos" + @"','" + this.ClientID + @"')){                                              
                                                         " + scriptBTN + @"
                                                    }
                                                 },100);
