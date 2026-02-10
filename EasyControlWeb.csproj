@@ -110,6 +110,7 @@
     <Compile Include="Form\Controls\EasyTabControl.cs" />
     <Compile Include="Form\Controls\EasyTabControlV.cs" />
     <Compile Include="Form\Controls\EasyTabItem.cs" />
+    <Compile Include="Form\Controls\EasyTimePicker.cs" />
     <Compile Include="Form\Controls\EasyTreeView.cs" />
     <Compile Include="Form\Controls\EasyUpLoadMultiple.cs" />
     <Compile Include="Form\Controls\EasyViewLog.cs" />
