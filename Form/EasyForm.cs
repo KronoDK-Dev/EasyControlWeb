@@ -753,8 +753,12 @@ namespace EasyControlWeb.Form
                 }
                 else if (ctrl is EasyCheckBox)
                 {
-                    ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Valor);
+                    ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Convert.ToInt32(Valor));
                     
+                }
+                else if (ctrl is EasyTimepicker)
+                {
+                    ((EasyTimepicker)ctrl).Text = Valor;
                 }
             }
         }
