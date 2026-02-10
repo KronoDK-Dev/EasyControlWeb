@@ -1,150 +1,239 @@
-﻿using EasyControlWeb.Form.Base;
+﻿using EasyControlWeb.Filtro;
+using EasyControlWeb.Form.Base;
+using EasyControlWeb.InterConeccion;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Security.Cryptography.Xml;
+using System.Security.Permissions;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Web;
 using System.Web.UI;
+using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
+using System.Xml.Linq;
 
-// referencia para crear el control de horas
-/*
- * https://codepen.io/elmahdim/pen/nVWKrq
- * https://thecodedeveloper.com/add-datetimepicker-jquery-plugin/
- */
 namespace EasyControlWeb.Form.Controls
 {
-    [DefaultProperty("FormatoHora")]
-    [ToolboxData("<{0}:EasyTimepicker runat=server></{0}:EasyTimepicker>")]
-    // El control que lo contenga debe de ser runat=server y dentro de un .container form
+        [
+           AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal),
+           AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal),
+           DefaultProperty("fncOnChange"),
+           ParseChildren(true, "fncOnChange"),
+           ToolboxData("<{0}:EasyTimePicker runat=server></{0}:EasyTimePicker")
+       ]
+
+
+
     [Serializable]
-    public class EasyTimepicker : EasyTexto
+    public class EasyTimePicker : CompositeControl
     {
-        const string ClaseContenedora = "container";
+        public EasyDropdownList ddlHora;
+        public EasyDropdownList ddlMinutos;
+        public EasyDropdownList ddlAMPM;
 
-        public EasyTimepicker()
-        {
-        }
 
-        public EasyTimepicker(string _FormatInPut)
-        {
-            this.FormatInPut = _FormatInPut;
-        }
 
-        public EasyTimepicker(string _FormatOutPut, string _FormatInPut)
-        {
-            this.FormatOutPut = _FormatOutPut;
-            this.FormatInPut = _FormatInPut;
-        }
-
-        [Browsable(true)]
-        [Category("Behavior"), DefaultValue(""), Description("")]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public override string Text
-        {
-            get { return base.Text; }
-            set { base.Text = value; }
-        }
-
+        [Category("Scripts"), Description("")]
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
-        public string Placeholder { get; set; }
+        public string fncOnChange { get; set; }
 
-        private int minuteStep = 1;
 
-        [Category("Behavior")]
-        [Description("Intervalo de minutos permitido")]
-        [DefaultValue(1)]
-        public int MinuteStep
+        public EasyTimePicker(string Formato) { }
+
+        public EasyTimePicker() : base()
         {
-            get { return minuteStep; }
-            set { minuteStep = value; }
+            if (ddlHora == null) { ddlHora = new EasyDropdownList(); }
+            if (ddlMinutos == null) { ddlMinutos = new EasyDropdownList(); }
+            if (ddlAMPM == null) { ddlAMPM = new EasyDropdownList(); }
         }
 
-        private string formatInPut;
-        [Category("Appearance"), Description("Formato de hora por defecto"), DefaultValue("HH:mm")]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public string FormatInPut
-        {
-            get { return formatInPut; }
-            set { formatInPut = value; }
-        }
-
-        private string formatOutPut;
-        [Category("Appearance"), Description("Formato de hora por defecto"), DefaultValue("HH:mm")]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public string FormatOutPut
-        {
-            get { return formatOutPut; }
-            set { formatOutPut = value; }
-        }
-
-        [Browsable(true)]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public string fncSelectTime { get; set; }
-
-        [Browsable(true)]
-        [DataType(DataType.Time)]
-        [DisplayFormat(DataFormatString = "{0:HH:mm}", ApplyFormatInEditMode = true)]
-        [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
-        public DateTime Hora { get; set; }
 
         protected override void OnInit(EventArgs e)
         {
-            if (!Page.IsClientScriptBlockRegistered("RegScript"))
+          
+            this.Attributes["disabled"] = ((this.Enabled) ? null : "disabled");
+            ListItem li;
+            if (this.Enabled == false)
             {
-                string JavaScriptCode = @"<script>
-                                            function RegistrarControl(){}
-                                         </script>";
-                Page.RegisterClientScriptBlock("RegScript", JavaScriptCode);
+                ddlHora.Style["border-color"] = "#C0C0C0";
+                ddlHora.Style["color"] = "#0000";
+                /*if (this.Attributes["required"] != null){txtText.Attributes["required"] = "";}*/
+
+                ddlMinutos.Style["border-color"] = "#C0C0C0";
+                ddlMinutos.Style["color"] = "#0000";
+
+                ddlAMPM.Style["border-color"] = "#C0C0C0";
+                ddlAMPM.Style["color"] = "#0000";
+              
             }
-            base.OnInit(e);
-        }
+            for (int i = 1; i <= 12; i++)
+            {
+                li = new ListItem(i.ToString().PadLeft(2, '0'), i.ToString().PadLeft(2, '0'));
+                ddlHora.Items.Add(li);
+            }
+            ddlHora.Items.Insert(0,new ListItem("---", "-1"));
 
-        protected override void Render(HtmlTextWriter writer)
-        {
-            string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
+            for (int i = 0; i <= 60; i++)
+            {
+                li = new ListItem(i.ToString().PadLeft(2, '0'), i.ToString().PadLeft(2, '0'));
+                ddlMinutos.Items.Add(li);
+            }
+            ddlMinutos.Items.Insert(0, new ListItem( "---", "-1"));
+            /*-------------------------------------*/
+            li = new ListItem("AM", "AM");
+            ddlAMPM.Items.Add(li);
 
-            this.Attributes.Add("placeholder", this.Placeholder);
-            this.Style.Add(
-                "background",
-                "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconDatePick + "') right center no-repeat; padding-right:5px;"
-            );
-
-            base.Render(writer);
-
-            string strFunction = ((fncSelectTime != null)
-                ? fncSelectTime + "(e.value);"
-                : "return null;");
-
-            string IdCtrl = ((this.ClientID == null) ? this.ID : this.ClientID);
-
-            string strFnc = IdCtrl + @".Change=function(e){
-                                " + strFunction + @"
-                            }";
-
-            string Formato = string.IsNullOrEmpty(this.FormatInPut)
-                ? "H:i"
-                : this.FormatInPut;
-
-            string scriptCall =
-                "EasyTimepicker.Setting(" +
-                cmll + IdCtrl + cmll + "," +
-                cmll + Formato + cmll + "," +
-                this.MinuteStep +
-                ");";
-
-            (new LiteralControl("<script>\n" + strFnc + "\n" + scriptCall + "\n</script>\n"))
-                .RenderControl(writer);
-
+            li = new ListItem("PM", "PM");
+            ddlAMPM.Items.Add(li);
         }
 
         protected override void CreateChildControls()
         {
+            Controls.Clear();
+            ddlHora.ID = "ddlH";
+            ddlHora.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onchange.ToString(), this.fncOnChange + "('H',this)");
+            ddlHora.Attributes["class"] = "timeSelectds";
+            ddlHora.Attributes["required"] = "";
+            ddlHora.Attributes["TypeIn"] = "TIMEPICK";
+
+            this.Controls.Add(ddlHora);
+
+            ddlMinutos.ID = "ddlM";
+            ddlMinutos.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onchange.ToString(), this.fncOnChange + "('M',this)");
+            ddlMinutos.Attributes["class"] = "timeSelectds";
+            ddlMinutos.Attributes["required"] = "";
+            ddlMinutos.Attributes["TypeIn"] = "TIMEPICK";
+            this.Controls.Add(ddlMinutos);
+
+            ddlAMPM.ID = "ddlAP";
+            ddlAMPM.Attributes["class"] = "timeSelectds";
+            ddlAMPM.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onchange.ToString(), this.fncOnChange + "('AP',this)");
+           
+
+            this.Controls.Add(ddlAMPM);
         }
+
+        [Browsable(false)]
+        public void SetValue(string Hora,string Minuto, string AP)
+        {
+            ddlHora.SetValue(Hora);
+            ddlMinutos.SetValue(Minuto);
+            ddlAMPM.SetValue(AP.ToUpper().Trim());
+        }
+        [Browsable(false)]
+        public void SetValue(string Time)
+        {
+            Time = Time.Replace(".", "");
+            if (IsValidTime(Time) ==true) {
+                string[] stime = Time.Split(' ');
+                string []HoraMin = stime[0].Split(':');
+                SetValue(HoraMin[0], HoraMin[1], stime[1]);
+            }
+        }
+
+        public bool IsValidTime(string thetime)
+        {
+            Regex checktime =new Regex(@"^(?:(?:0?[1-9]|1[0-2]):[0-5][0-9]\s?(?:[AP][Mm]?|[ap][m]?)?|(?:00?|1[3-9]|2[0-3]):[0-5][0-9])$");
+
+            return checktime.IsMatch(thetime);
+        }
+
+
+        HtmlGenericControl htmlTimePick() {
+            
+            HtmlGenericControl dvPanel = new HtmlGenericControl("div");
+            dvPanel.Attributes["class"] = "time-picker";
+
+            HtmlTable tbl = EasyUtilitario.Helper.HtmlControlsDesign.CrearTabla(1, 4);
+            tbl.Attributes.Add("style", "width:100%");
+
+            tbl.Rows[0].Cells[0].Controls.Add(ddlHora);
+            tbl.Rows[0].Cells[0].Attributes["reference"] = ddlHora.ClientID;
+
+            HtmlGenericControl sp = new HtmlGenericControl("span");
+            sp.InnerText = ":";
+            tbl.Rows[0].Cells[1].Controls.Add(sp);
+
+            tbl.Rows[0].Cells[2].Controls.Add(ddlMinutos);
+            tbl.Rows[0].Cells[2].Attributes["reference"] = ddlMinutos.ClientID;
+
+            tbl.Rows[0].Cells[3].Controls.Add(ddlAMPM);
+
+            dvPanel.Controls.Add(tbl); 
+            return dvPanel;
+        }
+
+
+        protected override void Render(HtmlTextWriter writer)
+        {
+            string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
+            htmlTimePick().RenderControl(writer);
+
+            if (!IsDesign())
+            {
+                //dpHIni_ddlH
+                string scriptGet = @" var " + this.ClientID + @"={};
+                                        var " + this.ClientID +"_ctrlH = jNet.get('" + ddlHora.ClientID + @"');
+                                        var " + this.ClientID +"_ctrlM = jNet.get('" + ddlMinutos.ClientID + @"');
+                                        var " + this.ClientID +"_ctrlAP = jNet.get('" + ddlAMPM.ClientID + @"');
+                                    " +
+                                    this.ClientID + @".GetValue=function(){
+                                                                        var ListItemH = " + this.ClientID + @"_ctrlH.options[" + this.ClientID + @"_ctrlH.selectedIndex];
+                                                                        var ListItemM = " + this.ClientID + @"_ctrlM.options[" + this.ClientID + @"_ctrlM.selectedIndex];
+                                                                        var ListItemAP = " + this.ClientID + @"_ctrlAP.options[" + this.ClientID + @"_ctrlAP.selectedIndex];
+                                                                        var AP ='';
+                                                                        if(ListItemAP.value=='AM'){
+                                                                            AP='a.m.';
+                                                                        }
+                                                                        else{
+                                                                            AP='p.m.';
+                                                                        }
+                                                                    return ListItemH.value + ':' + ListItemM.value + ' ' + AP;
+                                                                }
+                                    " + this.ClientID + @".SetValue=function(Hora,Minuto,AP){
+                                                                 " + this.ClientID + @"_ctrlH.FindValue(Hora);
+                                                                 " + this.ClientID + @"_ctrlM.FindValue(Minuto);
+                                                                 " + this.ClientID + @"_ctrlAP.FindValue(AP);
+                                                            }
+                                    ";
+
+                (new LiteralControl("\n <script>\n" + scriptGet + "\n" + "</script>\n")).RenderControl(writer);
+
+
+
+            }
+
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        private bool IsDesign()
+        {
+            if (this.Site != null)
+                return this.Site.DesignMode;
+            return false;
+        }
+
+
     }
 }
