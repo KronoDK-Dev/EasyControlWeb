@@ -8,7 +8,7 @@ namespace EasyControlWeb.Form
 {
     public class EasyFormCollectionEditor
     {
-        public class EasyFormoCollectionEditorGrupo: CollectionEditor
+        public class EasyFormoCollectionEditorGrupo : CollectionEditor
         {
             public EasyFormoCollectionEditorGrupo(Type type) : base(type)
             {
@@ -159,9 +159,9 @@ namespace EasyControlWeb.Form
 
         }
 
-       
 
-        
+
+
 
     }
 }

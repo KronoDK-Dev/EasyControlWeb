@@ -1,15 +1,16 @@
-﻿using System.IO;
-using System.Web.Services.Description;
-using Microsoft.CSharp;
-using System.CodeDom.Compiler;
-using System.CodeDom;
-using System.Net;
-using System.Text;
-using System;
+﻿using EasyControlWeb.Filtro;
 using EasyControlWeb.InterConeccion;
-using EasyControlWeb.Filtro;
-using static EasyControlWeb.EasyUtilitario.Enumerados;
+using Microsoft.CSharp;
+using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
+using System.IO;
+using System.Net;
+using System.Reflection;
+using System.Text;
+using System.Web.Services.Description;
+using static EasyControlWeb.EasyUtilitario.Enumerados;
 
 namespace EasyControlWeb.InterConecion
 {
@@ -55,6 +56,84 @@ namespace EasyControlWeb.InterConecion
             string PathApp = UrlApp + oEasyDataInterConect.UrlWebService;
             return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
 
+        }
+        public static object InvokeWebService2(string url, string classname, string methodname, object[] args)
+        {
+            string @namespace = "ServiceBase.WebService.DynamicWebLoad";
+
+            if (string.IsNullOrEmpty(classname))
+            {
+                classname = EasyWebServieHelper.GetClassName(url);
+            }
+
+            // Leer el WSDL con timeout extendido usando tu clase WebClient_Tiempo
+            using (var wc = new WebClient_Tiempo())
+            {
+                wc.Timeout = 600000; // 10 minutos
+                using (Stream stream = wc.OpenRead(url + "?WSDL"))
+                {
+                    ServiceDescription sd = ServiceDescription.Read(stream);
+                    ServiceDescriptionImporter sdi = new ServiceDescriptionImporter();
+                    sdi.AddServiceDescription(sd, "", "");
+
+                    CodeNamespace cn = new CodeNamespace(@namespace);
+                    CodeCompileUnit ccu = new CodeCompileUnit();
+                    ccu.Namespaces.Add(cn);
+                    sdi.Import(cn, ccu);
+
+                    CSharpCodeProvider csc = new CSharpCodeProvider();
+#pragma warning disable CS0618 // ICodeCompiler es obsoleto pero se requiere en este enfoque
+                    ICodeCompiler icc = csc.CreateCompiler();
+#pragma warning restore CS0618
+
+                    CompilerParameters cplist = new CompilerParameters
+                    {
+                        GenerateExecutable = false,
+                        GenerateInMemory = true
+                    };
+                    cplist.ReferencedAssemblies.Add("System.dll");
+                    cplist.ReferencedAssemblies.Add("System.XML.dll");
+                    cplist.ReferencedAssemblies.Add("System.Web.Services.dll");
+                    cplist.ReferencedAssemblies.Add("System.Data.dll");
+
+                    CompilerResults cr = icc.CompileAssemblyFromDom(cplist, ccu);
+                    if (cr.Errors.HasErrors)
+                    {
+                        StringBuilder sb = new StringBuilder();
+                        foreach (CompilerError ce in cr.Errors)
+                        {
+                            sb.AppendLine(ce.ToString());
+                        }
+                        throw new Exception(sb.ToString());
+                    }
+
+                    Assembly assembly = cr.CompiledAssembly;
+                    Type t = assembly.GetType(@namespace + "." + classname, true, true);
+                    object obj = Activator.CreateInstance(t);
+
+                    // Intentar establecer la propiedad Timeout si existe
+                    PropertyInfo timeoutProperty = t.GetProperty("Timeout");
+                    if (timeoutProperty != null && timeoutProperty.CanWrite)
+                    {
+                        timeoutProperty.SetValue(obj, 600000, null); // 10 minutos
+                    }
+
+                    MethodInfo mi = t.GetMethod(methodname);
+                    try
+                    {
+
+                        return mi.Invoke(obj, args);
+                    }
+                    catch (TargetInvocationException ex)
+                    {
+                        throw new Exception($"Error al invocar el método '{methodname}': {ex.InnerException?.Message ?? ex.Message}", ex);
+                    }
+                    catch (Exception ex)
+                    {
+                        throw new Exception($"Error inesperado al invocar el método '{methodname}': {ex.Message}", ex);
+                    }
+                }
+            }
         }
 
         public static object InvokeWebService(string url, string classname, string methodname, object[] args)
