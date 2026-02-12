@@ -175,6 +175,9 @@
     <Compile Include="InterConecion\EasyBaseEntityBE.cs" />
     <Compile Include="InterConecion\EasyDataInterConect.cs" />
     <Compile Include="InterConecion\EasyWebServieHelper.cs" />
+    <Compile Include="InterConecion\WebClient_Tiempo.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Test\DosBE.cs" />
     <Compile Include="Test\FilteredFileNameEditor.cs" />
