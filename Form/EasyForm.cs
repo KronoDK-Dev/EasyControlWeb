@@ -755,14 +755,10 @@ namespace EasyControlWeb.Form
                 {
                     ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Valor);
                     
-                }
-<<<<<<< Updated upstream
-=======
                 else if (ctrl is EasyTimepicker)
                 {
                     ((EasyTimepicker)ctrl).Text = Valor;
                 }
->>>>>>> Stashed changes
             }
         }
         public void SetValue(string Id, List<EasyFileInfo> allEasyFileInfo) {
