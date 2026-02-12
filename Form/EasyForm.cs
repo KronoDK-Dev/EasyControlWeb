@@ -249,9 +249,9 @@ namespace EasyControlWeb.Form
                                 ScriptObtenerDatos += "             DataColletion[" + cmll + IdCtrl + cmll + "] = " + IdCtrl + ".GetValue();\n";
                             }
                         }
-                        else if (ctrl is EasyTimepicker)
+                        else if (ctrl is EasyTimePicker2)
                         {
-                            EasyTimepicker oTP = (EasyTimepicker)ctrl;
+                            EasyTimePicker2 oTP = (EasyTimePicker2)ctrl;
 
                             _grp.Controls.Add(
                                 EasyUtilitario.Helper.HtmlControlsDesign.CrearControlBase(
@@ -756,9 +756,9 @@ namespace EasyControlWeb.Form
                     ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Convert.ToInt32(Valor));
                     
                 }
-                else if (ctrl is EasyTimepicker)
+                else if (ctrl is EasyTimePicker2)
                 {
-                    ((EasyTimepicker)ctrl).Text = Valor;
+                    ((EasyTimePicker2)ctrl).Text = Valor;
                 }
             }
         }
@@ -803,9 +803,9 @@ namespace EasyControlWeb.Form
                 {
                     objReturn = ((EasyDatepicker)(ctrl)).Text;
                 }
-                else if (ctrl is EasyTimepicker)
+                else if (ctrl is EasyTimePicker2)
                 {
-                    objReturn = ((EasyTimepicker)(ctrl)).Text;
+                    objReturn = ((EasyTimePicker2)(ctrl)).Text;
                 }
                 else if (ctrl is EasyNumericBox)
                 {
