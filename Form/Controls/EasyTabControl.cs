@@ -51,6 +51,14 @@ namespace EasyControlWeb.Form.Controls
         public string fncTabOnClick{ get; set; }
 
 
+
+        [Category("Scripts"), Description("")]
+        [Browsable(true)]
+        [RefreshProperties(RefreshProperties.All)]
+        [NotifyParentProperty(true)]
+        public string fncTabOnRefresh { get; set; }
+
+
         [Category("Scripts"), Description("")]
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
@@ -317,7 +325,13 @@ namespace EasyControlWeb.Form.Controls
               
                HtmlTabControlTop().RenderControl(writer);
                HtmlTabContentTop().RenderControl(writer);
-               
+
+                string OnRefreshIni = "";
+                string OnRefreshFin = "";
+                if ((this.fncTabOnRefresh != null) && (this.fncTabOnRefresh.Length > 0)) {
+                    OnRefreshIni = this.fncTabOnRefresh + "('Ini');";
+                    OnRefreshFin = this.fncTabOnRefresh + "('Fin');";
+                }
 
                 string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble.ToString();
                 string TabOnclick = ((this.fncTabOnClick != null) ? this.fncTabOnClick + "(oTab);" : "");
@@ -327,7 +341,8 @@ namespace EasyControlWeb.Form.Controls
                                                     var " + this.ClientID + @"_TabSelect = '" + TabDefault + @"'; 
                                                         " + this.ClientID + @".TabActivo =null;
                                                     " + this.ClientID + @".RefreshTabSelect=function(IdTabSelected){
-                                                           if(IdTabSelected==undefined){
+                                                    " + OnRefreshIni + @"
+                                                           if (IdTabSelected==undefined){
                                                                 IdTabSelected=" + this.ClientID + @"_TabSelect ;
                                                             }
                                                             var oTab = jNet.get(IdTabSelected);
@@ -345,6 +360,7 @@ namespace EasyControlWeb.Form.Controls
                                                                     TabContent.css('display','block');
                                                                     " + this.ClientID + @"_TabSelect = oTab.attr('id');
                                                                     if(oTab.attr('Loading')=='false'){
+                                                                            " + OnRefreshIni + @"
                                                                             TabContent.clear();
                                                                             var oColletionParams = new SIMA.ParamCollections();
                                                                             var oParam = null;
@@ -372,7 +388,9 @@ namespace EasyControlWeb.Form.Controls
                                                                                                                                                             UrlPage: urlPag,
                                                                                                                                                             ColletionParams: oColletionParams,
                                                                                                                                                             //fnTemplate:function () {},
-                                                                                                                                                            //fnOnComplete: function () {}
+                                                                                                                                                            fnOnComplete: function () {
+                                                                                                                                                                " + OnRefreshFin + @"
+                                                                                                                                                            }
                                                                                                                                                            };
                                                                                                                                         SIMA.Utilitario.Helper.LoadPageInCtrl(oLoadConfig);    
                                                                                                                                     });
@@ -382,11 +400,13 @@ namespace EasyControlWeb.Form.Controls
                                                                                     jNet.get(NomTabContent).innerHTML = oValor;
                                                                                     break;
                                                                                 case 'ContentCtrl':
-                                                                                    var obj= jNet.get(oValor);
-                                                                                    obj.css('visibility','visible');
-                                                                                    var TbContext = jNet.get(NomTabContent);
-                                                                                    //TbContext.css('border-style','dotted');
-                                                                                    TbContext.insert(obj);
+                                                                                    if(oTab.attr('Loading')=='false'){
+                                                                                        var obj= jNet.get(oValor);
+                                                                                        obj.css('visibility','visible');
+                                                                                        var TbContext = jNet.get(NomTabContent);
+                                                                                        //TbContext.css('border-style','dotted');
+                                                                                        TbContext.insert(obj);
+                                                                                    }
                                                                                     break;
                                                                             }
                                                                         //Tab Cargado

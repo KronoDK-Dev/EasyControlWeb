@@ -31,7 +31,7 @@ namespace EasyControlWeb.InterConecion
         {
             return InvokeWebService("", oEasyDataInterConect);
         }
-        public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
+       /* public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
         {
             object[] param = new object[oEasyDataInterConect.UrlWebServicieParams.Count]; int i = 0;
 
@@ -56,8 +56,100 @@ namespace EasyControlWeb.InterConecion
             string PathApp = UrlApp + oEasyDataInterConect.UrlWebService;
             return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
 
+        }*/
+
+      /* public static object InvokeWebService(string url, string classname, string methodname, object[] args)
+        {
+            string @namespace = "ServiceBase.WebService.DynamicWebLoad";
+            if (classname == null || classname == "")
+            {
+                classname = EasyWebServieHelper.GetClassName(url);
+            }
+            // Obtener lenguaje de descripción de servicio (WSDL)
+            WebClient wc = new WebClient();
+            Stream stream = wc.OpenRead(url + "?WSDL");
+            ServiceDescription sd = ServiceDescription.Read(stream);
+            ServiceDescriptionImporter sdi = new ServiceDescriptionImporter();
+            sdi.AddServiceDescription(sd, "", "");
+            CodeNamespace cn = new CodeNamespace(@namespace);
+            // Generar código de clase de proxy de cliente
+            CodeCompileUnit ccu = new CodeCompileUnit();
+            ccu.Namespaces.Add(cn);
+            sdi.Import(cn, ccu);
+            CSharpCodeProvider csc = new CSharpCodeProvider();
+            ICodeCompiler icc = csc.CreateCompiler();
+            // Establecer los parámetros del compilador
+            CompilerParameters cplist = new CompilerParameters();
+            cplist.GenerateExecutable = false;
+            cplist.GenerateInMemory = true;
+            cplist.ReferencedAssemblies.Add("System.dll");
+            cplist.ReferencedAssemblies.Add("System.XML.dll");
+            cplist.ReferencedAssemblies.Add("System.Web.Services.dll");
+            cplist.ReferencedAssemblies.Add("System.Data.dll");
+            // Compilar clase de proxy
+            CompilerResults cr = icc.CompileAssemblyFromDom(cplist, ccu);
+            if (true == cr.Errors.HasErrors)
+            {
+                System.Text.StringBuilder sb = new StringBuilder();
+                foreach (CompilerError ce in cr.Errors)
+                {
+                    sb.Append(ce.ToString());
+                    sb.Append(System.Environment.NewLine);
+                }
+                throw new Exception(sb.ToString());
+            }
+            // Genera una instancia de proxy y llama al método
+            System.Reflection.Assembly assembly = cr.CompiledAssembly;
+            Type t = assembly.GetType(@namespace + "." + classname, true, true);
+            object obj = Activator.CreateInstance(t);
+            methodname = methodname.Replace("\r\n", "");
+            System.Reflection.MethodInfo mi = t.GetMethod(methodname);
+            return mi.Invoke(obj, args);
+        }*/
+
+
+
+
+
+
+        public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
+        {
+            object[] param = new object[oEasyDataInterConect.UrlWebServicieParams.Count]; int i = 0;
+
+            foreach (EasyFiltroParamURLws objParam in oEasyDataInterConect.UrlWebServicieParams)
+            {
+
+                //switch ((TiposdeDatos)System.Enum.Parse(typeof(TiposdeDatos), oEntity["TipoDato"].ToString()))
+                switch (objParam.TipodeDato)
+                {
+                    case TiposdeDatos.String:
+                        param[i] = objParam.Paramvalue;
+                        break;
+                    case TiposdeDatos.Int:
+                        param[i] = Convert.ToInt32(objParam.Paramvalue);
+                        break;
+                    case TiposdeDatos.Double:
+                        param[i] = Convert.ToDouble(objParam.Paramvalue);
+                        break;
+                }
+                i++;
+            }
+            string PathApp = UrlApp + oEasyDataInterConect.UrlWebService;
+            try
+            {
+                return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw new Exception($"Error al invocar el método 'InvokeWebService2': {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al invocar el método 'InvokeWebService2': {ex.Message}", ex);
+            }
         }
-        public static object InvokeWebService2(string url, string classname, string methodname, object[] args)
+
+        public static object InvokeWebService(string url, string classname, string methodname, object[] args)
         {
             string @namespace = "ServiceBase.WebService.DynamicWebLoad";
 
@@ -66,7 +158,7 @@ namespace EasyControlWeb.InterConecion
                 classname = EasyWebServieHelper.GetClassName(url);
             }
 
-            // Leer el WSDL con timeout extendido usando tu clase WebClient_Tiempo
+            // Leer el WSDL con timeout extendido usando la nueva clase WebClient_Tiempo (esta en la carpeta interconecion)
             using (var wc = new WebClient_Tiempo())
             {
                 wc.Timeout = 600000; // 10 minutos
@@ -82,9 +174,7 @@ namespace EasyControlWeb.InterConecion
                     sdi.Import(cn, ccu);
 
                     CSharpCodeProvider csc = new CSharpCodeProvider();
-#pragma warning disable CS0618 // ICodeCompiler es obsoleto pero se requiere en este enfoque
                     ICodeCompiler icc = csc.CreateCompiler();
-#pragma warning restore CS0618
 
                     CompilerParameters cplist = new CompilerParameters
                     {
@@ -136,54 +226,13 @@ namespace EasyControlWeb.InterConecion
             }
         }
 
-        public static object InvokeWebService(string url, string classname, string methodname, object[] args)
-        {
-            string @namespace = "ServiceBase.WebService.DynamicWebLoad";
-            if (classname == null || classname == "")
-            {
-                classname = EasyWebServieHelper.GetClassName(url);
-            }
-            // Obtener lenguaje de descripción de servicio (WSDL)
-            WebClient wc = new WebClient();
-            Stream stream = wc.OpenRead(url + "?WSDL");
-            ServiceDescription sd = ServiceDescription.Read(stream);
-            ServiceDescriptionImporter sdi = new ServiceDescriptionImporter();
-            sdi.AddServiceDescription(sd, "", "");
-            CodeNamespace cn = new CodeNamespace(@namespace);
-            // Generar código de clase de proxy de cliente
-            CodeCompileUnit ccu = new CodeCompileUnit();
-            ccu.Namespaces.Add(cn);
-            sdi.Import(cn, ccu);
-            CSharpCodeProvider csc = new CSharpCodeProvider();
-            ICodeCompiler icc = csc.CreateCompiler();
-            // Establecer los parámetros del compilador
-            CompilerParameters cplist = new CompilerParameters();
-            cplist.GenerateExecutable = false;
-            cplist.GenerateInMemory = true;
-            cplist.ReferencedAssemblies.Add("System.dll");
-            cplist.ReferencedAssemblies.Add("System.XML.dll");
-            cplist.ReferencedAssemblies.Add("System.Web.Services.dll");
-            cplist.ReferencedAssemblies.Add("System.Data.dll");
-            // Compilar clase de proxy
-            CompilerResults cr = icc.CompileAssemblyFromDom(cplist, ccu);
-            if (true == cr.Errors.HasErrors)
-            {
-                System.Text.StringBuilder sb = new StringBuilder();
-                foreach (CompilerError ce in cr.Errors)
-                {
-                    sb.Append(ce.ToString());
-                    sb.Append(System.Environment.NewLine);
-                }
-                throw new Exception(sb.ToString());
-            }
-            // Genera una instancia de proxy y llama al método
-            System.Reflection.Assembly assembly = cr.CompiledAssembly;
-            Type t = assembly.GetType(@namespace + "." + classname, true, true);
-            object obj = Activator.CreateInstance(t);
-            methodname = methodname.Replace("\r\n", "");
-            System.Reflection.MethodInfo mi = t.GetMethod(methodname);
-            return mi.Invoke(obj, args);
-        }
+
+
+
+
+
+
+
         private static string GetClassName(string url)
         {
             string[] parts = url.Split('/');

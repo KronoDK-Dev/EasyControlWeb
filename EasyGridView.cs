@@ -695,51 +695,20 @@ namespace EasyControlWeb
                 Dictionary<string, string> Data = new Dictionary<String, string>();
                 if (_txtNroRegSelect.Text.Length > 0)
                 {
-                    //Data = FindRegSelected(Convert.ToInt32(_txtNroRegSelect.Text)-1);
                     Data = FindRegSelected(_txtNroRegSelect.Text);
                 }
                 if (EasyGridButton_Click != null) EasyGridButton_Click?.Invoke(item, Data);
             }
-          /*
-            if (this._txtNroRegSelect.Text.Trim().Length > 0) {
-                    string _ScriptSelectItem = @"<script>
-                                                    (function(){
-                                                                try{
-                                                                    var ogridView=document.getElementById('" + this.ClientID + @"');
-                                                                    var rows = ogridView.querySelectorAll('[TipoRow=" + Cmll + "2" + Cmll + @"]'); 
-                                                                    var GuidRegSelect = '" + this._txtNroRegSelect.Text + @"';
-                                                                        alert(GuidRegSelect);
-                                                                        rows.forEach(function(row,idx){
-                                                                                        if(jNet.get(row).attr('Guid')==GuidRegSelect){
-                                                                                            SIMA.GridView.Extended.OnEventClickChangeColor(row);
-                                                                                        }
-                                                                                   }
-                                                                                 );
-                                                                    }
-                                                                    catch(ex){
-                                                                    } 
-                                                                 }
-                                                        )();
-                                                </script>
-                                               ";
-
-
-                _Scripts.Add(new LiteralControl(_ScriptSelectItem));
-            }
-            */
         }
 
-        // Dictionary<string, string> FindRegSelected(int NroReg) {
         Dictionary<string, string> FindRegSelected(string NroReg)
         {
             Dictionary<string, string> DataExist = new Dictionary<String, string>();
             try
             {
-               // if (NroReg == -1) { return null; }
                 DataTable dtRowSelected = (DataTable)ViewState[DATA_COLLECION];
                 DataRow[] drs = dtRowSelected.Select("Guid='" + NroReg + "'");
                 DataRow dr = drs[0];
-                //DataRow dr = dtRowSelected.Rows[NroReg];
                 foreach (DataColumn dc in dtRowSelected.Columns)
                 {
                     DataExist.Add(dc.ColumnName, dr[dc.ColumnName].ToString());
@@ -922,37 +891,6 @@ namespace EasyControlWeb
             {
                 NroItem = (e.Row.RowIndex + (this.PageSize * this.PageIndex) + 1).ToString();
                 this.SetRowScriptFunctions(e.Row);
-                /*
-                if (!IsDesign()&& ShowRowNumber)//Numeracion de registro
-                {
-                        e.Row.Cells[0].Style.Add("Width", "3%");
-                        e.Row.Cells[0].Text = NroItem;
-                        e.Row.Cells[0].Style.Add("text-decoration","underline");
-                        e.Row.Cells[0].Style.Add("cursor", "hand");                        
-                        if (!IsDesign())
-                        {
-                        //e.Row.Cells[0].Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + "_OnDetalle('" + e.Row.RowIndex + "')");
-                            e.Row.Cells[0].Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + "_OnDetalle(jNet.get(this.parentNode))");                        
-                        }
-                }
-
-                e.Row.Attributes.Add("onmouseover", "javascript:SIMA.GridView.Extended.OnEventMouseInOutChangeColor(this, true);");
-                e.Row.Attributes.Add("onmouseout", "javascript:SIMA.GridView.Extended.OnEventMouseInOutChangeColor(this, false);");
-                if (this.EasyExtended.RowItemClick != null)
-                {
-                    //e.Row.Attributes.Add("onclick", "javascript:jNet.get('" + this.ClientID + "_txtIdRegSelected').attr('value','" + (e.Row.RowIndex + 1).ToString() + "'); SIMA.GridView.Extended.OnEventClickChangeColor(this);" + this.ClientID + @"_OnRowClick('" + e.Row.RowIndex + "');");
-                    e.Row.Attributes.Add("onclick", "javascript:var otxtNroReg=jNet.get('" + this.ClientID + "_txtIdRegSelected'); otxtNroReg.value=jNet.get(this).attr('Guid'); SIMA.GridView.Extended.OnEventClickChangeColor(this);" + this.ClientID + @"_OnRowClick(jNet.get(this));");
-                }
-                else {
-                        e.Row.Attributes.Add("onclick", "javascript:var otxtNroReg=jNet.get('" + this.ClientID + "_txtIdRegSelected'); otxtNroReg.value=jNet.get(this).attr('Guid'); SIMA.GridView.Extended.OnEventClickChangeColor(this);");
-                }
-                */
-
-                /*if (e.Row.Attributes["TipoRow"] != "4")
-                {
-                    e.Row.Attributes.Add("TipoRow", "2");
-                }*/
-                /*---------------------*/
             }
             else if (e.Row.RowType == DataControlRowType.Footer)
             {
@@ -980,7 +918,7 @@ namespace EasyControlWeb
                 gvr.Cells[0].Text = NroItem;
                 gvr.Cells[0].Style.Add("text-decoration", "underline");
                 gvr.Cells[0].Style.Add("cursor", "hand");
-                gvr.Cells[0].Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + "_OnDetalle(jNet.get(this.parentNode))");
+                //gvr.Cells[0].Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + "_OnDetalle(jNet.get(this.parentNode))");
             }
             gvr.Attributes.Add("onmouseover", "javascript:SIMA.GridView.Extended.OnEventMouseInOutChangeColor(this, true);");
             gvr.Attributes.Add("onmouseout", "javascript:SIMA.GridView.Extended.OnEventMouseInOutChangeColor(this, false);");
@@ -1182,13 +1120,22 @@ namespace EasyControlWeb
                 DataRow dr = drv.Row;
                 string NoDataFound = ((ShowRowNumber) ? e.Row.Cells[0].Text : e.Row.Cells[1].Text);
 
+                /*--------------------------------------------------------------------------------------*/
+                //Establece el evento click egeneral para cada celda
+             /*   if (this.EasyExtended.fncCellItemClick != null)
+                {
+                    foreach (TableCell cell in e.Row.Cells)
+                    {
+                        cell.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + @".OnCellClick(jNet.get(this))");
+                    }
+                }*/
+                /*--------------------------------------------------------------------------------------*/
+
+
                 if (e.Row.RowIndex== 0)//genera la definicion de la estructura del datatable como objeto de lado del cliente
                 {
                     //Marcar la fila para que no sea tocada
                     e.Row.Attributes.Add("NoDelete", "No");
-
-                    /*DataColumn dc = new DataColumn("bookmark", System.Type.GetType("System.Decimal"));
-                    dtPorPag.Columns.Add(dc);*/
                     DataColumn dc;
                     try
                     {
@@ -1429,57 +1376,52 @@ namespace EasyControlWeb
             //el valor de la propiedad this.RowItemClick  como evento debe de existir de lo contrario llamara al evento de boton btnIrDetalle y har'a un postBack de lado del servidor al evento asociado
             if (!IsDesign())
             {
+
+                /*asocia evento  a la columna*/
                 string scriptOnClickRow = "";
-                   string StamentSeccion = "";
-                if (this.EasyExtended.RowCellItemClick != null){
-                    StamentSeccion = ((this.EasyExtended.RowCellItemClick.Length > 0) ? this.EasyExtended.RowCellItemClick + "(ItemRowBE);" : "SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + ".PostBack();");
-                }
+                string StamentSeccion = "";
+
+                /*---para el evento de la primera columna--*/
+               //  if (this.EasyExtended.RowCellItemClick != null){
+                   // StamentSeccion = ((this.EasyExtended.RowCellItemClick.Length > 0) ? this.EasyExtended.RowCellItemClick + "(ItemRowBE);" : "SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + ".PostBack();");
+               // }
                 scriptOnClickRow = @"function " + this.ClientID + @"_OnDetalle(otr) {
-                                                                 //SIMA.Utilitario.Helper.Wait('Titulo',1000,function(){
-                                                                      var oDataRow =   ((oDT_" + this.ClientID + @"==null)?new Array():oDT_" + this.ClientID + @".Select('Guid', '=', otr.attr('Guid')));
-                                                                      var ItemRowBE =oDataRow[0];
-                                                                      $('#" + NomTextRegSele + @"').val(otr.attr('Guid'));
-                                                                      $('#" + NomRowIndexSele + @"').val(otr.rowIndex);
-                                                                   " + StamentSeccion + @" 
-                                                                 //});
-                                                   }";
+                                                                                " + this.ClientID + @"_OnRowClick(otr);
+                                                                }";
 
-                /*string scriptOnClickRow = @"function " + this.ClientID + @"_OnDetalle(otr) {
-                                                                var oDataRow =   ((oDT_" + this.ClientID + @"==null)?new Array():oDT_" + this.ClientID + @".Select('Guid', '=', otr.attr('Guid')));
-                                                                var ItemRowBE =oDataRow[0];
-                                                                    $('#" + NomTextRegSele + @"').val(otr.attr('Guid'));
-                                                                    $('#" + NomRowIndexSele + @"').val(otr.rowIndex);
-
-                                                                if(" + (this.EasyExtended.RowCellItemClick.Length + @">0){
-                                                                    SIMA.Utilitario.Helper.Wait('Titulo',1000,function(){
-                                                                      " + StamentSeccion + @" 
-                                                                    });
-                                                                }
-                                                                else{
-                                                                    SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });
-                                                                     " + StamentSeccion + @"
-                                                                }
-                                                  }";*/
 
                 (new LiteralControl("<script>" + ArrDataBE + "" + scriptOnClickRow + "</script>")).RenderControl(writer);
 
+                
+
+
                 StamentSeccion = "";
                 /*************************************************************************************************/
-                if (this.EasyExtended.RowItemClick != null)
+                if ((this.EasyExtended.RowItemClick != null) && (this.EasyExtended.RowItemClick.Length > 0))
                 {
-                    StamentSeccion = ((this.EasyExtended.RowItemClick.Length>0)? this.EasyExtended.RowItemClick + "(ItemRowBE);":"");
-                    //Adicionado el 27-10-2023 solo para uso de la seleccion de una fila
-                    scriptOnClickRow = @"function " + this.ClientID + @"_OnRowClick(otr) {
-                                                                           var oDataRow =   ((oDT_" + this.ClientID + @"==null)?new Array():oDT_" + this.ClientID + @".Select('Guid', '=', otr.attr('Guid')));
-                                                                           var ItemRowBE =oDataRow[0];
-                                                                             $('#" + NomTextRegSele + @"').val(otr.attr('Guid'));
-                                                                             $('#" + NomRowIndexSele + @"').val(otr.rowIndex);
-                                                                             " + StamentSeccion + @"
-                                                      }";
-
-
-                    (new LiteralControl("<script>" + ArrDataBE + "" + scriptOnClickRow + "</script>")).RenderControl(writer);
+                    StamentSeccion = this.EasyExtended.RowItemClick + "(oCell,ItemRowBE);";
+                }   //Adicionado el 27-10-2023 solo para uso de la seleccion de una fila
+                else {
+                    StamentSeccion = "";
                 }
+                    scriptOnClickRow = @"function " + this.ClientID + @"_OnRowClick(otr) {
+                                                                        var oDataRow =   ((oDT_" + this.ClientID + @"==null)?new Array():oDT_" + this.ClientID + @".Select('Guid', '=', otr.attr('Guid')));
+                                                                        var ItemRowBE =oDataRow[0];
+                                                                            $('#" + NomTextRegSele + @"').val(otr.attr('Guid'));
+                                                                            $('#" + NomRowIndexSele + @"').val(otr.rowIndex);
+                                                                            //Entrega la celda Seleccionada
+                                                                            var oCell= event.target;
+                                                                            if((oCell.cellIndex==0)&&('" + StamentSeccion + @"'.length==0)){
+                                                                                SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + @".PostBack();    
+                                                                            }
+                                                                            else if ('" + StamentSeccion + @"'.length>0){
+                                                                                " + StamentSeccion + @"
+                                                                            }
+                                                    }";
+
+
+                (new LiteralControl("<script>" + ArrDataBE + "" + scriptOnClickRow + "</script>")).RenderControl(writer);
+               
 
                 /*************************************************************************************************/
 
@@ -1496,8 +1438,6 @@ namespace EasyControlWeb
                 (new LiteralControl("\n <script>" + ViewState[DATA_TABLE_CLIENT].ToString() + "</script>")).RenderControl(writer);
             }
             //Clonar Fila
-           
-
             string strRowsCount = this.ClientID + @".RowCount=function(){
                                                          var ogridView = jNet.get('" + this.ClientID + @"');
                                                          var rows = ogridView.querySelectorAll('[TipoRow=" + Cmll + "2" + Cmll + @"]');
@@ -1906,6 +1846,17 @@ namespace EasyControlWeb
             _Scripts.Add(new LiteralControl("\n<script>" + strRowDeletes + "</script>"));
 
 
+
+
+
+            string strQuerySelector = this.ClientID + @".querySelector=function(Filtro,fncLoop){
+                                                                  var AllCtrl = document.getElementById('" + this.ClientID + @"').querySelectorAll('[' + Filtro + ']');
+                                                                  Array.prototype.forEach.call(AllCtrl, function(el){
+                                                                                                            fncLoop(jNet.get(el));
+                                                                                                          }); 
+                                                            }";
+
+            _Scripts.Add(new LiteralControl("\n<script>" + strQuerySelector + "</script>"));
 
 
 

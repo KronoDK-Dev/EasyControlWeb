@@ -360,35 +360,29 @@ namespace EasyControlWeb
 
                 public static void UploadProcessRequest(HttpContext context)
                 {
-                    // para framentar el archivo: https://www.c-sharpcorner.com/article/understanding-multithreading-and-multitasking-in-c-sharp/
-                    char bs = EasyControlWeb.EasyUtilitario.Constantes.Caracteres.BackSlash;
-                    string PathLocal = context.Request.Params["PathLocal"];
-                    PathLocal = PathLocal.Replace('.', bs);
-                    PathLocal = PathLocal.Substring(1, PathLocal.Length - 1);
-
-                    string PilaResponse = "";
-
+                    char backSlash = EasyUtilitario.Constantes.Caracteres.BackSlash;
+                    string str1 = context.Request.Params["PathLocal"].Replace('.', backSlash);
+                    string str2 = str1.Substring(1, str1.Length - 1);
+                    string str3 = "";
                     context.Response.Buffer = true;
                     context.Response.Clear();
-
                     context.Response.ContentType = "text/plain";
-                    //context.Response.ContentType = "text/html";
-                    var writer = new StringWriter();
-                    foreach (string ArchivoName in context.Request.Files)
+                    StringWriter stringWriter = new StringWriter();
+                    foreach (string file1 in (NameObjectCollectionBase)context.Request.Files)
                     {
-                        HttpPostedFile file = context.Request.Files[ArchivoName];
-                        int nFileLen = file.ContentLength;
-                        byte[] myData = new byte[nFileLen];
-                        file.InputStream.Read(myData, 0, nFileLen);
-                        WriteToFile(PathLocal + file.FileName, ref myData);
-                        PilaResponse += file.FileName + "@";
-                        //Al finalizar la carga
+                        HttpPostedFile file2 = context.Request.Files[file1];
+                        int contentLength = file2.ContentLength;
+                        byte[] Buffer = new byte[contentLength];
+                        file2.InputStream.Read(Buffer, 0, contentLength);
+                        EasyUtilitario.Helper.Genericos.WriteToFile(str2 + file2.FileName, ref Buffer);
+                        str3 = str3 + file1 + "@";
                     }
-                    PilaResponse = PilaResponse.Substring(0, PilaResponse.Length - 1);
-                    context.Response.Write(PilaResponse);
+                    string s = str3.Substring(0, str3.Length - 1);
+                    context.Response.Write(s);
                     context.Response.Flush();
                     context.Response.End();
                 }
+
 
                 public static void EnviarEmail(string From,string to,string Asunto,string Mensaje,string RutaFileAttach) {
                     
