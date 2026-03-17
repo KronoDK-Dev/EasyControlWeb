@@ -114,78 +114,86 @@ namespace EasyControlWeb.Form.Base
         public void LoadData() {
             if (CargaInmediata)
             {
-                if ((this.DataInterconect.UrlWebServicieParams != null) && (this.DataInterconect.UrlWebServicieParams.Count != 0))
+                try
                 {
-                    int pos = 0;
-                    object[] param = new object[this.DataInterconect.UrlWebServicieParams.Count];
-                    foreach (EasyFiltroParamURLws oEasyFiltroParamURLws in this.DataInterconect.UrlWebServicieParams)
+                    if ((this.DataInterconect.UrlWebServicieParams != null) && (this.DataInterconect.UrlWebServicieParams.Count != 0))
                     {
-                        string Valor = "";
-                        if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL)
+                        int pos = 0;
+                        object[] param = new object[this.DataInterconect.UrlWebServicieParams.Count];
+                        foreach (EasyFiltroParamURLws oEasyFiltroParamURLws in this.DataInterconect.UrlWebServicieParams)
                         {
-                            Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParamURLws.ParamName].ToString();
-                        }
-                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Fijo)
-                        {
-                            Valor = oEasyFiltroParamURLws.Paramvalue;
-                        }
-                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Session)
-                        {
-                            string NSesion = oEasyFiltroParamURLws.Paramvalue.ToString().Trim();
-                            switch (NSesion)
+                            string Valor = "";
+                            if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL)
                             {
-                                case "IdUsuario":
-                                    Valor = ((EasyUsuario)EasyUtilitario.Helper.Sessiones.Usuario.get()).IdUsuario.ToString();
+                                Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParamURLws.ParamName].ToString();
+                            }
+                            else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Fijo)
+                            {
+                                Valor = oEasyFiltroParamURLws.Paramvalue;
+                            }
+                            else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Session)
+                            {
+                                string NSesion = oEasyFiltroParamURLws.Paramvalue.ToString().Trim();
+                                switch (NSesion)
+                                {
+                                    case "IdUsuario":
+                                        Valor = ((EasyUsuario)EasyUtilitario.Helper.Sessiones.Usuario.get()).IdUsuario.ToString();
+                                        break;
+                                    case "UserName":
+                                        Valor = ((EasyUsuario)EasyUtilitario.Helper.Sessiones.Usuario.get()).Login;
+                                        break;
+                                    default:
+                                        Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Session[NSesion].ToString();
+                                        break;
+                                }
+                            }
+
+                            else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.FormControl)
+                            {
+                                string NomCtrlContext = this.Attributes["CtrlContext"];
+                                string NomCtrl = oEasyFiltroParamURLws.Paramvalue;
+                                Valor = NomCtrl;
+                            }
+                            switch (oEasyFiltroParamURLws.TipodeDato)
+                            {
+                                case EasyUtilitario.Enumerados.TiposdeDatos.String:
+                                    param[pos] = Valor;
                                     break;
-                                case "UserName":
-                                    Valor = ((EasyUsuario)EasyUtilitario.Helper.Sessiones.Usuario.get()).Login;
+                                case EasyUtilitario.Enumerados.TiposdeDatos.Int:
+                                    param[pos] = Convert.ToInt32(Valor);
                                     break;
-                                default:
-                                    Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Session[NSesion].ToString();
+                                case EasyUtilitario.Enumerados.TiposdeDatos.Double:
+                                    param[pos] = Convert.ToDouble(Valor);
+                                    break;
+                                case EasyUtilitario.Enumerados.TiposdeDatos.Date:
+                                    param[pos] = Convert.ToDateTime(Valor);
                                     break;
                             }
+                            pos++;
                         }
-
-                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.FormControl)
+                        string CadenaConexion = "";
+                        if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
                         {
-                            string NomCtrlContext = this.Attributes["CtrlContext"];
-                            string NomCtrl = oEasyFiltroParamURLws.Paramvalue;
-                            Valor = NomCtrl;
+                            CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;
                         }
-                        switch (oEasyFiltroParamURLws.TipodeDato)
+                        else
                         {
-                            case EasyUtilitario.Enumerados.TiposdeDatos.String:
-                                param[pos] = Valor;
-                                break;
-                            case EasyUtilitario.Enumerados.TiposdeDatos.Int:
-                                param[pos] = Convert.ToInt32(Valor);
-                                break;
-                            case EasyUtilitario.Enumerados.TiposdeDatos.Double:
-                                param[pos] = Convert.ToDouble(Valor);
-                                break;
-                            case EasyUtilitario.Enumerados.TiposdeDatos.Date:
-                                param[pos] = Convert.ToDateTime(Valor);
-                                break;
+                            string SourceCode = ((this.DataInterconect.ConfigPathSrvRemoto != null) ? EasyUtilitario.Helper.Configuracion.Leer(EasyUtilitario.Enumerados.Configuracion.SeccionKey.Nombre.ConfigBase, this.DataInterconect.ConfigPathSrvRemoto) : "");
+                            CadenaConexion = SourceCode + this.DataInterconect.UrlWebService;
                         }
-                        pos++;
+                        DataTable dt = (DataTable)EasyWebServieHelper.InvokeWebService(CadenaConexion, "", DataInterconect.Metodo, param);
+                        this.DataSource = dt;
+                        this.DataBind();
                     }
-                    string CadenaConexion = "";
-                    if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
-                    {
-                        CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;
-                    }
-                    else
-                    {
-                        CadenaConexion = this.DataInterconect.UrlWebService;//aqui hay un error
-                    }
-                    DataTable dt = (DataTable)EasyWebServieHelper.InvokeWebService(CadenaConexion, "", DataInterconect.Metodo, param);
-
-                    // DataTable dt = (DataTable)EasyUtilitario.Helper.Data.getResultInterConect(DataInterconect);
-                    this.DataSource = dt;
-                    this.DataBind();
+                    ListItem litem = new ListItem("[Seleccionar...]", "-1");
+                    this.Items.Insert(0, litem);
                 }
-                ListItem litem = new ListItem("[Seleccionar...]", "-1");
-                this.Items.Insert(0, litem);
+                catch (Exception ex) {
+                    string ScriptError = @" var msgConfig = { Titulo: 'EasyControl:" +  this.ClientID + @"', Descripcion: '" + ex.Message.Replace("'"," ") + @"'};
+                                            var oMsg = new SIMA.MessageBox(msgConfig);
+                                            oMsg.Alert();";
+                    EasyUtilitario.Helper.Genericos.RegistraBlockScriptLiteral(ScriptError);
+                }
             }
         }
 

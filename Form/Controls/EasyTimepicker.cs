@@ -126,6 +126,7 @@ namespace EasyControlWeb.Form.Controls
             ddlMinutos.SetValue(Minuto);
             ddlAMPM.SetValue(AP.ToUpper().Trim());
         }
+
         [Browsable(false)]
         public void SetValue(string Time)
         {
@@ -133,8 +134,43 @@ namespace EasyControlWeb.Form.Controls
             if (IsValidTime(Time) ==true) {
                 string[] stime = Time.Split(' ');
                 string []HoraMin = stime[0].Split(':');
-                SetValue(HoraMin[0], HoraMin[1], stime[1]);
+                try
+                {
+                    SetValue(GetHora(HoraMin[0]), HoraMin[1], stime[1]);
+                }
+                catch (Exception ex)
+                {
+                    SetValue(GetHora(HoraMin[0]), HoraMin[1], GetAmPm(HoraMin[0]));
+                }
             }
+        }
+        string GetHora(string Hora) {
+            if (Convert.ToInt32(Hora) > 12)
+            {
+                return (Convert.ToInt32(Hora)-12).ToString().PadLeft(2,'0');
+            }
+            return Hora;
+        }
+        string GetAmPm(string Hora) { 
+            if(Convert.ToInt32(Hora)>12){
+                return "PM";
+            }
+            return "AM";
+        }
+        public string getValue24()
+        {
+            string Hora = this.ddlHora.getValue();
+            string AmPm = this.ddlAMPM.getValue();
+            int CalHora = 0;
+            if (AmPm == "PM") {
+                CalHora = (Convert.ToInt32(Hora) + 12);
+            }
+            return CalHora.ToString() + ":" + this.ddlMinutos.getValue();
+        }
+
+        public string getValue()
+        {
+            return this.ddlHora.getValue() + ":" + this.ddlMinutos.getValue() + " " + ((this.ddlAMPM.getValue()=="AM")?"a.m.":"p.m."); 
         }
 
         public bool IsValidTime(string thetime)
@@ -195,6 +231,18 @@ namespace EasyControlWeb.Form.Controls
                                                                             AP='p.m.';
                                                                         }
                                                                     return ListItemH.value + ':' + ListItemM.value + ' ' + AP;
+                                                                }
+                                     " + this.ClientID + @".GetValue24=function(){
+                                                                        var ListItemH = " + this.ClientID + @"_ctrlH.options[" + this.ClientID + @"_ctrlH.selectedIndex];
+                                                                        var ListItemM = " + this.ClientID + @"_ctrlM.options[" + this.ClientID + @"_ctrlM.selectedIndex];
+                                                                        var ListItemAP = " + this.ClientID + @"_ctrlAP.options[" + this.ClientID + @"_ctrlAP.selectedIndex];
+                                                                        var AP ='';
+                                                                        var Hora=ListItemH.value;
+                                                                        if(ListItemAP.value=='PM'){
+                                                                            Hora = parseInt(Hora)+12;
+                                                                        }
+                                                                       
+                                                                    return Hora + ':' + ListItemM.value;
                                                                 }
                                     " + this.ClientID + @".SetValue=function(Hora,Minuto,AP){
                                                                  " + this.ClientID + @"_ctrlH.FindValue(Hora);

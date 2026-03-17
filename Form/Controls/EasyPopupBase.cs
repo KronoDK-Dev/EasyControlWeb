@@ -177,7 +177,7 @@ namespace EasyControlWeb.Form.Controls
 
 
             string HtmlProgress = "  <div id='" + this.ClientID + "_ContentProgress' class='progress progress-striped active' style='margin-left:0;margin-bottom:0;display:none;width: 100%;height: 100%;'>"
-                                + "     <div  id='" + this.ClientID + "_Progress' class='progress-bar' style='width: 100%;height: 100%;'>Load..</div>"
+                                + "     <div  id='" + this.ClientID + "_Progress' class='progress-bar' style='width: 100%;height: 100%;padding-left: 15px; '>Load..</div>"
                                 + " </div>";
                                  
 
@@ -397,6 +397,7 @@ namespace EasyControlWeb.Form.Controls
                                                     theForm = document.forms[" + ClientID + @".FormContextName]; 
                                                 }
                                                " + ClientID + @".onClose();
+                                               jNet.get('" + this.ClientID + @"_MsgValidaDatos').remove();
                                         }
                                         " + ClientID + @".ProgressBar={};
 

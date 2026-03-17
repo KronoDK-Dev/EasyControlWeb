@@ -333,6 +333,31 @@ namespace EasyControlWeb.Form.Controls
                     OnRefreshFin = this.fncTabOnRefresh + "('Fin');";
                 }
 
+                string ExecuteTab = @"var urlPag = ((oTipoTab=='UrlLocal')? Page.Request.ApplicationPath + oValor:oValor);
+                                                var oLoadConfig = {
+                                                                    CtrlName: NomTabContent,
+                                                                    UrlPage: urlPag,
+                                                                    ColletionParams: oColletionParams,
+                                                                    //fnTemplate:function () {},
+                                                                    fnOnComplete: function () {
+                                                                                        " + OnRefreshFin + @"
+                                                                                    }
+                                                                };
+                                       SIMA.Utilitario.Helper.LoadPageInCtrl(oLoadConfig);";
+                string TaskTabON = "";
+                //if (this.LoadSilent == true)
+                {
+                    TaskTabON = @"Manager.Task.Excecute(function () {
+                                                                " + ExecuteTab + @"
+                                                        }, 800,"+ this.LoadSilent.ToString().ToLower() + @");";
+                }
+               /* else {
+                    TaskTabON = @"SIMA.Utilitario.Helper.Wait('Extendiendo',800,function(){
+                                                            " + ExecuteTab + @"
+                                                        });";
+                }*/
+
+
                 string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble.ToString();
                 string TabOnclick = ((this.fncTabOnClick != null) ? this.fncTabOnClick + "(oTab);" : "");
                 string ScriptTabOnclick = @"<script>
@@ -381,20 +406,7 @@ namespace EasyControlWeb.Form.Controls
                                                                             switch(oTipoTab){
                                                                                 case 'UrlLocal':
                                                                                 case 'UrlExterna':
-                                                                                   SIMA.Utilitario.Helper.Wait('Extendiendo',1000,function(){
-                                                                                                                                        var urlPag = ((oTipoTab=='UrlLocal')? Page.Request.ApplicationPath + oValor:oValor);
-                                                                                                                                        var oLoadConfig = {
-                                                                                                                                                            CtrlName: NomTabContent,
-                                                                                                                                                            UrlPage: urlPag,
-                                                                                                                                                            ColletionParams: oColletionParams,
-                                                                                                                                                            //fnTemplate:function () {},
-                                                                                                                                                            fnOnComplete: function () {
-                                                                                                                                                                " + OnRefreshFin + @"
-                                                                                                                                                            }
-                                                                                                                                                           };
-                                                                                                                                        SIMA.Utilitario.Helper.LoadPageInCtrl(oLoadConfig);    
-                                                                                                                                    });
-
+                                                                                        " + TaskTabON + @"
                                                                                     break;
                                                                                 case 'Texto':
                                                                                     jNet.get(NomTabContent).innerHTML = oValor;

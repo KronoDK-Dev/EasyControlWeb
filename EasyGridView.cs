@@ -1411,11 +1411,13 @@ namespace EasyControlWeb
                                                                             $('#" + NomRowIndexSele + @"').val(otr.rowIndex);
                                                                             //Entrega la celda Seleccionada
                                                                             var oCell= event.target;
-                                                                            if((oCell.cellIndex==0)&&('" + StamentSeccion + @"'.length==0)){
-                                                                                SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + @".PostBack();    
-                                                                            }
-                                                                            else if ('" + StamentSeccion + @"'.length>0){
-                                                                                " + StamentSeccion + @"
+                                                                            if(jNet.get(oCell.parentNode.parentNode.parentNode).attr('id')=='" + this.ClientID + @"'){
+                                                                                if((oCell.cellIndex==0)&&('" + StamentSeccion + @"'.length==0)){
+                                                                                    SIMA.Utilitario.Helper.Wait('Redireccionando a...', 0, function () { });" + this.ClientID + @".PostBack();    
+                                                                                }
+                                                                                else if ('" + StamentSeccion + @"'.length>0){
+                                                                                    " + StamentSeccion + @"
+                                                                                }
                                                                             }
                                                     }";
 
@@ -1860,14 +1862,14 @@ namespace EasyControlWeb
 
 
 
-            string strQuerySelector = this.ClientID + @".querySelector=function(Filtro,fncLoop){
-                                                                  var AllCtrl = document.getElementById('" + this.ClientID + @"').querySelectorAll('[' + Filtro + ']');
-                                                                  Array.prototype.forEach.call(AllCtrl, function(el){
-                                                                                                            fncLoop(jNet.get(el));
-                                                                                                          }); 
-                                                            }";
+            //string strQuerySelector = this.ClientID + @".querySelector=function(Filtro,fncLoop){
+            //                                                      var AllCtrl = document.getElementById('" + this.ClientID + @"').querySelectorAll('[' + Filtro + ']');
+            //                                                      Array.prototype.forEach.call(AllCtrl, function(el){
+            //                                                                                                fncLoop(jNet.get(el));
+            //                                                                                              }); 
+            //                                                }";
 
-            _Scripts.Add(new LiteralControl("\n<script>" + strQuerySelector + "</script>"));
+            //_Scripts.Add(new LiteralControl("\n<script>" + strQuerySelector + "</script>"));
 
 
 

@@ -538,8 +538,11 @@ namespace EasyControlWeb.Filtro
                                     oEasyAutocompletar.DisplayText = acpl.TextField;//Campos que muestra la busqueda
                                     oEasyAutocompletar.ValueField = acpl.ValueField;//Campo disponible para se usado en el filtro
                                     oEasyAutocompletar.fncTempaleCustom = acpl.fncTempaleCustom;
-                                                                                    //oEasyAutocompletar.DisplayText = oEasyCampo.Nombre;
-                                                                                    // oEasyAutocompletar.DisplayValue = acpl.ValueField;//Campo disponible para se usado en el filtro
+                                //oEasyAutocompletar.DisplayText = oEasyCampo.Nombre;
+                                // oEasyAutocompletar.DisplayValue = acpl.ValueField;//Campo disponible para se usado en el filtro 23/02/2026
+                                    if (oEasyCampo.DataInterconect.ConfigPathSrvRemoto != null) {
+                                        oEasyCampo.DataInterconect.UrlWebService = EasyUtilitario.Helper.Configuracion.Leer(EasyUtilitario.Enumerados.Configuracion.SeccionKey.Nombre.ConfigBase, oEasyCampo.DataInterconect.ConfigPathSrvRemoto) + oEasyCampo.DataInterconect.UrlWebService;
+                                    }
                                     oEasyAutocompletar.DataInterconect = oEasyCampo.DataInterconect;
                                     oEasyAutocompletar.ID = oEasyCampo.Nombre;
                                     oEasyAutocompletar.Attributes.Add("Placeholder", oEasyCampo.Descripcion);
