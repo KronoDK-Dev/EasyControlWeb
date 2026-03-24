@@ -397,7 +397,11 @@ namespace EasyControlWeb.Form.Controls
                                                     theForm = document.forms[" + ClientID + @".FormContextName]; 
                                                 }
                                                " + ClientID + @".onClose();
-                                               jNet.get('" + this.ClientID + @"_MsgValidaDatos').remove();
+                                               try{
+                                                    jNet.get('" + this.ClientID + @"_MsgValidaDatos').remove();
+                                               }
+                                               catch(ex){
+                                               }
                                         }
                                         " + ClientID + @".ProgressBar={};
 
