@@ -251,7 +251,8 @@ namespace EasyControlWeb.InterConeccion
         }
         public string SendData()
         {
-            return (string)this.GetObjectInfo();
+            var ob = this.GetObjectInfo();
+            return ob.ToString();
         }
 
 
