@@ -29,9 +29,20 @@ namespace EasyControlWeb.InterConecion
 
         public static object InvokeWebService(EasyDataInterConect oEasyDataInterConect)
         {
-            return InvokeWebService("", oEasyDataInterConect);
+            try { 
+              return InvokeWebService("", oEasyDataInterConect);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw new Exception($"Error al invocar el método 'InvokeWebService': {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al invocar el método 'InvokeWebService': {ex.Message}", ex);
+            }
+
         }
-       /* public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
+        public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
         {
             object[] param = new object[oEasyDataInterConect.UrlWebServicieParams.Count]; int i = 0;
 
@@ -54,11 +65,21 @@ namespace EasyControlWeb.InterConecion
                 i++;
             }
             string PathApp = UrlApp + oEasyDataInterConect.UrlWebService;
-            return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
+            try { 
+             return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw new Exception($"Error al invocar el método 'InvokeWebService(2)': {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al invocar el método 'InvokeWebService(2)': {ex.Message}", ex);
+            }
+        }
 
-        }*/
-
-      /* public static object InvokeWebService(string url, string classname, string methodname, object[] args)
+        
+        public static object InvokeWebService(string url, string classname, string methodname, object[] args)
         {
             string @namespace = "ServiceBase.WebService.DynamicWebLoad";
             if (classname == null || classname == "")
@@ -104,15 +125,23 @@ namespace EasyControlWeb.InterConecion
             object obj = Activator.CreateInstance(t);
             methodname = methodname.Replace("\r\n", "");
             System.Reflection.MethodInfo mi = t.GetMethod(methodname);
-            return mi.Invoke(obj, args);
-        }*/
+            
+            try
+            {
 
-
-
-
-
-
-        public static object InvokeWebService(string UrlApp, EasyDataInterConect oEasyDataInterConect)
+                return mi.Invoke(obj, args);
+            }
+            catch (TargetInvocationException ex)
+            {
+                throw new Exception($"Error al invocar el método '{methodname}': {ex.InnerException?.Message ?? ex.Message}", ex);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"Error inesperado al invocar el método '{methodname}' desde la dirección '{url}'. Detalle del error: {ex.Message}", ex);
+            }
+        }
+        // metodo con control de tiempo  12.01.2025
+        public static object InvokeWebService2(string UrlApp, EasyDataInterConect oEasyDataInterConect)
         {
             object[] param = new object[oEasyDataInterConect.UrlWebServicieParams.Count]; int i = 0;
 
@@ -135,9 +164,8 @@ namespace EasyControlWeb.InterConecion
                 i++;
             }
             string PathApp = UrlApp + oEasyDataInterConect.UrlWebService;
-            try
-            {
-                return EasyWebServieHelper.InvokeWebService(PathApp, "", oEasyDataInterConect.Metodo, param);
+            try { 
+            return EasyWebServieHelper.InvokeWebService2(PathApp, "", oEasyDataInterConect.Metodo, param);
             }
             catch (TargetInvocationException ex)
             {
@@ -148,8 +176,7 @@ namespace EasyControlWeb.InterConecion
                 throw new Exception($"Error inesperado al invocar el método 'InvokeWebService2': {ex.Message}", ex);
             }
         }
-
-        public static object InvokeWebService(string url, string classname, string methodname, object[] args)
+        public static object InvokeWebService2(string url, string classname, string methodname, object[] args)
         {
             string @namespace = "ServiceBase.WebService.DynamicWebLoad";
 
@@ -174,7 +201,9 @@ namespace EasyControlWeb.InterConecion
                     sdi.Import(cn, ccu);
 
                     CSharpCodeProvider csc = new CSharpCodeProvider();
+#pragma warning disable CS0618 // ICodeCompiler es obsoleto pero se requiere en este enfoque
                     ICodeCompiler icc = csc.CreateCompiler();
+#pragma warning restore CS0618
 
                     CompilerParameters cplist = new CompilerParameters
                     {
@@ -225,13 +254,6 @@ namespace EasyControlWeb.InterConecion
                 }
             }
         }
-
-
-
-
-
-
-
 
         private static string GetClassName(string url)
         {

@@ -196,7 +196,8 @@ namespace EasyControlWeb.Form.Controls
             output.Write("                              <div id='PanelProgress_" + this.ClientID + "' style ='width:80%;height: 25px;position: fixed;right: 0; padding-right: 40px;'>");
             output.Write(HtmlProgress);
             output.Write("                              </div>");
-            output.Write("                        <button type = " + cmll + "button" + cmll + " class=" + cmll + "close" + cmll + " data-dismiss=" + cmll + "modal" + cmll + " aria-hidden=" + cmll + "true" + cmll + " onclick='javascript:" + ClientID + @".ClearonLoad();'> &times;</button>");
+            // 22.01.2026 se cambia por incompatibilidad aria-hidden="true"
+            output.Write("                        <button type = " + cmll + "button" + cmll + " class=" + cmll + "close" + cmll + " data-dismiss=" + cmll + "modal" + cmll + " aria-label=" + cmll + "Close" + cmll + " onclick='javascript:" + ClientID + @".ClearonLoad();'> &times;</button>");
             output.Write("                    </div>\n");
             output.Write("                    <div id=" + cmll + ClientID +"_body" + cmll + " class=" + cmll + "modal-body" + cmll + PrintBorder + ">" + TextHolder + "\n");
             this.RenderChildren(output);
@@ -232,8 +233,8 @@ namespace EasyControlWeb.Form.Controls
 
         protected override void RenderContents(HtmlTextWriter output)
         {
-            //Renderiza el Control
-            BootStrapPopupFullScreen(output);
+            //Renderiza el Control 
+            //  BootStrapPopupFullScreen(output); // se comenta  22.01.2026
             //this.RenderChildren(output);
 
         }
@@ -272,10 +273,13 @@ namespace EasyControlWeb.Form.Controls
         }
        protected override void Render(HtmlTextWriter writer)
         {
-            // base.Render(writer);
+            base.Render(writer);  
             if (!DesignMode)
             {
-                base.Render(writer);
+
+                // 1. Generar todo el DIV del popup // 22.01.2026
+                BootStrapPopupFullScreen(writer);
+
                 //Referencia: https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_ref_js_modal_backdrop&stacked=h
                 string _onCloseFNC = (((this.fncScriptOnClose != null) && (this.fncScriptOnClose.Length > 0)) ? this.fncScriptOnClose + "();" : "");
                 string NameProgress = "jNet.get('" + this.ClientID + @"_ContentProgress');";
@@ -443,10 +447,12 @@ namespace EasyControlWeb.Form.Controls
                                          }
                                   </script>
                                     ";
-                (new LiteralControl(Script)).RenderControl(writer);
+                // (new LiteralControl(Script)).RenderControl(writer); // 22.01.2026
+                writer.Write(Script);
             }
-            else { 
-                (new LiteralControl("Mi Popup Windows")).RenderControl(writer);
+            else {
+                //   (new LiteralControl("Mi Popup Windows")).RenderControl(writer);  // 22.01.2026
+                writer.Write("Mi Popup Windows");
             }
         }
 

@@ -24,7 +24,7 @@ using System.Runtime.InteropServices;
 using System.Windows.Shapes;
 using System.Net;
 using System.Xml.Linq;
-using iTextSharp.text;
+using iTextSharp.text;   // en caso falle reinstalar con: Update-Package iTextSharp -ProjectName EasyControlWeb -Reinstall
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
 
