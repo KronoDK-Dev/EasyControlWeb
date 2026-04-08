@@ -67,7 +67,7 @@ namespace EasyControlWeb.Form.Controls
 
 
         #endregion
-         
+
 
 
 
@@ -197,6 +197,8 @@ namespace EasyControlWeb.Form.Controls
                                                                     action: function () {
                                                                               var Confirma = " + fnc_Externo_ItemOnDelete + @"
                                                                               if(Confirma){
+                                                                                //Agrega rl item eliminado a la coleccion de la papelera
+                                                                                " + this.ClientID + @"_CollectionDel.Add(oItemBE);
                                                                                 var CtrlItem = jNet.get(oItemBE." + this.ValueField + @");
                                                                                 var ctrlContent = jNet.get('" + this.ClientID + @"_Content');
                                                                                 ctrlContent.remove(CtrlItem);
@@ -280,9 +282,12 @@ namespace EasyControlWeb.Form.Controls
                                                                     return lstTexts;
                                                                 }
                                     " + this.ClientID + @".GetCollection = function(){
-                                        return " + this.ClientID + @"_Collection;
-                                    }
-                                                                ";
+                                                                                return " + this.ClientID + @"_Collection;
+                                                                            }
+                                      " + this.ClientID + @".Recycle = function(){
+                                                                                return " + this.ClientID + @"_CollectionDel;
+                                                                        }
+                                    ";
 
              (new LiteralControl("\n <script>\n" + ScriptMetodos + "\n" + "</script>\n")).RenderControl(writer);
 

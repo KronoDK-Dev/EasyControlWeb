@@ -249,6 +249,49 @@ namespace EasyControlWeb.Form
                                 ScriptObtenerDatos += "             DataColletion[" + cmll + IdCtrl + cmll + "] = " + IdCtrl + ".GetValue();\n";
                             }
                         }
+                        else if (ctrl is EasyTimePicker2)
+                        {
+                            EasyTimePicker2 oTP = (EasyTimePicker2)ctrl;
+
+                            _grp.Controls.Add(
+                                EasyUtilitario.Helper.HtmlControlsDesign.CrearControlBase(
+                                    oTP,
+                                    oTP.Etiqueta,
+                                    oTP.Requerido,
+                                    oTP.MensajeValida,
+                                    oTP.EasyStyle
+                                )
+                            );
+
+                            if (!IsDesign())
+                            {
+                                string _doPost = (((oTP.EnableOnChange) && (Change != null))
+                                    ? "__doPostBack('" + this.ClientID + @"$btnAction', '" + oTP.ID + @"');"
+                                    : "");
+
+                                string defFNC = oTP.fncSelectTime;
+                                if (defFNC != null)
+                                {
+                                    defFNC = defFNC + "(value);";
+                                }
+
+                                string NombreFCAC = oTP.ID + "_OnSelectTime";
+                                oTP.fncSelectTime = NombreFCAC;
+
+                                string ScriptSelectTime = "function " + NombreFCAC + @"(value){ 
+                        " + defFNC + @"
+                        " + _doPost + @"
+                   }";
+
+                                BloqueScript.Add(
+                                    new LiteralControl("<script>\n" + ScriptSelectTime + "</script>")
+                                );
+
+                                // Datos script
+                                IdCtrl = this.ClientID + "_" + oTP.ID;
+                                ScriptObtenerDatos += "             DataColletion[" + cmll + IdCtrl + cmll + "] = " + IdCtrl + ".GetValue();\n";
+                            }
+                        }
                         else if (ctrl is EasyAutocompletar)
                         {
                             EasyAutocompletar oDP = (EasyAutocompletar)ctrl;
@@ -704,14 +747,18 @@ namespace EasyControlWeb.Form
                 else if (ctrl is EasyDropdownList)
                 {
                     ListItem itm = ((EasyDropdownList)(ctrl)).Items.FindByValue(Valor);
-                    if (itm != null) {
+                    if (itm != null)
+                    {
                         itm.Selected = true;
                     }
                 }
                 else if (ctrl is EasyCheckBox)
                 {
-                    ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Valor);
-                    
+                    ((EasyCheckBox)(ctrl)).Checked = Convert.ToBoolean(Convert.ToInt32(Valor));
+                }
+                else if (ctrl is EasyTimePicker2)
+                {
+                    ((EasyTimePicker2)ctrl).Text = Valor;
                 }
             }
         }
@@ -756,6 +803,10 @@ namespace EasyControlWeb.Form
                 {
                     objReturn = ((EasyDatepicker)(ctrl)).Text;
                 }
+                else if (ctrl is EasyTimePicker2)
+                {
+                    objReturn = ((EasyTimePicker2)(ctrl)).Text;
+                }
                 else if (ctrl is EasyNumericBox)
                 {
                     objReturn = ((EasyNumericBox)(ctrl)).Text;
@@ -781,7 +832,7 @@ namespace EasyControlWeb.Form
                             idx++;
                         }
                     }
-                    objReturn =  LstFiles;
+                    objReturn = LstFiles;
                 }
                 else if (ctrl is EasyCheckBox)
                 {

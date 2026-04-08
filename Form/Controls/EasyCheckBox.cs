@@ -23,7 +23,12 @@ namespace EasyControlWeb.Form.Controls
         [NotifyParentProperty(true)]
         public string Placeholder { get; set; }
 
-        
+        private bool requerido;
+        [Category("Validación"), Description("Activa la validacion de campos obligatorios")]
+        [Browsable(true)]
+        [RefreshProperties(RefreshProperties.All)]
+        [NotifyParentProperty(true)]
+        public bool Requerido { get { return requerido; } set { requerido = value; } }
 
         Bootstrap oBootstrap = new Bootstrap();
         [TypeConverter(typeof(Type_Style))]

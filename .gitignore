@@ -116,3 +116,6 @@ _ReSharper*/
 **/[Rr]elease/
 .vs/
 
+/bin/Debug/EasyControlWeb.dll.config
+/bin/Debug/Newtonsoft.Json.dll
+/obj/Release

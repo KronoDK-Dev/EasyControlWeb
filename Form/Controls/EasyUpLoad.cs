@@ -14,10 +14,10 @@ using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
 
 namespace EasyControlWeb.Form.Controls
 {
-    [Serializable] 
-    public  class EasyUpLoad : EasyPopupBase
+    [Serializable]
+    public class EasyUpLoad : EasyPopupBase
     {
-     
+
 
         const string UPLOAD_PAGE = "PagProceso";
         const string IMG_UPLOAD = "ImagenUP";
@@ -25,17 +25,17 @@ namespace EasyControlWeb.Form.Controls
         string UniqID = "";
 
         #region Controles
-            HtmlButton btnPostBack2;
-            HtmlButton btnPostBackDelete;
-            HtmlTable tbl;
-            EasyListView oListView;
-            List<LiteralControl> BloqueScript = new List<LiteralControl>();
+        HtmlButton btnPostBack2;
+        HtmlButton btnPostBackDelete;
+        HtmlTable tbl;
+        EasyListView oListView;
+        List<LiteralControl> BloqueScript = new List<LiteralControl>();
         #endregion
         string ScriptColletionBE = "var oEasyListItemBE=null;\n";
 
         #region Eventos
         public delegate void CompletarCarga(List<EasyFileInfo> oLstEasyFileInfo);
-            public event CompletarCarga CargarArchivo;
+        public event CompletarCarga CargarArchivo;
         #endregion
 
         #region Propiedades
@@ -69,7 +69,7 @@ namespace EasyControlWeb.Form.Controls
             }
         }
 
-      
+
         [Browsable(false)]
         List<EasyFileInfo> oEasyFileInfo;
 
@@ -93,10 +93,10 @@ namespace EasyControlWeb.Form.Controls
             }
         }
 
-       
+
         EasyPathLocalWeb oEasyPathLocalWeb = new EasyPathLocalWeb();
         [Category("Editor")]
-        [TypeConverter(typeof(Type_CarpetaUrl))]        
+        [TypeConverter(typeof(Type_CarpetaUrl))]
         [Description("Rutas de almacenamiento y consulta Tempral y finales"),
         DesignerSerializationVisibility(DesignerSerializationVisibility.Content)]
         [PersistenceMode(PersistenceMode.InnerProperty)]
@@ -104,8 +104,8 @@ namespace EasyControlWeb.Form.Controls
         [NotifyParentProperty(true)]
         public EasyPathLocalWeb PathLocalyWeb
         {
-            get{return oEasyPathLocalWeb;}
-            set{oEasyPathLocalWeb = (EasyPathLocalWeb)value;}
+            get { return oEasyPathLocalWeb; }
+            set { oEasyPathLocalWeb = (EasyPathLocalWeb)value; }
         }
 
 
@@ -195,17 +195,18 @@ namespace EasyControlWeb.Form.Controls
 
         string NombreUpLoad = "";
 
-        HtmlGenericControl InputUpLoad() {
+        HtmlGenericControl InputUpLoad()
+        {
             HtmlGenericControl Label = new HtmlGenericControl("label");
             Label.Style.Add("display", "inline-block");
 
             Label.Style.Add("padding", "7px 15px");
             Label.Style.Add("cursor", "pointer");
             Label.Style.Add("border-radius", "5px");
-            Label.Style.Add("color","#ffffff");
+            Label.Style.Add("color", "#ffffff");
 
             FileUpload oF = new FileUpload();
-            oF.Style.Add("display","none");
+            oF.Style.Add("display", "none");
             oF.ID = "ToUpload";
             NombreUpLoad = oF.ClientID;
             oF.Attributes.Add("onchange", UniqID + "SelectedAll(this.id);");
@@ -219,10 +220,11 @@ namespace EasyControlWeb.Form.Controls
             return Label;
         }
 
-        string scriptOnCompleteInterno(){
+        string scriptOnCompleteInterno()
+        {
             string objInstanceUpLoad = "o" + UniqID + "_Exe";
             //string fncComplete = ((this.fncOnComplete != null) ? objInstanceUpLoad + @".fncComplete = " + this.fncOnComplete + ";" : "");
-            string fncComplete = ((this.fncOnComplete != null)&& (this.fncOnComplete.Length >0) ? this.fncOnComplete + "("+ this.ClientID + ",oCollectionsFile);" : this.ClientID + ".Close();");
+            string fncComplete = ((this.fncOnComplete != null) && (this.fncOnComplete.Length > 0) ? this.fncOnComplete + "(" + this.ClientID + ",oCollectionsFile);" : this.ClientID + ".Close();");
 
             string script = UniqID + @"_ListViewItemPaint=function(oCollectionsFile){
                                                                         var Listview= " + oListView.ClientID + @";
@@ -239,7 +241,8 @@ namespace EasyControlWeb.Form.Controls
                                                                     }";
             return script;
         }
-        string scriptDeclare() {
+        string scriptDeclare()
+        {
             try
             {
                 string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
@@ -253,22 +256,24 @@ namespace EasyControlWeb.Form.Controls
                 return strDeclare;
 
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return "alert('UpLoad:' +'" + this.ClientID + "'   + '" + " No se ha definido valor a la propiedad [RutaLocalTmp]" + "');";
             }
         }
 
         string ScriptSendFileInfo()
         {
-            string strFnc = @"function " + UniqID +"_SendInfo" + @"(strFileInfo){
+            string strFnc = @"function " + UniqID + "_SendInfo" + @"(strFileInfo){
                     
                 __doPostBack('" + this.UniqueID + @"$btnActionSend',strFileInfo);
                             }";
             return strFnc;
         }
 
-        
-        string ScriptSelected() {
+
+        string ScriptSelected()
+        {
             string objInstanceUpLoad = "o" + UniqID + "_Exe";
             string script = @" var nomcltrl ='';
                                 function " + UniqID + @"SelectedAll(UploadId) {
@@ -277,7 +282,7 @@ namespace EasyControlWeb.Form.Controls
                                 var file = objInputFile.files[0];
                                 if(file){
                                     var _add = true;
-                                    var oIemBE = new EasyUploadFileBE(file,'" + UniqID +  @"');
+                                    var oIemBE = new EasyUploadFileBE(file,'" + UniqID + @"');
                                     if (" + objInstanceUpLoad + @".FileCollections.length > 0) {
                                         " + objInstanceUpLoad + @".FileCollections.forEach(function (_ItemBE,i) {
                                                                                 if (_ItemBE.Nombre == oIemBE.Nombre) {
@@ -299,35 +304,39 @@ namespace EasyControlWeb.Form.Controls
                             ";
             return script;
         }
-        
-        HtmlTable tblScreen() {
+
+
+
+
+        HtmlTable tblScreen()
+        {
             HtmlButton btn = new HtmlButton();
             btn.InnerText = "...";
             btn.Attributes.Add("type", "button");
-            btn.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), UniqID + ".Show({backdrop: true});"); 
+            btn.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), UniqID + ".Show({backdrop: true});");
 
             tbl.Attributes.Add("border", "0px");
             //tbl.Attributes.Add("style", "width: 200px;");
-            tbl.Attributes.Add("style",  this.Width.ToString());
+            tbl.Attributes.Add("style", this.Width.ToString());
 
             HtmlTableRow tblrow = new HtmlTableRow();
-            
+
             HtmlTableCell tblcell = new HtmlTableCell();
             tblcell.Style.Add("Width", "90%");
             //tblcell.Controls.Add(PaintItemFile());
-           
+
 
             tblrow.Controls.Add(tblcell);
 
             tblcell = new HtmlTableCell();
             tblcell.Attributes.Add("valign", "top");
-            
+
             tblcell.Controls.Add(btn);
-            tblcell.Style.Add("padding-left","10px");
+            tblcell.Style.Add("padding-left", "10px");
             tblrow.Controls.Add(tblcell);
 
             tbl.Controls.Add(tblrow);
-            tbl.Width = this.Width.ToString(); 
+            tbl.Width = this.Width.ToString();
             return tbl;
         }
         protected override void CreateChildControls()
@@ -342,11 +351,11 @@ namespace EasyControlWeb.Form.Controls
             CustomFile.Controls.Add(InputUpLoad());
             //Crea la fila para contener los tag
             HtmlGenericControl _row = new HtmlGenericControl("div");
-                _row.Attributes.Add("class", "row");
-                _row.Style.Add("padding-left","10px");
+            _row.Attributes.Add("class", "row");
+            _row.Style.Add("padding-left", "10px");
             HtmlGenericControl _Col = new HtmlGenericControl("div");
-                _Col.Attributes.Add("class", "col-lg-8 col-sm-6 pb-3");
-                _row.Controls.Add(_Col);
+            _Col.Attributes.Add("class", "col-lg-8 col-sm-6 pb-3");
+            _row.Controls.Add(_Col);
 
             this.Controls.Add(CustomFile);
 
@@ -366,7 +375,7 @@ namespace EasyControlWeb.Form.Controls
             btnPostBackDelete.ServerClick += new System.EventHandler(EasyDeleteItem_Click);
             btnPostBackDelete.Style.Add("display", "none");
             this.Controls.Add(btnPostBackDelete);
-           
+
 
             /*Trabajos con el ListView*/
             oListView = new EasyListView();
@@ -377,16 +386,17 @@ namespace EasyControlWeb.Form.Controls
             oListView.AlertMensaje = "Desea eliminar el Item de archivo seleccionado ahora?";
             oListView.ClassName = this.ItemFileClass; //"BaseItem";
             oListView.Ancho = "100%";
-            oListView.FncItemOnCLick = this.fncListViewItemClick; 
+            oListView.FncItemOnCLick = this.fncListViewItemClick;
             oListView.TextAlign = EasyUtilitario.Enumerados.Ubicacion.Izquierda;
 
 
-            if ((this.ListadeArchivos != null) && (this.ListadeArchivos.Count()>0)){
-                foreach (EasyFileInfo oEasyFileInfo in this.ListadeArchivos) {
+            if ((this.ListadeArchivos != null) && (this.ListadeArchivos.Count() > 0))
+            {
+                foreach (EasyFileInfo oEasyFileInfo in this.ListadeArchivos)
+                {
                     EasyListItem oEasyListItem = new EasyListItem();
                     oEasyListItem.Value = oEasyFileInfo.IdFile;
                     oEasyListItem.Text = oEasyFileInfo.Nombre;
-                    oEasyListItem.IdEstado = oEasyFileInfo.IdEstado;
                     oEasyListItem.IdEstado = oEasyFileInfo.IdEstado;
                     oEasyListItem.Url = this.PathLocalyWeb.UrlFinal + oEasyFileInfo.Nombre;
                     oListView.ListItems.Add(oEasyListItem);
@@ -427,22 +437,24 @@ namespace EasyControlWeb.Form.Controls
             if (!IsDesign())
             {
                 base.RenderContents(output);
-               
+
                 //this.Controls.Add(oListView);
 
             }
         }
 
-        string fcScriptDeleteFile() {
+        string fcScriptDeleteFile()
+        {
             string _script = @"<script>
                                 function " + this.ClientID + @"_FileAction(oItemFile,Action){
                                      __doPostBack('" + this.UniqueID + @"$btnActionDelete',oItemFile.Nombre);
                               }
                               </script>";
             return _script;
-        } 
-        HtmlGenericControl PaintItemFile() {
-            HtmlGenericControl dvContext =EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
+        }
+        HtmlGenericControl PaintItemFile()
+        {
+            HtmlGenericControl dvContext = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
             List<EasyFileInfo> allEasyFileInfo = (List<EasyFileInfo>)getAllFiles();
             if (allEasyFileInfo != null)
             {
@@ -472,18 +484,19 @@ namespace EasyControlWeb.Form.Controls
                     img.Attributes.Add(EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString(), this.ClientID + "_FileAction(" + oEasyFileInfo.ToString(true) + ",'Delete')");
                     img.Attributes["style"] = "cursor:pointer;";
 
-                     tblHead.Rows[0].Cells[1].Controls.Add(img);
+                    tblHead.Rows[0].Cells[1].Controls.Add(img);
                     _CardBlock.Controls.Add(tblHead);
 
 
                     HtmlGenericControl _File = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("div");
                     _File.InnerHtml = ((oEasyFileInfo.Nombre.Length > 58) ? oEasyFileInfo.Nombre.Substring(0, 58) + "..." : oEasyFileInfo.Nombre);
-                    _File.Attributes["style"]="text-decoration:underline;color:blue;cursor:pointer;";
-                    if (oEasyFileInfo.Temporal==true)
+                    _File.Attributes["style"] = "text-decoration:underline;color:blue;cursor:pointer;";
+                    if (oEasyFileInfo.Temporal == true)
                     {
                         _File.Attributes[EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString()] = "window.location.href ='" + this.PathLocalyWeb.UrlTemporal + oEasyFileInfo.Nombre + "'";
                     }
-                    else {
+                    else
+                    {
                         _File.Attributes[EasyUtilitario.Enumerados.EventosJavaScript.onclick.ToString()] = "window.location.href ='" + this.PathLocalyWeb.UrlFinal + oEasyFileInfo.Nombre + "'";
                     }
 
@@ -501,7 +514,7 @@ namespace EasyControlWeb.Form.Controls
                     dvContext.Controls.Add(_Card);
 
                     HtmlGenericControl Separador = EasyUtilitario.Helper.HtmlControlsDesign.CrearControl("br");
-                    Separador.Attributes["id"]= "br" + CardID;
+                    Separador.Attributes["id"] = "br" + CardID;
                     dvContext.Controls.Add(Separador);
                 }
             }
@@ -515,14 +528,14 @@ namespace EasyControlWeb.Form.Controls
 
                 (new LiteralControl("<script>\n" + scriptOnCompleteInterno() + "</script>")).RenderControl(writer);
                 (new LiteralControl("<script>\n" + scriptDeclare() + "</script>")).RenderControl(writer);
-                
+
 
                 (new LiteralControl(fcScriptDeleteFile())).RenderControl(writer);
-                
+
 
                 base.Render(writer);
                 //Controles Propies
-                HtmlTable tblScr= tblScreen();
+                HtmlTable tblScr = tblScreen();
                 tblScr.RenderControl(writer);
 
                 //Crea el Objeto a nivel de javascript
@@ -535,7 +548,8 @@ namespace EasyControlWeb.Form.Controls
                 (new LiteralControl("<script>\n" + ObjAndPrpperty + "</script>")).RenderControl(writer);
 
 
-                foreach (LiteralControl lcScript in BloqueScript) {
+                foreach (LiteralControl lcScript in BloqueScript)
+                {
                     lcScript.RenderControl(writer);
 
                 }
@@ -551,68 +565,71 @@ namespace EasyControlWeb.Form.Controls
         }
 
         #region Eventos Locales
-            protected virtual void EasyDeleteItem_Click(object sender, EventArgs e)
+        protected virtual void EasyDeleteItem_Click(object sender, EventArgs e)
+        {
+            string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
+            if (Argument.Length > 0)
             {
-                string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
-                if (Argument.Length > 0)
-                {
-                    List<EasyFileInfo> allEasyFileInfo = (List<EasyFileInfo>)getAllFiles();
-                    EasyFileInfo oEasyFileInfoBE =  allEasyFileInfo.Find(oBE => oBE.Nombre == Argument);
-                    int index = allEasyFileInfo.FindIndex(oBE => oBE.Nombre == Argument);
+                List<EasyFileInfo> allEasyFileInfo = (List<EasyFileInfo>)getAllFiles();
+                EasyFileInfo oEasyFileInfoBE = allEasyFileInfo.Find(oBE => oBE.Nombre == Argument);
+                int index = allEasyFileInfo.FindIndex(oBE => oBE.Nombre == Argument);
 
-                    if (oEasyFileInfoBE != null) 
-                    {
-                        oEasyFileInfoBE.IdEstado = 0;
-                        allEasyFileInfo[index] = oEasyFileInfoBE;
-                        setAllFiles(allEasyFileInfo);
-                    }
+                if (oEasyFileInfoBE != null)
+                {
+                    oEasyFileInfoBE.IdEstado = 0;
+                    allEasyFileInfo[index] = oEasyFileInfoBE;
+                    setAllFiles(allEasyFileInfo);
                 }
             }
+        }
 
-            protected virtual void EasyUpLoadButton_Click(object sender, EventArgs e)
+        protected virtual void EasyUpLoadButton_Click(object sender, EventArgs e)
+        {
+            //Carga imagen al area temporal   
+            string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
+            if (Argument.Length > 0)
             {
-                //Carga imagen al area temporal   
-                string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
-                if (Argument.Length > 0)
-                {
                 List<EasyFileInfo> allEasyFileInfo = (List<EasyFileInfo>)getAllFiles();
                 if (allEasyFileInfo == null) allEasyFileInfo = new List<EasyFileInfo>();
 
-                    foreach (string strFileInfo in Argument.Split('@')) {
-                        string[] Infor = strFileInfo.Split('|');
+                foreach (string strFileInfo in Argument.Split('@'))
+                {
+                    string[] Infor = strFileInfo.Split('|');
 
-                        EasyFileInfo InfoExis =allEasyFileInfo.Find(oBE => oBE.Nombre == Infor[0]);
-                        if (InfoExis == null)
-                        {
-                            EasyFileInfo oEasyFileInfoBE = new EasyFileInfo(Infor[0], Infor[1], Infor[2], Infor[3], false);
-                            oEasyFileInfoBE.IdEstado = 1;
-                            oEasyFileInfoBE.Temporal = true;
-                            allEasyFileInfo.Add(oEasyFileInfoBE);
-                        }
-                        else {
-                            InfoExis.IdEstado = 1;
-                        }
-                    }
-                    setAllFiles(allEasyFileInfo);
-
-                if (CargarArchivo != null)//verifica si esta asociado en la pagina con el evento
+                    EasyFileInfo InfoExis = allEasyFileInfo.Find(oBE => oBE.Nombre == Infor[0]);
+                    if (InfoExis == null)
                     {
-                        CargarArchivo?.Invoke(allEasyFileInfo);
+                        EasyFileInfo oEasyFileInfoBE = new EasyFileInfo(Infor[0], Infor[1], Infor[2], Infor[3], false);
+                        oEasyFileInfoBE.IdEstado = 1;
+                        oEasyFileInfoBE.Temporal = true;
+                        allEasyFileInfo.Add(oEasyFileInfoBE);
+                    }
+                    else
+                    {
+                        InfoExis.IdEstado = 1;
                     }
                 }
+                setAllFiles(allEasyFileInfo);
+
+                if (CargarArchivo != null)//verifica si esta asociado en la pagina con el evento
+                {
+                    CargarArchivo?.Invoke(allEasyFileInfo);
+                }
             }
+        }
 
         public List<EasyFileInfo> getAllFiles()
         {
             return getAllFiles(false);
         }
-        public List<EasyFileInfo> getAllFiles(bool paint) {
+        public List<EasyFileInfo> getAllFiles(bool paint)
+        {
             //Preguntar si es null el contenido de viewstate para luego revisar el contenido del texbox y acoplar los items cargados en el lado del cliente
             List<EasyFileInfo> allEasyFileInfo = (List<EasyFileInfo>)ViewState[this.ClientID];
-            
+
 
             //Se obtiene del cuadro de texto
-            string []sItem = this.getListFiles().Split(EasyUtilitario.Constantes.Caracteres.SeparadorHorizontal.ToCharArray());
+            string[] sItem = this.getListFiles().Split(EasyUtilitario.Constantes.Caracteres.SeparadorHorizontal.ToCharArray());
             if ((sItem.Length > 0) && (sItem[0].Length != 0))
             {
                 foreach (string ssItem in sItem)
@@ -622,9 +639,10 @@ namespace EasyControlWeb.Form.Controls
                                                 .Replace(EasyUtilitario.Constantes.Caracteres.ComillaDoble, "")
                                                 .Split(EasyUtilitario.Constantes.Caracteres.Coma.ToCharArray());
 
-                    Dictionary<string,string> oRData = new Dictionary<string,string>();
-                    foreach (string CampoAndValor in arrDatos) {
-                        string []arrFielVal= CampoAndValor.Split(EasyUtilitario.Constantes.Caracteres.DosPuntos.ToCharArray());
+                    Dictionary<string, string> oRData = new Dictionary<string, string>();
+                    foreach (string CampoAndValor in arrDatos)
+                    {
+                        string[] arrFielVal = CampoAndValor.Split(EasyUtilitario.Constantes.Caracteres.DosPuntos.ToCharArray());
                         oRData[arrFielVal[0]] = arrFielVal[1];
                     }
 
@@ -645,7 +663,8 @@ namespace EasyControlWeb.Form.Controls
                         oEasyFileInfoBE.Temporal = true;
                         allEasyFileInfo.Add(oEasyFileInfoBE);
                     }
-                    else { //
+                    else
+                    { //
                         InfoExis.IdEstado = Convert.ToInt32(oRData["IdEstado"]);
                     }
                     setAllFiles(allEasyFileInfo);
@@ -673,13 +692,14 @@ namespace EasyControlWeb.Form.Controls
                 setAllFiles(this.ListadeArchivos);
             }
             //Vlueve a pintar los items
-            if (paint) {
+            if (paint)
+            {
                 this.CreateChildControls();
             }
 
             return allEasyFileInfo;
         }
-       
+
         public void setAllFiles(List<EasyFileInfo> allEasyFileInfo)
         {
             ViewState[this.ClientID] = allEasyFileInfo;
@@ -687,7 +707,8 @@ namespace EasyControlWeb.Form.Controls
 
 
         #endregion
-        public string getListFiles() {
+        public string getListFiles()
+        {
             return oListView.getListItems();
         }
 

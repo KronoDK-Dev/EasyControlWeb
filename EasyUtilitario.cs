@@ -151,6 +151,7 @@ namespace EasyControlWeb
                 static public readonly string ImportBaja = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAVCAIAAADq7AgqAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAbSURBVChTY1Ta6MOACpigNBIYFYIBmgoxMAAA30IBSUCugYwAAAAASUVORK5CYII=";
                 static public readonly string Home = "data:image/png;base64,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";
                 static public readonly string Config =  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABIAAAASCAMAAABhEH5lAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAACKUExURQAAAExyo1R+tVB4rUZpl050p1F5rlN9tFF6r1F6sFJ7sFV/tV6FuWmOvk10p1R9tGWLvJmy08rW52WKvFJ6sE51qJmz0+nv9fn6/Etxo8rX6Pn6+/7+/mqOvs/b6vr6/F6GuZq005my0svX6M/a6Zqz00drmmqPvlN8slR+tExzpUxypE1zpQAAAPkPK6gAAAAudFJOU////////////////////////////////////////////////////////////wCCj3NVAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAApklEQVQoU22P6RKCMAyEZTkKthXBoygoeJ95/9czhQLO6P5Kv+luNhP6UY88wHOjRX5AFAIhUeB3KIKIEwGIJBaIWhTws5dggzVOAam0VhJIOuMshZxneZ4tJJYtWvF/tTZFYTKFdLZhZCP0tqyqMtd2dmi3r7+Rx1nNwRS1OfZGu5HjT+fLEE9X7sUlbs1Y4m4TnFzVPwe5sx/P8exWL7zdNKBBRB9fgx9hnLX+GQAAAABJRU5ErkJggg==";
+                static public readonly string NewItem = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAwUExURQAAAKbK8KDAwMDAwP///0BAgICgwGCgwP/78KCgwGCAwODggEBgwECAwMDcwAAAAIFwGqgAAAAQdFJOU////////////////////wDgI10ZAAAACXBIWXMAAA7DAAAOwwHHb6hkAAAAc0lEQVQoU1WPSRLDIAwEQQsRGKP//zbaXHH6Nq0pJJoWvQMAqv4EEQGjtm6MMT5AJBMZQzggImy4sPlaLkQublYNpsfrX1g2MYk2rfuekVNkI/K74St8SzViB7Bd+jT23v0RNbfjUpxzsK4NUY8lr98mql/FMAeEtBlvCQAAAABJRU5ErkJggg==";
             }
 
             public struct Pagina
@@ -359,35 +360,29 @@ namespace EasyControlWeb
 
                 public static void UploadProcessRequest(HttpContext context)
                 {
-                    // para framentar el archivo: https://www.c-sharpcorner.com/article/understanding-multithreading-and-multitasking-in-c-sharp/
-                    char bs = EasyControlWeb.EasyUtilitario.Constantes.Caracteres.BackSlash;
-                    string PathLocal = context.Request.Params["PathLocal"];
-                    PathLocal = PathLocal.Replace('.', bs);
-                    PathLocal = PathLocal.Substring(1, PathLocal.Length - 1);
-
-                    string PilaResponse = "";
-
+                    char backSlash = EasyUtilitario.Constantes.Caracteres.BackSlash;
+                    string str1 = context.Request.Params["PathLocal"].Replace('.', backSlash);
+                    string str2 = str1.Substring(1, str1.Length - 1);
+                    string str3 = "";
                     context.Response.Buffer = true;
                     context.Response.Clear();
-
                     context.Response.ContentType = "text/plain";
-                    //context.Response.ContentType = "text/html";
-                    var writer = new StringWriter();
-                    foreach (string ArchivoName in context.Request.Files)
+                    StringWriter stringWriter = new StringWriter();
+                    foreach (string file1 in (NameObjectCollectionBase)context.Request.Files)
                     {
-                        HttpPostedFile file = context.Request.Files[ArchivoName];
-                        int nFileLen = file.ContentLength;
-                        byte[] myData = new byte[nFileLen];
-                        file.InputStream.Read(myData, 0, nFileLen);
-                        WriteToFile(PathLocal + file.FileName, ref myData);
-                        PilaResponse += file.FileName + "@";
-                        //Al finalizar la carga
+                        HttpPostedFile file2 = context.Request.Files[file1];
+                        int contentLength = file2.ContentLength;
+                        byte[] Buffer = new byte[contentLength];
+                        file2.InputStream.Read(Buffer, 0, contentLength);
+                        EasyUtilitario.Helper.Genericos.WriteToFile(str2 + file2.FileName, ref Buffer);
+                        str3 = str3 + file1 + "@";
                     }
-                    PilaResponse = PilaResponse.Substring(0, PilaResponse.Length - 1);
-                    context.Response.Write(PilaResponse);
+                    string s = str3.Substring(0, str3.Length - 1);
+                    context.Response.Write(s);
                     context.Response.Flush();
                     context.Response.End();
                 }
+
 
                 public static void EnviarEmail(string From,string to,string Asunto,string Mensaje,string RutaFileAttach) {
                     

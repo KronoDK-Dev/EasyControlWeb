@@ -27,6 +27,7 @@ namespace EasyControlWeb
         string idGestorFiltro;
 
         string rowCellItemClick;
+        string onCellItemClick;
 
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
@@ -58,32 +59,42 @@ namespace EasyControlWeb
        
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
-        public string RowItemClick { 
+        /*public string RowItemClick { 
             get { if (rowItemClick == null) {
                     rowItemClick = "OnEasyGridDetalle_Click";
             }
                 return rowItemClick; } 
             set { rowItemClick = value; } 
+        }*/
+        public string RowItemClick
+        {
+            get{return rowItemClick;}
+            set { rowItemClick = value; }
         }
 
-
-
+/*
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
         public string RowCellItemClick
         {
             get
             {
-               /* if (rowCellItemClick == null)
-                {
-                    rowCellItemClick = "OnEasyGridRowCell_Click";
-                }*/
                 return rowCellItemClick;
             }
             set { rowCellItemClick = value; }
         }
+        */
 
-
+      /*  [RefreshProperties(RefreshProperties.All)]
+        [NotifyParentProperty(true)]
+        public string fncCellItemClick
+        {
+            get
+            {
+                return onCellItemClick;
+            }
+            set { onCellItemClick = value; }
+        }*/
 
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]

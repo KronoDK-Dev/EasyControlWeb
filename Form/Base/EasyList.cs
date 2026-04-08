@@ -19,14 +19,12 @@ namespace EasyControlWeb.Form.Base
 {
     public class EasyList : DropDownList
     {
-
         private bool cargaInmediata;
         [Category("Validación"), Description("")]
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
         public bool CargaInmediata { get { return cargaInmediata; } set { cargaInmediata = value; } }
-
 
         [Category("Validación"), Description("")]
         [Browsable(true)]
@@ -48,8 +46,6 @@ namespace EasyControlWeb.Form.Base
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
         public string MensajeValida { get { return mensajeValida; } set { mensajeValida = value; } }
-
-
 
         Bootstrap oBootstrap = new Bootstrap();
         [TypeConverter(typeof(Type_Style))]
@@ -78,7 +74,6 @@ namespace EasyControlWeb.Form.Base
             set { oEasyDataInterConect = value; }
         }
 
-
         /*Propiedad de collecion de cadenas*/
         [Browsable(true)]
         private List<EasyControlBE> easyCtrlDepend;
@@ -102,10 +97,6 @@ namespace EasyControlWeb.Form.Base
             }
         }
 
-
-
-
-
         public EasyList()
         {
             this.CssClass = EasyStyle.ClassName;
@@ -116,7 +107,7 @@ namespace EasyControlWeb.Form.Base
         {
             if (CargaInmediata)
             {
-                if ((this.DataInterconect.UrlWebServicieParams != null) && (this.DataInterconect.UrlWebServicieParams.Count != 0))
+                try
                 {
                     int pos = 0;
                     object[] param = new object[this.DataInterconect.UrlWebServicieParams.Count];
@@ -240,6 +231,5 @@ namespace EasyControlWeb.Form.Base
                 this.Style["color"] = "#0000";
             }
         }
-
     }
 }

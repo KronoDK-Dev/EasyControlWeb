@@ -202,15 +202,19 @@ namespace EasyControlWeb.Form.Controls
                     }
                 }
 
-                string CadenaConexion = "";
-                if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
-                {
-                    CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService + "/" + this.DataInterconect.Metodo;//aqui hay un error
-                }
-                else
-                {
-                    CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;//aqui hay un error
-                }
+            string CadenaConexion = "";
+            if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
+            {
+                CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService + "/" + this.DataInterconect.Metodo;//aqui hay un error
+            }
+            else
+            {
+                CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;//aqui hay un error
+            }
+            string SourceCode = ((this.DataInterconect.ConfigPathSrvRemoto!=null)
+                                                ? EasyUtilitario.Helper.Configuracion.Leer(EasyUtilitario.Enumerados.Configuracion.SeccionKey.Nombre.ConfigBase
+                                                                                            , this.DataInterconect.ConfigPathSrvRemoto)
+                                                :"");
 
                 scriptLoadData += @"                      var ddl = jNet.get('" + this.ClientID + @"');
                                                             options = ddl.getElementsByTagName('option');
@@ -222,7 +226,8 @@ namespace EasyControlWeb.Form.Controls
 
                                                          var oEasyDataInterConect = new EasyDataInterConect();
                                                              oEasyDataInterConect.MetododeConexion = ModoInterConect." + this.DataInterconect.MetodoConexion.ToString() + @";
-                                                             oEasyDataInterConect.UrlWebService = '" + this.DataInterconect.UrlWebService + @"';
+                                                             
+                                                             oEasyDataInterConect.UrlWebService = '" + SourceCode + this.DataInterconect.UrlWebService + @"';
                                                              oEasyDataInterConect.Metodo = '" + this.DataInterconect.Metodo + @"';
                                                              oEasyDataInterConect.ParamsCollection = oParamCollections;
 
