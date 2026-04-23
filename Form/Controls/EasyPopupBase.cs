@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing.Design;
 using System.Web;
@@ -74,8 +76,7 @@ namespace EasyControlWeb.Form.Controls
 
         /*Event handler*/
         HtmlButton obtnAccion;
-
-        public delegate void _Click();
+        public delegate void _Click(Dictionary<string, object> jSonToBE);
         public event _Click Click;
 
 
@@ -141,7 +142,7 @@ namespace EasyControlWeb.Form.Controls
                     scriptBTN = @"if(" + fncScriptAceptar + @"()==true){ 
                                             SIMA.Utilitario.Helper.Wait('Procesando...', 0, function () {  
                                                                                                 " + this.ClientID + @".ClearonLoad();
-                                                                                                __doPostBack('" + this.ClientID + @"$btnApcetarUnder','');
+                                                                                                __doPostBack('" + this.ClientID + @"$btnApcetarUnder', " + ClientID + @".Arguments);
                                                                                                 });
                                    }";
                 }
@@ -280,6 +281,7 @@ namespace EasyControlWeb.Form.Controls
                 string _onCloseFNC = (((this.fncScriptOnClose != null) && (this.fncScriptOnClose.Length > 0)) ? this.fncScriptOnClose + "();" : "");
                 string NameProgress = "jNet.get('" + this.ClientID + @"_ContentProgress');";
                 string Script = @"<script> 
+                                    " + ClientID + @".Arguments ='';
                                     " + ClientID + @".Titulo ='';
                                     " + ClientID + @".FormContextName = null;                                  
                                     " + ClientID + @".Show=function(Modo){
@@ -463,14 +465,21 @@ namespace EasyControlWeb.Form.Controls
         #region Eventos internos
         public void btn_onClick(object sender, EventArgs e)
         {
-            string Argument = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
+            //string jsonString = "{\"name\": \"John\", \"age\": 30}";
+            string Json = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
+            Dictionary<string, object> JsonToDic = JsonConvert.DeserializeObject<Dictionary<string, object>>(Json);
+
+
             if (Click != null)//verifica si esta asociado en la pagina con el evento
             {
                 //EasyControlWeb.Form.Controls.EasyButton oEasyButton = new EasyButton();
                 //oEasyButton.Texto = Argument;
 
-                    Click?.Invoke();
-              
+                //  Click?.Invoke(JsonToBE);
+                Click?.Invoke(JsonToDic);
+                
+
+
             }
 
         }

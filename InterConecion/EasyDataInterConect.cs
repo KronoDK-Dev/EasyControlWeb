@@ -15,8 +15,7 @@ using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
 
 namespace EasyControlWeb.InterConeccion
 {
-
-   
+  
 
     [TypeConverter(typeof(Type_DataInterConect))]
     [Serializable]

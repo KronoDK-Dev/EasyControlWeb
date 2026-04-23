@@ -13,6 +13,7 @@ using System.Web.UI;
 using System.Web.UI.Design;
 using System.Web.UI.WebControls;
 using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.TrayNotify;
 
 //Referencia
 //https://stackoverflow.com/questions/15664964/jquery-autocomplete-renderitem
@@ -185,6 +186,7 @@ namespace EasyControlWeb.Form.Controls
             if (this.Enabled == false)
             {
                 this.Style["border-color"] = "#C0C0C0";
+
                 this.Style["color"] = "#0000";
             }
              
@@ -392,11 +394,14 @@ namespace EasyControlWeb.Form.Controls
                         }
 
                     }
+                String BColor = ((this.Enabled == false) ? "#E9ECEF" : "white");
+
                 //// var CollectionParams" + this.ClientID + @" = eval(jNet.get(" + this.ClientID + @").attr(" + cmll + "ParamCollection" + cmll + @"));
                 string JavaScriptCode = @"  
                                             var " + this.ClientID + @"= $(" + cmll + "#" + txtText.ClientID + cmll + @");
                                             var CollectionParams" + this.ClientID + @" = eval('" + AttrParamsCollection + @"');
-                                            " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @"); 
+
+                                            " + this.ClientID + @".css(" + cmll + "background" + cmll + "," + cmll + "white url('" + cmll + " + SIMA.Utilitario.Constantes.ImgDataURL.IconFind + " + cmll + "') right center no-repeat " + cmll + @").css(" + cmll + "background-color" + cmll  + ","+ cmll + BColor + cmll + @"); 
                                             " + this.ClientID + @".autocomplete({
                                                                         minLength: " + NroCarIni.ToString() + @",
                                                                         Text: '" + this.DisplayText + @"',//atributos adicionales para el control de display y seleccion

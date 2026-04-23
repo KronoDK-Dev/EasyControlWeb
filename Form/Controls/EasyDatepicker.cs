@@ -1,7 +1,9 @@
 ﻿using EasyControlWeb.Form.Base;
+using iTextSharp.text;
 using System;
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Drawing;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
@@ -33,7 +35,7 @@ namespace EasyControlWeb.Form.Controls
         }
 
 
-        [Browsable(true)]
+        /*[Browsable(true)]
         [Category("Behavior"), DefaultValue(""),Description("")]
         [RefreshProperties(RefreshProperties.All)]
         [NotifyParentProperty(true)]
@@ -41,7 +43,7 @@ namespace EasyControlWeb.Form.Controls
         {
             get{return base.Text;}
             set{base.Text = value;}
-        }
+        }*/
 
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
@@ -119,15 +121,28 @@ namespace EasyControlWeb.Form.Controls
 
         protected override void Render(HtmlTextWriter writer)
         {
+            string backColor = ((ColorTranslator.ToHtml(this.BackColor).Length > 0) ? ColorTranslator.ToHtml(this.BackColor) : "white");
+            if (this.Enabled == false) { backColor = "#E9ECEF"; }// ColorTranslator.ToHtml(System.Drawing.Color.LightGray); }
+
             string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
             this.Attributes.Add("placeholder", this.Placeholder);
-            this.Style.Add("background", "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconDatePick + "') right center no-repeat; padding-right:5px;");
+            this.Style.Add("background", "white url('" + EasyUtilitario.Constantes.ImgDataURL.IconDatePick + "') right center no-repeat; padding-right:5px;background-color:" + backColor);
             base.Render(writer);
+            
+
 
             string strFunction = ((fncSelectDate != null) ? fncSelectDate+ "(e.format());" : "return null;");
             string IdCtrl = ((this.ClientID == null) ? this.ID : this.ClientID);
 
             string strFnc = IdCtrl + @".Change=function(e){
+                                                           /* var allchild=document.getElementById('"  + IdCtrl + @"').getElementsByTagName('div').children;
+                                                             Array.prototype.slice.call(allchild).forEach(function(ctrl){
+                                                                                                                alert(ctrl.innerHTML);
+                                                                                                           });
+
+                                                                                                           */
+
+
                                                     " + strFunction + @"
                                                     }";
 
@@ -148,6 +163,9 @@ namespace EasyControlWeb.Form.Controls
                                                 return jNet.get('" + this.ClientID + @"').value;
                                         }
                                     " + this.ClientID + @".SetValue=function(value){
+                                                var objF = $('#' +'" + this.ClientID + @"' );
+                                                 $(objF).datepicker('setDate', value);
+                                                 //Control de lado del servidor
                                                 jNet.get('" + this.ClientID + @"').value=value;
                                         }
                                     ";

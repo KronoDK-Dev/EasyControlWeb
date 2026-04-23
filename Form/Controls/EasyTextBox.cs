@@ -43,7 +43,9 @@ namespace EasyControlWeb.Form.Controls
             
             this.Attributes.Add("placeholder", this.Placeholder);
             string backColor = ((ColorTranslator.ToHtml(this.BackColor).Length >0) ? ColorTranslator.ToHtml(this.BackColor) : "white");
-            this.Style.Add("background", backColor + " url('" + EasyUtilitario.Constantes.ImgDataURL.IconTextBox + "') right center no-repeat; padding-right:5px;");
+            if (this.Enabled == false) { backColor = "#E9ECEF"; }//ColorTranslator.ToHtml(System.Drawing.Color.LightGray); }
+
+            this.Style.Add("background",  "url('" + EasyUtilitario.Constantes.ImgDataURL.IconTextBox + "') right center no-repeat; padding-right:5px;background-color:" + backColor);
             base.Render(writer);
 
             string scriptGetSet = this.ClientID + @".GetValue=function(){

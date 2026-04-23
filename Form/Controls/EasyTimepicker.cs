@@ -209,15 +209,21 @@ namespace EasyControlWeb.Form.Controls
         protected override void Render(HtmlTextWriter writer)
         {
             string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
-            htmlTimePick().RenderControl(writer);
+
 
             if (!IsDesign())
             {
+
+                ddlHora.Enabled = this.Enabled;
+                ddlMinutos.Enabled = this.Enabled;
+                ddlAMPM.Enabled = this.Enabled;
+
+                htmlTimePick().RenderControl(writer);
                 //dpHIni_ddlH
                 string scriptGet = @" var " + this.ClientID + @"={};
-                                        var " + this.ClientID +"_ctrlH = jNet.get('" + ddlHora.ClientID + @"');
-                                        var " + this.ClientID +"_ctrlM = jNet.get('" + ddlMinutos.ClientID + @"');
-                                        var " + this.ClientID +"_ctrlAP = jNet.get('" + ddlAMPM.ClientID + @"');
+                                        var " + this.ClientID + "_ctrlH = jNet.get('" + ddlHora.ClientID + @"');
+                                        var " + this.ClientID + "_ctrlM = jNet.get('" + ddlMinutos.ClientID + @"');
+                                        var " + this.ClientID + "_ctrlAP = jNet.get('" + ddlAMPM.ClientID + @"');
                                     " +
                                     this.ClientID + @".GetValue=function(){
                                                                         var ListItemH = " + this.ClientID + @"_ctrlH.options[" + this.ClientID + @"_ctrlH.selectedIndex];
@@ -255,6 +261,9 @@ namespace EasyControlWeb.Form.Controls
 
 
 
+            }
+            else {
+                (new LiteralControl("HH:mm a.m/p.m")).RenderControl(writer);
             }
 
         }
