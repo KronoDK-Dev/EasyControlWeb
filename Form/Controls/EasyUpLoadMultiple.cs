@@ -23,7 +23,7 @@ namespace EasyControlWeb.Form.Controls
         TextBox txtLstItems;
 
 
-
+         
         const string UPLOAD_PAGE = "PagProceso";
         #region Rutas
 

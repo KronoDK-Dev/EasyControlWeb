@@ -16,7 +16,7 @@ using System.Windows;
 namespace EasyControlWeb.Form.Controls
 {
     public enum EasyTabUbicacion { 
-                                    Top,
+                                    Top, 
                                     left,
                                     Right
                                    }

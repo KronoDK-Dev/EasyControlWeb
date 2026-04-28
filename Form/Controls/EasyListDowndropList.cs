@@ -17,7 +17,7 @@ namespace EasyControlWeb.Form.Controls
             //if (!IsDesign())
             //{
             //    this.fnOnSelected = NewFncOnSelected;
-            //}
+            //} 
 
             //txtLstItems.ID = "txtLstItems";
             //txtLstItems.Style.Add("display", "none");

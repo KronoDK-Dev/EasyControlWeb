@@ -25,7 +25,7 @@ namespace EasyControlWeb.Form.Controls
            ParseChildren(true, "fncOnChange"),
            ToolboxData("<{0}:EasyTimePicker runat=server></{0}:EasyTimePicker")
        ]
-
+        
 
 
     [Serializable]

@@ -25,7 +25,7 @@ namespace EasyControlWeb.Form.Controls
         public EasyTimePicker2(string _FormatInPut)
         {
             this.FormatInPut = _FormatInPut;
-        }
+        } 
 
         public EasyTimePicker2(string _FormatOutPut, string _FormatInPut)
         {

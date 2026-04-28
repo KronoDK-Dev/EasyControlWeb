@@ -18,7 +18,7 @@ namespace EasyControlWeb.Form.Controls
     [DefaultProperty("FormatoFecha")]
     [ToolboxData("<{0}:EasyDatepicker runat=server></{0}:EasyDatepicker>")]
     //El control que lo contenga debe de ser runat=server y detro de un .container form
-    [Serializable]
+    [Serializable] 
     public class EasyDatepicker : EasyTexto
     {
         const string ClaseContenedora = "container";

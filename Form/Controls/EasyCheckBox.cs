@@ -13,7 +13,7 @@ namespace EasyControlWeb.Form.Controls
 {
     public  class EasyCheckBox:CheckBox
     {
-
+     
         //reference: https://stackoverflow.com/questions/63192157/html-change-the-background-color-of-a-checked-checkbox
         public EasyCheckBox() : base()
         {

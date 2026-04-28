@@ -15,7 +15,7 @@ namespace EasyControlWeb.Form.Controls
     public  class EasyListAutocompletar:EasyAutocompletar
     {
         TextBox txtLstItems;
-        string OldfncOnSelected = "";
+        string OldfncOnSelected = ""; 
         string NewFncOnSelected = "";
           
          

@@ -22,7 +22,7 @@ namespace EasyControlWeb.Form.Controls
         }
         [Browsable(true)]
         [RefreshProperties(RefreshProperties.All)]
-        [NotifyParentProperty(true)]
+        [NotifyParentProperty(true)] 
         public int Min { get; set; }
 
         [Browsable(true)]

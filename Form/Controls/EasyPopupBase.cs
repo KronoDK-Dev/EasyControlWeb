@@ -22,7 +22,7 @@ namespace EasyControlWeb.Form.Controls
         #region Variables
         string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
         #endregion
-        /*
+        /* 
          Generador de stylos
          https://www.cssportal.com/css-tooltip-generator/
          */

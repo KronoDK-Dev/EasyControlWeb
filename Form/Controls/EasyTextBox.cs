@@ -19,7 +19,7 @@ namespace EasyControlWeb.Form.Controls
         [Browsable(false), Bindable(false), EditorBrowsable(EditorBrowsableState.Never), DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden), Obsolete("", true)]
             public new int EnableOnChange { get; set; }
         #endregion
-
+         
         public EasyTextBox() : base()
         {
         }

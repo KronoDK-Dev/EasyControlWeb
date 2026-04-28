@@ -19,7 +19,7 @@ namespace EasyControlWeb.Form.Controls
         {
             this.Text=_text;
             this.Value = _value;
-        }
+        } 
        
     }
 }
