@@ -81,6 +81,7 @@ namespace EasyControlWeb.Form.Controls
 
 
 
+
         public override void RenderBeginTag(HtmlTextWriter writer)
         {
             //base.RenderBeginTag(writer);
@@ -467,19 +468,19 @@ namespace EasyControlWeb.Form.Controls
         {
             //string jsonString = "{\"name\": \"John\", \"age\": 30}";
             string Json = ((System.Web.UI.Page)HttpContext.Current.Handler).Request["__EVENTARGUMENT"];
-            Dictionary<string, object> JsonToDic = JsonConvert.DeserializeObject<Dictionary<string, object>>(Json);
-
+         
 
             if (Click != null)//verifica si esta asociado en la pagina con el evento
             {
-                //EasyControlWeb.Form.Controls.EasyButton oEasyButton = new EasyButton();
-                //oEasyButton.Texto = Argument;
 
-                //  Click?.Invoke(JsonToBE);
-                Click?.Invoke(JsonToDic);
-                
-
-
+                if (Json.Length > 0)
+                {
+                    Dictionary<string, object> JsonToDic = JsonConvert.DeserializeObject<Dictionary<string, object>>(Json);
+                    Click?.Invoke(JsonToDic);
+                }
+                else {
+                    Click?.Invoke(null);
+                }
             }
 
         }
