@@ -1,32 +1,33 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls; 
-using System.Web.UI.HtmlControls;
-using EasyControlWeb;
-using EasyControlWeb.Form.Controls;
-using System.Configuration;
-using System.Collections;
-using System.Data;
-using System.Reflection;
+﻿using EasyControlWeb;
 using EasyControlWeb.Filtro;
-using System.Collections.Specialized;
+using EasyControlWeb.Form.Controls;
 using EasyControlWeb.Form.Estilo;
-using System.Net.Mail;
-using System.Windows.Resources;
-using System.Text.RegularExpressions;
-using System.Configuration.Assemblies;
-using System.Runtime.InteropServices;
-using System.Windows.Shapes;
-using System.Net;
-using System.Xml.Linq;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.Configuration;
+using System.Configuration.Assemblies;
+using System.Data;
+using System.IO;
+using System.Linq;
+using System.Net;
+using System.Net.Mail;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Web;
+using System.Web.UI;
+using System.Web.UI.HtmlControls;
+using System.Web.UI.WebControls; 
+using System.Windows.Resources;
+using System.Windows.Shapes;
+using System.Xml.Linq;
 
 namespace EasyControlWeb
 {
@@ -433,6 +434,61 @@ namespace EasyControlWeb
                         i++;
                     }
                     return "{" + fJson + "}";   
+                }
+
+                public static DataTable JsonDataToDataTable(string json, string camposOrden = null)
+                {
+                    if (string.IsNullOrWhiteSpace(json))
+                        return new DataTable();
+
+                    // Parseamos el JSON completo
+                    JObject jsonObject = JObject.Parse(json);
+
+                    // Obtenemos el nodo "data"
+                    JToken dataToken = jsonObject["data"];
+
+                    if (dataToken == null || dataToken.Type != JTokenType.Array)
+                        return new DataTable();
+
+                    // Convertimos todo el array a DataTable
+                    DataTable dtOriginal = JsonConvert.DeserializeObject<DataTable>(dataToken.ToString());
+
+                    // Si no se indicó selección de campos, devolvemos todo
+                    if (string.IsNullOrWhiteSpace(camposOrden))
+                        return dtOriginal;
+
+                    // ============================
+                    // FILTRAR POR ORDEN DE COLUMNAS
+                    // ============================
+
+                    // Convierte "1,3,5" -> [0,2,4]
+                    int[] indices = camposOrden
+                        .Split(',')
+                        .Select(i => int.Parse(i.Trim()) - 1)
+                        .Where(i => i >= 0 && i < dtOriginal.Columns.Count)
+                        .ToArray();
+
+                    DataTable dtFiltrado = new DataTable();
+
+                    // Crear columnas seleccionadas
+                    foreach (int index in indices)
+                    {
+                        DataColumn col = dtOriginal.Columns[index];
+                        dtFiltrado.Columns.Add(col.ColumnName, col.DataType);
+                    }
+
+                    // Copiar filas
+                    foreach (DataRow row in dtOriginal.Rows)
+                    {
+                        DataRow newRow = dtFiltrado.NewRow();
+                        for (int i = 0; i < indices.Length; i++)
+                        {
+                            newRow[i] = row[indices[i]];
+                        }
+                        dtFiltrado.Rows.Add(newRow);
+                    }
+
+                    return dtFiltrado;
                 }
 
             }
