@@ -326,6 +326,14 @@ namespace EasyControlWeb
                 this.ViewState["fncExecBeforeServer"] = value;
             }
         }
+
+        private bool cargaInmediata = true;
+        [Category("Validación"), Description("")]
+        [Browsable(true)]
+        [RefreshProperties(RefreshProperties.All)]
+        [NotifyParentProperty(true)]
+        public bool CargaInmediata { get { return cargaInmediata; } set { cargaInmediata = value; } }
+
         #endregion
 
         #region Suprimir  Propiedades Innecesarias
@@ -1015,21 +1023,153 @@ namespace EasyControlWeb
         }
         public void LoadData(string CriterioFiltro)
         {
-            DataTable dt = this.DataInterconect.GetDataTable();
-            DataView dv = dt.DefaultView;
-
-            if (CriterioFiltro.Length > 0)
+            if (CargaInmediata)
             {
-                dv.RowFilter = CriterioFiltro;
-                this.DataSource = dv;
+                DataTable dt = this.DataInterconect.GetDataTable();
+                DataView dv = dt.DefaultView;
+
+                if (CriterioFiltro.Length > 0)
+                {
+                    dv.RowFilter = CriterioFiltro;
+                    this.DataSource = dv;
+                }
+                else
+                {
+                    this.DataSource = dt;
+                }
+                
             }
             else
             {
-                this.DataSource = dt;
+                try
+                {
+                    if ((this.DataInterconect != null) && (this.DataInterconect.UrlWebServicieParams != null) &&
+                        (this.DataInterconect.UrlWebServicieParams.Count > 0))
+                    {
+
+                    }
+
+                    int pos = 0;
+                    object[] param = new object[this.DataInterconect.UrlWebServicieParams.Count];
+
+                    foreach (EasyFiltroParamURLws oEasyFiltroParamURLws in this.DataInterconect.UrlWebServicieParams)
+                    {
+                        string Valor = "";
+
+                        if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.DinamicoPorURL)
+                        {
+                            Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Request.Params[oEasyFiltroParamURLws.ParamName].ToString();
+                        }
+                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Fijo)
+                        {
+                            Valor = oEasyFiltroParamURLws.Paramvalue;
+                        }
+                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.Session)
+                        {
+                            string NSesion = oEasyFiltroParamURLws.Paramvalue.ToString().Trim();
+                            switch (NSesion)
+                            {
+                                case "IdUsuario":
+                                    Valor = (EasyUtilitario.Helper.Sessiones.Usuario.get() as EasyUsuario)?.IdUsuario.ToString() ?? "";
+                                    break;
+                                case "UserName":
+                                    Valor = (EasyUtilitario.Helper.Sessiones.Usuario.get() as EasyUsuario)?.Login.ToString() ?? "";
+                                    break;
+                                case "IdCentro":
+                                    Valor = (EasyUtilitario.Helper.Sessiones.Usuario.get() as EasyUsuario)?.IdCentroOperativo.ToString() ?? "";
+                                    break;
+                                default:
+                                    Valor = ((System.Web.UI.Page)HttpContext.Current.Handler).Session[NSesion].ToString();
+                                    break;
+                            }
+                        }
+                        else if (oEasyFiltroParamURLws.ObtenerValor == EasyFiltroParamURLws.TipoObtenerValor.FormControl)
+                        {
+                            Control oCtrl = ((System.Web.UI.Page)HttpContext.Current.Handler).FindControl(oEasyFiltroParamURLws.Paramvalue);
+
+                            if (oCtrl != null)
+                            {
+                                if (oCtrl is EasyNumericBox)
+                                {
+                                    EasyNumericBox onb = (EasyNumericBox)oCtrl;
+                                    Valor = onb.Text;
+                                }
+                                else if (oCtrl is EasyTextBox)
+                                {
+                                    EasyTextBox onb = (EasyTextBox)oCtrl;
+                                    Valor = onb.Text;
+                                }
+                                else if (oCtrl is EasyDatepicker)
+                                {
+                                    EasyDatepicker dpk = (EasyDatepicker)oCtrl;
+                                    Valor = dpk.Text;
+                                }
+                                else if (oCtrl is EasyAutocompletar)
+                                {
+                                    EasyAutocompletar oAC = (EasyAutocompletar)oCtrl;
+                                    Valor = oAC.GetValue();
+                                }
+                                else if (oCtrl is EasyDropdownList)
+                                {
+                                    EasyDropdownList ddl = (EasyDropdownList)oCtrl;
+                                    if (ddl.Items.Count > 0)
+                                    {
+                                        Valor = ddl.getValue();
+                                    }
+                                }
+                                else if (oCtrl is EasyControlWeb.Form.Base.EasyList)
+                                {
+                                    EasyControlWeb.Form.Base.EasyList ddlList = (EasyControlWeb.Form.Base.EasyList)oCtrl;
+                                    Valor = ddlList.SelectedValue;
+                                }
+                            }
+                        }
+
+                        switch (oEasyFiltroParamURLws.TipodeDato)
+                        {
+                            case EasyUtilitario.Enumerados.TiposdeDatos.String:
+                                param[pos] = Valor;
+                                break;
+                            case EasyUtilitario.Enumerados.TiposdeDatos.Int:
+                                param[pos] = Convert.ToInt32(Valor);
+                                break;
+                            case EasyUtilitario.Enumerados.TiposdeDatos.Double:
+                                param[pos] = Convert.ToDouble(Valor);
+                                break;
+                            case EasyUtilitario.Enumerados.TiposdeDatos.Date:
+                                param[pos] = Convert.ToDateTime(Valor);
+                                break;
+                        }
+
+                        pos++;
+                    }
+
+                    string CadenaConexion = "";
+
+                    if (this.DataInterconect.MetodoConexion == EasyDataInterConect.MetododeConexion.WebServiceInterno)
+                    {
+                        CadenaConexion = EasyUtilitario.Helper.Pagina.PathSite() + this.DataInterconect.UrlWebService;
+                    }
+                    else
+                    {
+                        string SourceCode = ((this.DataInterconect.ConfigPathSrvRemoto != null) ? EasyUtilitario.Helper.Configuracion.Leer(EasyUtilitario.Enumerados.Configuracion.SeccionKey.Nombre.ConfigBase, this.DataInterconect.ConfigPathSrvRemoto) : "");
+                        CadenaConexion = SourceCode + this.DataInterconect.UrlWebService;
+                    }
+
+                    DataTable dt = (DataTable)EasyWebServieHelper.InvokeWebService(CadenaConexion, "", DataInterconect.Metodo, param);
+                    this.DataSource = dt;
+                    //this.DataBind();
+                }
+                catch (Exception ex)
+                {
+                    string ScriptError = @" var msgConfig = { Titulo: 'EasyGridView:" + this.ClientID + @"', Descripcion: '" + ex.Message.Replace("'", " ") + @"'};
+                                            var oMsg = new SIMA.MessageBox(msgConfig);
+                                            oMsg.Alert();";
+                    EasyUtilitario.Helper.Genericos.RegistraBlockScriptLiteral(ScriptError);
+                }
             }
+
             this.DataBind();
-
-
         }
 
 
