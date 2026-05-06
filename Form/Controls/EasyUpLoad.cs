@@ -24,7 +24,7 @@ namespace EasyControlWeb.Form.Controls
         const string Pref_Colletion = "Acum";
         string UniqID = "";
 
-        #region Controles
+        #region Controles 
         HtmlButton btnPostBack2;
         HtmlButton btnPostBackDelete;
         HtmlTable tbl;

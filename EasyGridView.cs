@@ -17,7 +17,7 @@ using EasyControlWeb.InterConeccion;
 using EasyControlWeb.Filtro;
 using EasyControlWeb.InterConecion;
  
-namespace EasyControlWeb
+namespace EasyControlWeb 
 {
     /*
      * Autor:Rosales Azabache Eddy 

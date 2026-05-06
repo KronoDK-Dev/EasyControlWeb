@@ -16,7 +16,7 @@ namespace EasyControlWeb.Form.Controls
 {
     /*
      * texto vertical :https://stackoverflow.com/questions/4264527/vertical-text-direction
-     */
+     */ 
     public class EasyTabControlV : CompositeControl
     {
         #region Declaracion de variables y Objetos de uso interno 

@@ -22,7 +22,7 @@ namespace EasyControlWeb.Form.Controls
         ImagenCircular,
         hyperlink,
     }
-
+     
     [
    /* AspNetHostingPermission(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Minimal),
     AspNetHostingPermission(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal),*/

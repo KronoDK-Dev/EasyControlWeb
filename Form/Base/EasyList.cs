@@ -16,7 +16,7 @@ using System.Web.UI.WebControls;
 using static EasyControlWeb.Form.Editor.EasyFormColletionsEditor;
 
 namespace EasyControlWeb.Form.Base
-{
+{ 
     public class EasyList : DropDownList
     {
         private bool cargaInmediata;

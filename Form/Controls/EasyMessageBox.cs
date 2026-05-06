@@ -21,7 +21,7 @@ namespace EasyControlWeb.Form.Controls
     */
 
     public class EasyMessageBox : CompositeControl
-    {
+    { 
         #region Variables
         string NombreFuncion = "";
         #endregion

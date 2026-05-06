@@ -14,7 +14,7 @@ namespace EasyControlWeb.Form.Controls
         {
             this.IdFile = _IdFile;
             this.Nombre = _Nombre;
-            this.Tipo = _Tipo;
+            this.Tipo = _Tipo; 
             this.Size = _Sise;
             this.Temporal = _Temporal;
             this.IdEstado = 1;
