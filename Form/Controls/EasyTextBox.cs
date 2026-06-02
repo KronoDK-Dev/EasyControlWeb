@@ -34,8 +34,13 @@ namespace EasyControlWeb.Form.Controls
         public string GetValue() {
             return this.Text;
         }
+        public string GetOldValue()
+        {
+            return this.Attributes["Old"];
+        }
         public void SetValue(string Value) { 
             this.Text = Value;
+            this.Attributes["Old"] = Value;
         }
         protected override void Render(HtmlTextWriter writer)
         {
@@ -56,10 +61,14 @@ namespace EasyControlWeb.Form.Controls
                                         }
                                     " + this.ClientID + @".SetValue=function(value){
                                                 jNet.get('" + this.ClientID + @"').value=value;
+                                                jNet.get('" + this.ClientID + @"').attr('Old',value);
+                                        }
+                                    " + this.ClientID + @".GetOldValue = function(value){
+                                                return jNet.get('" + this.ClientID + @"').attr('Old');
                                         }
                                     ";
 
-            (new LiteralControl("<script>\n" + scriptGetSet + "\n" + "</script>\n")).RenderControl(writer);
+(new LiteralControl("<script>\n" + scriptGetSet + "\n" + "</script>\n")).RenderControl(writer);
         }
     }
 }

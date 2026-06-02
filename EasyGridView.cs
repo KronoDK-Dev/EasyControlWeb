@@ -1819,7 +1819,7 @@ namespace EasyControlWeb
 
 
             //string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble;
-            string VerificaMetodoScript = (((this.ToolBarButtonClick != null) || (this.ToolBarButtonClick.Length > 0)) ? this.ToolBarButtonClick + "(btnItem,ItemRowBE);" : "alert('No se ha definido funcion script para esta propiedad: ToolBarButtonClick');");
+            string VerificaMetodoScript = (((this.ToolBarButtonClick != null) || (this.ToolBarButtonClick.Length > 0)) ? this.ToolBarButtonClick + "(btnItem,ItemRowBE,'" + this.ClientID + "');" : "alert('No se ha definido funcion script para esta propiedad: ToolBarButtonClick');");
             string ExecServerOrClient = @"if(btnItem.RunAtServer.toLowerCase()=='true'){
                                                 if(" + (((this.fncExecBeforeServer != null)&& (this.fncExecBeforeServer.Length>0)) ? this.fncExecBeforeServer + @"(btnItem,ItemRowBE)" : "true") + @"==true){ 
                                                     if(btnItem.SilenceWait.toLowerCase()=='false'){//Simula Carga 17/10/2025

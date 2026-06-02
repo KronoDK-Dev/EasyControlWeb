@@ -219,6 +219,7 @@ namespace EasyControlWeb
                 onmousemove,
                 onmouseover,
                 ondblclick,
+                onkeydown,
             }
 
             public struct MessageBox
@@ -331,6 +332,10 @@ namespace EasyControlWeb
                         return GetFechaHoyFormatYYYYmmdd + "||" + GetHoraHoyFormatoHHmmSS;
                     }
                 }
+                public static string FormatoFechayyymmdd(string Fecha,char Sep) { 
+                    string []arrF = Fecha.Split(Sep);
+                    return arrF[2].ToString() + arrF[1].ToString().PadLeft(2, '0') + arrF[0].ToString().PadLeft(2, '0');
+                }
 
             }
 
@@ -434,6 +439,34 @@ namespace EasyControlWeb
                         i++;
                     }
                     return "{" + fJson + "}";   
+                }
+
+                public static DataRow JsonToDataRow(string json)
+                {
+                    if (string.IsNullOrWhiteSpace(json))
+                        throw new ArgumentException("JSON string cannot be null or empty.");
+
+                    // Deserialize JSON into a dictionary
+                    var dict = JsonConvert.DeserializeObject<Dictionary<string, object>>(json);
+                    if (dict == null || dict.Count == 0)
+                        throw new InvalidOperationException("JSON does not contain valid data.");
+
+                    // Create a DataTable with columns based on JSON keys
+                    DataTable table = new DataTable();
+                    foreach (var key in dict.Keys)
+                    {
+                        table.Columns.Add(key, typeof(object));
+                    }
+
+                    // Create a new DataRow and populate it
+                    DataRow row = table.NewRow();
+                    foreach (var kvp in dict)
+                    {
+                        row[kvp.Key] = kvp.Value ?? DBNull.Value;
+                    }
+
+                    table.Rows.Add(row);
+                    return row;
                 }
 
                 public static DataTable JsonDataToDataTable(string json, string camposOrden = null)
@@ -852,7 +885,8 @@ namespace EasyControlWeb
                         else {
                             value = Fiel_Value[1];
                         }
-                        DataDiconario[Fiel_Value[0].Replace(EasyUtilitario.Constantes.Caracteres.ComillaDoble, "")]= value.Replace(EasyUtilitario.Constantes.Caracteres.ComillaDoble,"").Replace("'", "");
+                        string FieldName = Fiel_Value[0].Replace(EasyUtilitario.Constantes.Caracteres.ComillaDoble, "").Replace(" ", "");
+                        DataDiconario[FieldName] = value.Replace(EasyUtilitario.Constantes.Caracteres.ComillaDoble,"").Replace("'", "");
                     }
                     return DataDiconario;
                 }

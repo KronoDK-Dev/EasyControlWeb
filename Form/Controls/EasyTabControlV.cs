@@ -38,6 +38,15 @@ namespace EasyControlWeb.Form.Controls
         public string fncTabOnClick { get; set; }
 
 
+
+        [Category("Scripts"), Description("")]
+        [Browsable(true)]
+        [RefreshProperties(RefreshProperties.All)]
+        [NotifyParentProperty(true)]
+        public string fncTabOnRefresh { get; set; }
+
+
+
         [Browsable(false)]
         List<EasyTabItem> oEasyTabItem;
 
@@ -302,12 +311,21 @@ namespace EasyControlWeb.Form.Controls
             if (!IsDesign())
             {
                 HmtlTabControlBaseUbicacion().RenderControl(writer);
-              
+
+                string OnRefreshIni = "";
+                string OnRefreshFin = "";
+                if ((this.fncTabOnRefresh != null) && (this.fncTabOnRefresh.Length > 0))
+                {
+                    OnRefreshIni = this.fncTabOnRefresh + "('Ini');";
+                    OnRefreshFin = this.fncTabOnRefresh + "('Fin');";
+                }
+
                 string cmll = EasyUtilitario.Constantes.Caracteres.ComillaDoble.ToString();
                 string TabOnclick = ((this.fncTabOnClick != null) ? this.fncTabOnClick + "(oTab);" : "");
                 string ScriptTabOnclick = @"<script>
                                                var " + this.ClientID + @"={};
                                                " + this.ClientID + @".TabsCollections=new Array();
+                                               var " + this.ClientID + @"_TabSelect = '" + TabDefault + @"'; 
                                                " + this.ClientID + @".TabActivo =null;
                                                " + this.ClientID + @".onTabClick=function(e){
                                                                                        // event.preventDefault();
@@ -321,10 +339,6 @@ namespace EasyControlWeb.Form.Controls
                                                                                         var oTipoTab = oTab.attr('TipoTab');
                                                                                         var oValor = oTab.attr('Valor');
                                                                                         var NomTabContent='C_' + oTab.attr('id');
-                                                                                        //var TabContent=jNet.get(NomTabContent);
-                                                                                        //TabContent.clear();
-
-                                                                                        
 
                                                                                          if(oTab.attr('Loading')=='false'){
                                                                                                 //Parametros para invocar a
@@ -371,6 +385,29 @@ namespace EasyControlWeb.Form.Controls
 
 
                                                }
+                                                " + this.ClientID + @".RefreshTabSelect=function(IdTabSelected){
+                                                    " + OnRefreshIni + @"
+                                                           
+                                                           if (IdTabSelected==undefined){
+                                                                IdTabSelected=" + this.ClientID + @"_TabSelect ;
+                                                            }
+                                                            var oTab = jNet.get(IdTabSelected);
+                                                                //---------------Obtiene los parametros actualizados --------------------
+                                                                    var p=0;LstParams='';
+                                                                    for (var [key, value] of Object.entries(oTab.Params)) {
+                                                                          if (key != 'Refresh') {
+                                                                              LstParams +=  ((p==0)?'':'&') + key + '='+ value ;
+                                                                              p++;
+                                                                          }
+                                                                    }
+                                                                  oTab.attr('Params',LstParams);
+                                                                //---------------------------------------------------------------------------
+
+                                                                if(oTab.attr('Enabled')=='0') {return false;}//abandona por estar deshabilitado
+
+                                                                oTab.attr('Loading','false');
+                                                                " + this.ClientID + @".onTabClick(IdTabSelected);
+                                                        }
                                            </script>
                                            ";
 
